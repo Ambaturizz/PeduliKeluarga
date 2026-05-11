@@ -1,228 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_radius.dart';
-import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/pk_design.dart';
 import '../../../../state/providers/app_mode_provider.dart';
 import '../../data/home_dummy_data.dart';
 
-Color dashboardToneColor(DashboardTone tone) {
-  return switch (tone) {
-    DashboardTone.teal => AppColors.teal,
-    DashboardTone.blue => AppColors.blue,
-    DashboardTone.amber => AppColors.amberMid,
-    DashboardTone.red => AppColors.redMid,
-    DashboardTone.green => AppColors.greenMid,
-    DashboardTone.purple => AppColors.purple,
-    DashboardTone.gray => AppColors.textSecondary,
-  };
-}
-
-Color dashboardToneBackground(DashboardTone tone) {
-  return switch (tone) {
-    DashboardTone.teal => AppColors.tealLight,
-    DashboardTone.blue => AppColors.blueLight,
-    DashboardTone.amber => AppColors.amberLight,
-    DashboardTone.red => AppColors.redLight,
-    DashboardTone.green => AppColors.greenLight,
-    DashboardTone.purple => AppColors.purpleLight,
-    DashboardTone.gray => AppColors.grayBg,
-  };
-}
-
-class DashboardSectionTitle extends StatelessWidget {
-  const DashboardSectionTitle({
-    required this.title,
-    this.trailing,
-    super.key,
-  });
-
-  final String title;
-  final Widget? trailing;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: AppSpacing.lg,
-        bottom: AppSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              title.toUpperCase(),
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 0.9,
-                  ),
-            ),
-          ),
-          ?trailing,
-        ],
-      ),
-    );
-  }
-}
-class DashboardCard extends StatelessWidget {
-  const DashboardCard({
-    required this.child,
-    this.padding = const EdgeInsets.all(AppSpacing.xl),
-    this.backgroundColor = AppColors.grayCard,
-    this.borderColor = AppColors.grayBorder,
-    this.onTap,
-    super.key,
-  });
-
-  final Widget child;
-  final EdgeInsetsGeometry padding;
-  final Color backgroundColor;
-  final Color borderColor;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final content = AnimatedContainer(
-      duration: const Duration(milliseconds: 240),
-      curve: Curves.easeOutCubic,
-      padding: padding,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: AppRadius.medium,
-        border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.035),
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: child,
-    );
-
-    if (onTap == null) return content;
-
-    return Semantics(
-      button: true,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: AppRadius.medium,
-          onTap: onTap,
-          child: content,
-        ),
-      ),
-    );
-  }
-}
-
-class DashboardStatusBadge extends StatelessWidget {
-  const DashboardStatusBadge({
-    required this.label,
-    required this.tone,
-    this.icon,
-    super.key,
-  });
-
-  final String label;
-  final DashboardTone tone;
-  final IconData? icon;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = dashboardToneColor(tone);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: dashboardToneBackground(tone),
-        borderRadius: AppRadius.full,
-        border: Border.all(
-          color: color.withValues(alpha: 0.18),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[
-            Icon(icon, color: color, size: 14),
-            const SizedBox(width: AppSpacing.xs),
-          ],
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w900,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class DashboardAlertCard extends StatelessWidget {
-  const DashboardAlertCard({
-    required this.alert,
-    super.key,
-  });
-
-  final HomeAlertData alert;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = dashboardToneColor(alert.tone);
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: dashboardToneBackground(alert.tone),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: color.withValues(alpha: 0.25),
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(alert.icon, color: color, size: 21),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  alert.title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.w900,
-                      ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  alert.message,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: color,
-                        height: 1.45,
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class HomeModeSwitcher extends StatelessWidget {
-  const HomeModeSwitcher({
+class PremiumModeSwitch extends StatelessWidget {
+  const PremiumModeSwitch({
     required this.mode,
     required this.onChanged,
     super.key,
@@ -233,155 +16,504 @@ class HomeModeSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SegmentedButton<AppUserMode>(
-      showSelectedIcon: false,
-      style: ButtonStyle(
-        visualDensity: VisualDensity.compact,
-        padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-        ),
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: PkColors.text,
+        borderRadius: PkRadius.pillRadius,
+        boxShadow: PkShadow.xs,
       ),
-      segments: const [
-        ButtonSegment<AppUserMode>(
-          value: AppUserMode.elder,
-          label: Text('Lansia'),
-          icon: Icon(Icons.volunteer_activism_outlined),
-        ),
-        ButtonSegment<AppUserMode>(
-          value: AppUserMode.caregiver,
-          label: Text('Anak'),
-          icon: Icon(Icons.groups_outlined),
-        ),
-      ],
-      selected: {mode},
-      onSelectionChanged: (selection) {
-        if (selection.isEmpty) return;
-        onChanged(selection.first);
-      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _ModeButton(
+            label: 'Lansia',
+            icon: Icons.volunteer_activism_outlined,
+            active: mode == AppUserMode.elder,
+            onTap: () => onChanged(AppUserMode.elder),
+          ),
+          _ModeButton(
+            label: 'Anak',
+            icon: Icons.groups_outlined,
+            active: mode == AppUserMode.caregiver,
+            onTap: () => onChanged(AppUserMode.caregiver),
+          ),
+        ],
+      ),
     );
   }
 }
 
-class HomeDashboardHero extends StatelessWidget {
-  const HomeDashboardHero({
-    required this.data,
-    required this.onPrimaryPressed,
-    super.key,
+class _ModeButton extends StatelessWidget {
+  const _ModeButton({
+    required this.label,
+    required this.icon,
+    required this.active,
+    required this.onTap,
   });
 
-  final HomeDashboardData data;
-  final VoidCallback onPrimaryPressed;
+  final String label;
+  final IconData icon;
+  final bool active;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'Ringkasan dashboard ${data.modeBadge}',
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(AppSpacing.xxl),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.teal,
-              AppColors.tealMid,
+      button: true,
+      selected: active,
+      label: label,
+      child: InkWell(
+        borderRadius: PkRadius.pillRadius,
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 9,
+          ),
+          decoration: BoxDecoration(
+            color: active ? Colors.white : Colors.transparent,
+            borderRadius: PkRadius.pillRadius,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: 17,
+                color: active ? PkColors.text : Colors.white70,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: active ? PkColors.text : Colors.white70,
+                      fontWeight: FontWeight.w900,
+                    ),
+              ),
             ],
           ),
-          borderRadius: AppRadius.large,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.teal.withValues(alpha: 0.18),
-              blurRadius: 30,
-              offset: const Offset(0, 16),
-            ),
-          ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DashboardStatusBadge(
-              label: data.modeBadge,
-              tone: DashboardTone.teal,
-              icon: data.isElder
-                  ? Icons.volunteer_activism_outlined
-                  : Icons.groups_outlined,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              data.name,
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.w900,
-                  ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              data.subtitle,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.white.withValues(alpha: 0.82),
-                  ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Row(
+      ),
+    );
+  }
+}
+
+class PremiumPageHeader extends StatelessWidget {
+  const PremiumPageHeader({
+    required this.mode,
+    required this.liveLabel,
+    required this.onModeChanged,
+    super.key,
+  });
+
+  final AppUserMode mode;
+  final String liveLabel;
+  final ValueChanged<AppUserMode> onModeChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).width < 640;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: compact
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.sensors_rounded,
-                  color: AppColors.white.withValues(alpha: 0.75),
-                  size: 17,
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                Text(
-                  data.lastUpdatedLabel,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.white.withValues(alpha: 0.78),
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
+                _TitleBlock(liveLabel: liveLabel),
+                const SizedBox(height: 12),
+                PremiumModeSwitch(mode: mode, onChanged: onModeChanged),
+              ],
+            )
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: _TitleBlock(liveLabel: liveLabel)),
+                PremiumModeSwitch(mode: mode, onChanged: onModeChanged),
               ],
             ),
-            const SizedBox(height: AppSpacing.xl),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final isCompact = constraints.maxWidth < 520;
+    );
+  }
+}
 
-                return GridView.count(
-                  crossAxisCount: isCompact ? 1 : 3,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  mainAxisSpacing: AppSpacing.sm,
-                  crossAxisSpacing: AppSpacing.sm,
-                  childAspectRatio: isCompact ? 4.2 : 1.9,
+class _TitleBlock extends StatelessWidget {
+  const _TitleBlock({
+    required this.liveLabel,
+  });
+
+  final String liveLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'PeduliKeluarga',
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: PkColors.brand,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.4,
+              ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Healthcare Dashboard',
+          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                color: PkColors.text,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1.5,
+                height: 1.02,
+              ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Ringkasan kesehatan keluarga yang tenang, jelas, dan bisa ditindaklanjuti.',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: PkColors.text2,
+                height: 1.6,
+              ),
+        ),
+        const SizedBox(height: 12),
+        LivePill(label: liveLabel),
+      ],
+    );
+  }
+}
+
+class LivePill extends StatelessWidget {
+  const LivePill({
+    required this.label,
+    super.key,
+  });
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 9,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.78),
+        borderRadius: PkRadius.pillRadius,
+        border: Border.all(color: PkColors.line),
+        boxShadow: PkShadow.xs,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 900),
+            tween: Tween(begin: 0.72, end: 1),
+            curve: Curves.easeInOut,
+            builder: (context, value, child) {
+              return Transform.scale(scale: value, child: child);
+            },
+            child: Container(
+              width: 9,
+              height: 9,
+              decoration: BoxDecoration(
+                color: PkColors.green,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: PkColors.green.withValues(alpha: 0.18),
+                    blurRadius: 0,
+                    spreadRadius: 6,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: PkColors.text2,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PremiumHomeHero extends StatelessWidget {
+  const PremiumHomeHero({
+    required this.data,
+    required this.onPrimary,
+    required this.onSecondary,
+    super.key,
+  });
+
+  final HomeDashboardData data;
+  final VoidCallback onPrimary;
+  final VoidCallback onSecondary;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 340),
+      padding: EdgeInsets.all(
+        MediaQuery.sizeOf(context).width < 640 ? 22 : 36,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: PkRadius.lgRadius,
+        boxShadow: PkShadow.md,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF064D49),
+            PkColors.brand,
+            PkColors.brand2,
+          ],
+          stops: [0, 0.48, 1],
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: CustomPaint(
+              painter: _HeroGridPainter(),
+            ),
+          ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 760;
+
+              final content = _HeroCopy(
+                data: data,
+                onPrimary: onPrimary,
+                onSecondary: onSecondary,
+              );
+
+              final panel = _HeroPanel(data: data);
+
+              if (isNarrow) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    for (final stat in data.heroStats)
-                      _HeroStatTile(stat: stat),
+                    content,
+                    const SizedBox(height: 26),
+                    panel,
                   ],
                 );
-              },
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.white,
-                  foregroundColor: AppColors.tealDark,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xl,
-                    vertical: AppSpacing.lg,
-                  ),
-                ),
-                onPressed: onPrimaryPressed,
-                icon: Icon(
-                  data.isElder
-                      ? Icons.medical_services_outlined
-                      : Icons.assignment_outlined,
-                ),
-                label: Text(data.primaryCtaLabel),
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(flex: 6, child: content),
+                  const SizedBox(width: 26),
+                  Expanded(flex: 4, child: panel),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HeroCopy extends StatelessWidget {
+  const _HeroCopy({
+    required this.data,
+    required this.onPrimary,
+    required this.onSecondary,
+  });
+
+  final HomeDashboardData data;
+  final VoidCallback onPrimary;
+  final VoidCallback onSecondary;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _HeroBadge(label: data.kicker),
+        const SizedBox(height: 18),
+        Text(
+          data.heroTitle,
+          style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -2.8,
+                height: 0.96,
               ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          data.heroSubtitle,
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.white.withValues(alpha: 0.78),
+                height: 1.7,
+              ),
+        ),
+        const SizedBox(height: 24),
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: PkColors.brand,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
+                ),
+                shape: const StadiumBorder(),
+              ),
+              onPressed: onPrimary,
+              icon: Icon(
+                data.isElder
+                    ? Icons.medical_services_outlined
+                    : Icons.assignment_outlined,
+              ),
+              label: Text(data.primaryButton),
+            ),
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: BorderSide(
+                  color: Colors.white.withValues(alpha: 0.34),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
+                ),
+                shape: const StadiumBorder(),
+              ),
+              onPressed: onSecondary,
+              icon: const Icon(Icons.medication_outlined),
+              label: Text(data.secondaryButton),
             ),
           ],
         ),
+      ],
+    );
+  }
+}
+
+class _HeroBadge extends StatelessWidget {
+  const _HeroBadge({
+    required this.label,
+  });
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 8,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.16),
+        borderRadius: PkRadius.pillRadius,
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.18),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.auto_awesome_outlined,
+            color: Colors.white,
+            size: 16,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HeroPanel extends StatelessWidget {
+  const _HeroPanel({
+    required this.data,
+  });
+
+  final HomeDashboardData data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.13),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.18),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 42,
+            offset: const Offset(0, 18),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  data.isElder ? 'Health status' : 'Family monitoring',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.76),
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+              ),
+              Text(
+                'Realtime',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.76),
+                      fontWeight: FontWeight.w900,
+                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final narrow = constraints.maxWidth < 340;
+
+              return GridView.count(
+                crossAxisCount: narrow ? 1 : 3,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: narrow ? 4.6 : 1.08,
+                children: [
+                  for (final stat in data.heroStats)
+                    _HeroStatTile(stat: stat),
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -397,46 +529,42 @@ class _HeroStatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.black.withValues(alpha: 0.15),
-        borderRadius: AppRadius.medium,
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: AppColors.white.withValues(alpha: 0.08),
+          color: Colors.white.withValues(alpha: 0.14),
         ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
             stat.icon,
-            color: AppColors.white.withValues(alpha: 0.82),
-            size: 24,
+            color: Colors.white.withValues(alpha: 0.82),
+            size: 20,
           ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  stat.value,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.w900,
-                      ),
+          const Spacer(),
+          Text(
+            stat.value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.7,
                 ),
-                Text(
-                  stat.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.white.withValues(alpha: 0.72),
-                      ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            stat.label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Colors.white.withValues(alpha: 0.70),
+                  fontWeight: FontWeight.w800,
                 ),
-              ],
-            ),
           ),
         ],
       ),
@@ -444,8 +572,120 @@ class _HeroStatTile extends StatelessWidget {
   }
 }
 
-class HomeHealthStatusWidget extends StatelessWidget {
-  const HomeHealthStatusWidget({
+class _HeroGridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.06)
+      ..strokeWidth = 1;
+
+    const gap = 42.0;
+
+    for (double x = 0; x <= size.width; x += gap) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+
+    for (double y = 0; y <= size.height; y += gap) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+
+    final glow = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          Colors.white.withValues(alpha: 0.24),
+          Colors.transparent,
+        ],
+      ).createShader(
+        Rect.fromCircle(
+          center: Offset(size.width * 0.82, size.height * 0.18),
+          radius: 160,
+        ),
+      );
+
+    canvas.drawCircle(
+      Offset(size.width * 0.82, size.height * 0.18),
+      160,
+      glow,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class AlertStack extends StatelessWidget {
+  const AlertStack({
+    required this.items,
+    super.key,
+  });
+
+  final List<HomeAlert> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final item in items)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: PkCard(
+              clean: true,
+              tint: pkToneSoft(item.tone),
+              borderColor: pkToneColor(item.tone).withValues(alpha: 0.14),
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  PkIconBox(
+                    icon: item.icon,
+                    tone: item.tone,
+                    size: 38,
+                    iconSize: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.title,
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    color: pkToneColor(item.tone),
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          item.copy,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: pkToneColor(item.tone),
+                                    height: 1.5,
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    item.time,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: pkToneColor(item.tone).withValues(alpha: 0.72),
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class PremiumSummaryCard extends StatelessWidget {
+  const PremiumSummaryCard({
     required this.data,
     super.key,
   });
@@ -454,123 +694,36 @@ class HomeHealthStatusWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tone = data.overallScore >= 90
-        ? DashboardTone.green
-        : data.overallScore >= 82
-            ? DashboardTone.amber
-            : DashboardTone.red;
-
-    final color = dashboardToneColor(tone);
-
-    return DashboardCard(
+    return PkCard(
+      soft: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              _IconBox(
-                icon: Icons.health_and_safety_outlined,
-                tone: tone,
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Health Status',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w900,
-                          ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      data.overallStatus,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-              TweenAnimationBuilder<double>(
-                duration: const Duration(milliseconds: 380),
-                curve: Curves.easeOutCubic,
-                tween: Tween<double>(
-                  begin: 0,
-                  end: data.overallScore.toDouble(),
-                ),
-                builder: (context, value, _) {
-                  return Text(
-                    '${value.round()}%',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: color,
-                          fontWeight: FontWeight.w900,
-                        ),
-                  );
-                },
-              ),
-            ],
+          CardTitleRow(
+            eyebrow: data.isElder ? 'Daily condition' : 'Parent monitoring',
+            title: data.summaryTitle,
+            subtitle: data.summarySubtitle,
+            icon: data.isElder
+                ? Icons.monitor_heart_outlined
+                : Icons.groups_outlined,
+            tone: data.isElder ? PkTone.brand : PkTone.blue,
           ),
-          const SizedBox(height: AppSpacing.lg),
-          ClipRRect(
-            borderRadius: AppRadius.full,
-            child: LinearProgressIndicator(
-              value: data.overallScore / 100,
-              minHeight: 9,
-              color: color,
-              backgroundColor: AppColors.grayBg,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            data.overallMessage,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                  height: 1.5,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class HomeHealthSummaryCard extends StatelessWidget {
-  const HomeHealthSummaryCard({
-    required this.metrics,
-    super.key,
-  });
-
-  final List<HomeHealthMetric> metrics;
-
-  @override
-  Widget build(BuildContext context) {
-    return DashboardCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _CardHeader(
-            title: 'Health Summary',
-            subtitle: 'Ringkasan kondisi terbaru',
-            icon: Icons.monitor_heart_outlined,
-            tone: DashboardTone.teal,
-          ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: 16),
           LayoutBuilder(
             builder: (context, constraints) {
-              final isWide = constraints.maxWidth >= 520;
+              final width = constraints.maxWidth;
+              final count = width >= 720 ? 3 : width >= 440 ? 2 : 1;
 
               return GridView.count(
-                crossAxisCount: isWide ? 2 : 1,
+                crossAxisCount: count,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: AppSpacing.md,
-                crossAxisSpacing: AppSpacing.md,
-                childAspectRatio: isWide ? 2.25 : 3.15,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: count == 1 ? 2.45 : 1.55,
                 children: [
-                  for (final metric in metrics)
-                    _HealthMetricTile(metric: metric),
+                  for (final metric in data.metrics)
+                    PremiumMetricTile(metric: metric),
                 ],
               );
             },
@@ -581,309 +734,96 @@ class HomeHealthSummaryCard extends StatelessWidget {
   }
 }
 
-class _HealthMetricTile extends StatelessWidget {
-  const _HealthMetricTile({
+class PremiumMetricTile extends StatelessWidget {
+  const PremiumMetricTile({
     required this.metric,
+    super.key,
   });
 
-  final HomeHealthMetric metric;
+  final HomeMetric metric;
 
   @override
   Widget build(BuildContext context) {
-    final color = dashboardToneColor(metric.tone);
+    final color = pkToneColor(metric.tone);
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: AppColors.grayBg,
-        borderRadius: AppRadius.medium,
-        border: Border.all(color: AppColors.grayBorder),
+        color: PkColors.surfaceSoft,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: PkColors.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              _IconBox(
-                icon: metric.icon,
-                tone: metric.tone,
-                size: 36,
-                iconSize: 19,
-              ),
-              const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
                   metric.label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: AppColors.textSecondary,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: PkColors.muted,
+                        fontWeight: FontWeight.w900,
                       ),
                 ),
               ),
+              Icon(metric.icon, size: 18, color: color),
             ],
           ),
           const Spacer(),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                metric.value,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: color,
-                      fontWeight: FontWeight.w900,
-                    ),
-              ),
-              if (metric.unit.isNotEmpty) ...[
-                const SizedBox(width: AppSpacing.xs),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Text(
-                    metric.unit,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
+          RichText(
+            text: TextSpan(
+              text: metric.value,
+              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                    color: PkColors.text,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -1.7,
+                    height: 0.95,
+                  ),
+              children: [
+                if (metric.unit != null)
+                  TextSpan(
+                    text: ' ${metric.unit}',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: PkColors.muted,
+                          fontWeight: FontWeight.w900,
                         ),
                   ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  metric.status,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-              ),
-              Text(
-                metric.trend,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: AppColors.textMuted,
-                    ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          ClipRRect(
-            borderRadius: AppRadius.full,
-            child: LinearProgressIndicator(
-              value: metric.progress.clamp(0, 1),
-              minHeight: 6,
-              color: color,
-              backgroundColor: AppColors.grayBorder,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class HomeMedicationProgressCard extends StatelessWidget {
-  const HomeMedicationProgressCard({
-    required this.medications,
-    super.key,
-  });
-
-  final List<HomeMedicationProgress> medications;
-
-  @override
-  Widget build(BuildContext context) {
-    return DashboardCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _CardHeader(
-            title: 'Medication Progress',
-            subtitle: 'Jadwal dan kepatuhan obat hari ini',
-            icon: Icons.medication_outlined,
-            tone: DashboardTone.teal,
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          for (final medication in medications)
-            _MedicationProgressRow(medication: medication),
-        ],
-      ),
-    );
-  }
-}
-
-class _MedicationProgressRow extends StatelessWidget {
-  const _MedicationProgressRow({
-    required this.medication,
-  });
-
-  final HomeMedicationProgress medication;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = dashboardToneColor(medication.tone);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
-      child: Row(
-        children: [
-          Container(
-            width: 62,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.sm,
-              vertical: AppSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: dashboardToneBackground(medication.tone),
-              borderRadius: AppRadius.small,
-              border: Border.all(
-                color: color.withValues(alpha: 0.18),
-              ),
-            ),
-            child: Text(
-              medication.time,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w900,
-                  ),
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  medication.name,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w900,
-                      ),
-                ),
-                const SizedBox(height: AppSpacing.xxs),
-                Text(
-                  medication.detail,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                ClipRRect(
-                  borderRadius: AppRadius.full,
-                  child: LinearProgressIndicator(
-                    value: medication.progress.clamp(0, 1),
-                    minHeight: 6,
-                    color: color,
-                    backgroundColor: AppColors.grayBg,
-                  ),
-                ),
               ],
             ),
           ),
-          const SizedBox(width: AppSpacing.md),
-          DashboardStatusBadge(
-            label: medication.status,
-            tone: medication.tone,
-            icon: medication.completed
-                ? Icons.check_rounded
-                : Icons.schedule_rounded,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class HomeNotificationSummaryCard extends StatelessWidget {
-  const HomeNotificationSummaryCard({
-    required this.notifications,
-    super.key,
-  });
-
-  final List<HomeNotificationData> notifications;
-
-  @override
-  Widget build(BuildContext context) {
-    return DashboardCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _CardHeader(
-            title: 'Notification Summary',
-            subtitle: 'Aktivitas dan alert terkini',
-            icon: Icons.notifications_active_outlined,
-            tone: DashboardTone.amber,
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          for (final notification in notifications)
-            _NotificationRow(notification: notification),
-        ],
-      ),
-    );
-  }
-}
-
-class _NotificationRow extends StatelessWidget {
-  const _NotificationRow({
-    required this.notification,
-  });
-
-  final HomeNotificationData notification;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = dashboardToneColor(notification.tone);
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.grayBg,
-        borderRadius: AppRadius.small,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(notification.icon, color: color, size: 20),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  notification.title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w900,
-                      ),
-                ),
-                const SizedBox(height: AppSpacing.xxs),
-                Text(
-                  notification.message,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
+          const SizedBox(height: 10),
           Text(
-            notification.time,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.textMuted,
+            metric.note,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: PkColors.text2,
+                  height: 1.45,
                 ),
           ),
+          if (metric.progress != null) ...[
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: PkRadius.pillRadius,
+              child: LinearProgressIndicator(
+                value: metric.progress!.clamp(0, 1),
+                minHeight: 7,
+                color: color,
+                backgroundColor: PkColors.line,
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 }
 
-class HomeAIInsightCard extends StatelessWidget {
-  const HomeAIInsightCard({
+class PremiumAiCard extends StatelessWidget {
+  const PremiumAiCard({
     required this.data,
     super.key,
   });
@@ -892,39 +832,49 @@ class HomeAIInsightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DashboardCard(
-      backgroundColor: AppColors.purpleLight,
-      borderColor: AppColors.purple.withValues(alpha: 0.18),
+    return PkCard(
+      tint: PkColors.purpleSoft,
+      borderColor: PkColors.purple.withValues(alpha: 0.14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _CardHeader(
-            title: data.aiTitle,
-            subtitle: data.aiConfidence,
-            icon: Icons.auto_awesome_outlined,
-            tone: DashboardTone.purple,
+          Row(
+            children: [
+              Expanded(
+                child: CardTitleRow(
+                  eyebrow: data.aiEyebrow,
+                  title: data.aiTitle,
+                  icon: Icons.auto_awesome_outlined,
+                  tone: PkTone.purple,
+                ),
+              ),
+              PkBadge(
+                label: data.aiBadge,
+                tone: data.aiBadge == 'Medium' ? PkTone.amber : PkTone.purple,
+              ),
+            ],
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: 16),
           Text(
-            data.aiMessage,
+            data.aiCopy,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.purpleDark,
-                  height: 1.55,
+                  color: PkColors.text2,
+                  height: 1.65,
                 ),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: 16),
           Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
+            spacing: 8,
+            runSpacing: 8,
             children: const [
-              DashboardStatusBadge(
-                label: 'AI Insight',
-                tone: DashboardTone.purple,
+              PkBadge(
+                label: 'AI insight',
+                tone: PkTone.purple,
                 icon: Icons.auto_awesome_outlined,
               ),
-              DashboardStatusBadge(
+              PkBadge(
                 label: 'Preventif',
-                tone: DashboardTone.teal,
+                tone: PkTone.brand,
                 icon: Icons.health_and_safety_outlined,
               ),
             ],
@@ -935,34 +885,182 @@ class HomeAIInsightCard extends StatelessWidget {
   }
 }
 
-class HomeQuickActionMenu extends StatelessWidget {
-  const HomeQuickActionMenu({
+class PremiumMedicineCard extends StatelessWidget {
+  const PremiumMedicineCard({
+    required this.items,
+    super.key,
+  });
+
+  final List<HomeMedicine> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return PkCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const CardTitleRow(
+            eyebrow: 'Medication progress',
+            title: 'Obat hari ini',
+            subtitle: 'Jadwal, status, dan stok obat.',
+            icon: Icons.medication_outlined,
+            tone: PkTone.green,
+          ),
+          const SizedBox(height: 16),
+          for (final item in items)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _MedicineItem(item: item),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MedicineItem extends StatelessWidget {
+  const _MedicineItem({
+    required this.item,
+  });
+
+  final HomeMedicine item;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = pkToneColor(item.tone);
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: item.lowStock ? PkColors.redSoft : PkColors.surfaceSoft,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: item.lowStock
+              ? PkColors.red.withValues(alpha: 0.18)
+              : PkColors.line,
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 64,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: pkToneSoft(item.tone),
+                  borderRadius: PkRadius.smRadius,
+                ),
+                child: Text(
+                  item.time,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.name,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: PkColors.text,
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      item.dose,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: PkColors.text2,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              PkBadge(
+                label: item.status,
+                tone: item.tone,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: PkRadius.pillRadius,
+            child: LinearProgressIndicator(
+              value: item.progress / 100,
+              minHeight: 7,
+              color: color,
+              backgroundColor: PkColors.line,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PremiumQuickGrid extends StatelessWidget {
+  const PremiumQuickGrid({
     required this.actions,
-    required this.onActionTap,
+    required this.onTap,
     super.key,
   });
 
   final List<HomeQuickAction> actions;
-  final ValueChanged<HomeQuickAction> onActionTap;
+  final ValueChanged<HomeQuickAction> onTap;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final crossAxisCount = constraints.maxWidth >= 700 ? 4 : 2;
+        final width = constraints.maxWidth;
+        final count = width >= 960 ? 4 : width >= 520 ? 2 : 1;
 
         return GridView.count(
-          crossAxisCount: crossAxisCount,
+          crossAxisCount: count,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: AppSpacing.md,
-          crossAxisSpacing: AppSpacing.md,
-          childAspectRatio: constraints.maxWidth >= 700 ? 1.15 : 1.08,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: count == 1 ? 2.45 : 1.08,
           children: [
             for (final action in actions)
-              _QuickActionTile(
-                action: action,
-                onTap: () => onActionTap(action),
+              PkCard(
+                onTap: () => onTap(action),
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        PkIconBox(icon: action.icon, tone: action.tone),
+                        const Spacer(),
+                        if (action.badge != null)
+                          PkBadge(label: action.badge!, tone: action.tone),
+                      ],
+                    ),
+                    const Spacer(),
+                    Text(
+                      action.title,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: PkColors.text,
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      action.subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: PkColors.text2,
+                          ),
+                    ),
+                  ],
+                ),
               ),
           ],
         );
@@ -971,173 +1069,54 @@ class HomeQuickActionMenu extends StatelessWidget {
   }
 }
 
-class _QuickActionTile extends StatelessWidget {
-  const _QuickActionTile({
-    required this.action,
-    required this.onTap,
-  });
-
-  final HomeQuickAction action;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = dashboardToneColor(action.tone);
-
-    return DashboardCard(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _IconBox(
-            icon: action.icon,
-            tone: action.tone,
-            size: 46,
-            iconSize: 24,
-          ),
-          const Spacer(),
-          Text(
-            action.title,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                ),
-          ),
-          const SizedBox(height: AppSpacing.xxs),
-          Text(
-            action.subtitle,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-          ),
-          if (action.badge != null) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm,
-                vertical: AppSpacing.xs,
-              ),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.10),
-                borderRadius: AppRadius.full,
-              ),
-              child: Text(
-                action.badge!,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: color,
-                      fontWeight: FontWeight.w900,
-                    ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class HomeEmergencyCTA extends StatelessWidget {
-  const HomeEmergencyCTA({
-    required this.data,
-    required this.onPressed,
-    super.key,
-  });
-
-  final HomeDashboardData data;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final backgroundColor = data.isElder ? AppColors.redMid : AppColors.tealMid;
-
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton(
-        style: FilledButton.styleFrom(
-          backgroundColor: backgroundColor,
-          foregroundColor: AppColors.white,
-          padding: const EdgeInsets.all(AppSpacing.xxl),
-          shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.medium,
-          ),
-        ),
-        onPressed: onPressed,
-        child: Column(
-          children: [
-            Icon(
-              data.isElder
-                  ? Icons.emergency_outlined
-                  : Icons.notifications_active_outlined,
-              size: 34,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              data.emergencyTitle,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.w900,
-                  ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              data.emergencySubtitle,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.white.withValues(alpha: 0.78),
-                  ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class HomeTimelineCard extends StatelessWidget {
-  const HomeTimelineCard({
+class PremiumNotificationCard extends StatelessWidget {
+  const PremiumNotificationCard({
     required this.items,
     super.key,
   });
 
-  final List<HomeTimelineItem> items;
+  final List<HomeAlert> items;
 
   @override
   Widget build(BuildContext context) {
-    return DashboardCard(
+    return PkCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _CardHeader(
-            title: 'Aktivitas terbaru',
-            subtitle: 'Simulasi timeline keluarga',
-            icon: Icons.timeline_outlined,
-            tone: DashboardTone.blue,
+          const CardTitleRow(
+            eyebrow: 'Notification summary',
+            title: 'Notifikasi terkini',
+            subtitle: 'Aktivitas dan alert yang perlu diperhatikan.',
+            icon: Icons.notifications_active_outlined,
+            tone: PkTone.amber,
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: 14),
           for (final item in items)
-            _TimelineRow(item: item),
+            _NotificationItem(item: item),
         ],
       ),
     );
   }
 }
 
-class _TimelineRow extends StatelessWidget {
-  const _TimelineRow({
+class _NotificationItem extends StatelessWidget {
+  const _NotificationItem({
     required this.item,
   });
 
-  final HomeTimelineItem item;
+  final HomeAlert item;
 
   @override
   Widget build(BuildContext context) {
-    final color = dashboardToneColor(item.tone);
+    final color = pkToneColor(item.tone);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: PkColors.line),
+        ),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1150,21 +1129,35 @@ class _TimelineRow extends StatelessWidget {
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: AppSpacing.md),
+          const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              item.title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: PkColors.text,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  item.copy,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: PkColors.text2,
+                        height: 1.45,
+                      ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          const SizedBox(width: 10),
           Text(
             item.time,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.textMuted,
+                  color: PkColors.muted,
+                  fontWeight: FontWeight.w800,
                 ),
           ),
         ],
@@ -1173,8 +1166,170 @@ class _TimelineRow extends StatelessWidget {
   }
 }
 
-class DashboardResponsiveColumns extends StatelessWidget {
-  const DashboardResponsiveColumns({
+class PremiumEmergencyCard extends StatelessWidget {
+  const PremiumEmergencyCard({
+    required this.data,
+    required this.onPressed,
+    super.key,
+  });
+
+  final HomeDashboardData data;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: PkColors.red,
+        borderRadius: PkRadius.mdRadius,
+        boxShadow: [
+          BoxShadow(
+            color: PkColors.red.withValues(alpha: 0.20),
+            blurRadius: 28,
+            offset: const Offset(0, 12),
+          ),
+        ],
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFA92F32),
+            Color(0xFFD44848),
+          ],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CardTitleRow(
+            eyebrow: 'Emergency CTA',
+            title: data.emergencyTitle,
+            subtitle: data.emergencyCopy,
+            icon: Icons.emergency_outlined,
+            tone: PkTone.red,
+            light: true,
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: PkColors.red,
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: const StadiumBorder(),
+              ),
+              onPressed: onPressed,
+              icon: const Icon(Icons.phone_in_talk_outlined),
+              label: const Text('Buka Family Alert'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PremiumHistoryCard extends StatelessWidget {
+  const PremiumHistoryCard({
+    required this.items,
+    super.key,
+  });
+
+  final List<HomeHistoryItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return PkCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const CardTitleRow(
+            eyebrow: 'Timeline kesehatan',
+            title: 'Catatan terbaru',
+            icon: Icons.timeline_outlined,
+            tone: PkTone.blue,
+          ),
+          const SizedBox(height: 14),
+          for (final item in items)
+            _HistoryItem(item: item),
+        ],
+      ),
+    );
+  }
+}
+
+class _HistoryItem extends StatelessWidget {
+  const _HistoryItem({
+    required this.item,
+  });
+
+  final HomeHistoryItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = pkToneColor(item.tone);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 11),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: PkColors.line),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 9,
+            height: 9,
+            margin: const EdgeInsets.only(top: 5),
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: PkColors.text,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  item.copy,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: PkColors.text2,
+                        height: 1.45,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            item.time,
+            textAlign: TextAlign.right,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: PkColors.muted,
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ResponsiveDashboardGrid extends StatelessWidget {
+  const ResponsiveDashboardGrid({
     required this.left,
     required this.right,
     super.key,
@@ -1187,9 +1342,9 @@ class DashboardResponsiveColumns extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isWide = constraints.maxWidth >= 820;
+        final wide = constraints.maxWidth >= 920;
 
-        if (!isWide) {
+        if (!wide) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -1209,7 +1364,7 @@ class DashboardResponsiveColumns extends StatelessWidget {
                 children: left,
               ),
             ),
-            const SizedBox(width: AppSpacing.lg),
+            const SizedBox(width: 16),
             Expanded(
               flex: 5,
               child: Column(
@@ -1224,82 +1379,79 @@ class DashboardResponsiveColumns extends StatelessWidget {
   }
 }
 
-class _CardHeader extends StatelessWidget {
-  const _CardHeader({
+class CardTitleRow extends StatelessWidget {
+  const CardTitleRow({
+    required this.eyebrow,
     required this.title,
-    required this.subtitle,
     required this.icon,
     required this.tone,
+    this.subtitle,
+    this.light = false,
+    super.key,
   });
 
+  final String eyebrow;
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final IconData icon;
-  final DashboardTone tone;
+  final PkTone tone;
+  final bool light;
 
   @override
   Widget build(BuildContext context) {
+    final textColor = light ? Colors.white : PkColors.text;
+    final subColor =
+        light ? Colors.white.withValues(alpha: 0.76) : PkColors.text2;
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _IconBox(
-          icon: icon,
-          tone: tone,
-        ),
-        const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
+                eyebrow.toUpperCase(),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: light
+                          ? Colors.white.withValues(alpha: 0.72)
+                          : PkColors.muted,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.1,
+                    ),
+              ),
+              const SizedBox(height: 4),
+              Text(
                 title,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: textColor,
                       fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                      height: 1.25,
                     ),
               ),
-              const SizedBox(height: AppSpacing.xxs),
-              Text(
-                subtitle,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  subtitle!,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: subColor,
+                        height: 1.55,
+                      ),
+                ),
+              ],
             ],
           ),
         ),
+        const SizedBox(width: 14),
+        PkIconBox(
+          icon: icon,
+          tone: tone,
+          backgroundColor:
+              light ? Colors.white.withValues(alpha: 0.18) : null,
+          iconColor: light ? Colors.white : null,
+        ),
       ],
-    );
-  }
-}
-
-class _IconBox extends StatelessWidget {
-  const _IconBox({
-    required this.icon,
-    required this.tone,
-    this.size = 42,
-    this.iconSize = 22,
-  });
-
-  final IconData icon;
-  final DashboardTone tone;
-  final double size;
-  final double iconSize;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = dashboardToneColor(tone);
-
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: dashboardToneBackground(tone),
-        borderRadius: BorderRadius.circular(size * 0.28),
-      ),
-      child: Icon(
-        icon,
-        color: color,
-        size: iconSize,
-      ),
     );
   }
 }

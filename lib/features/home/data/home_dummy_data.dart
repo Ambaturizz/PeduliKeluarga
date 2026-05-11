@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/pk_design.dart';
 import '../../../state/providers/app_mode_provider.dart';
-
-enum DashboardTone {
-  teal,
-  blue,
-  amber,
-  red,
-  green,
-  purple,
-  gray,
-}
 
 enum HomeActionTarget {
   peduliCek,
@@ -35,76 +26,60 @@ class HomeHeroStat {
   final IconData icon;
 }
 
-class HomeAlertData {
-  const HomeAlertData({
-    required this.title,
-    required this.message,
-    required this.icon,
-    required this.tone,
-  });
-
-  final String title;
-  final String message;
-  final IconData icon;
-  final DashboardTone tone;
-}
-
-class HomeHealthMetric {
-  const HomeHealthMetric({
+class HomeMetric {
+  const HomeMetric({
     required this.label,
     required this.value,
-    required this.unit,
-    required this.status,
-    required this.trend,
+    required this.note,
     required this.icon,
-    required this.progress,
     required this.tone,
+    this.unit,
+    this.progress,
   });
 
   final String label;
   final String value;
-  final String unit;
-  final String status;
-  final String trend;
+  final String? unit;
+  final String note;
   final IconData icon;
-  final double progress;
-  final DashboardTone tone;
+  final PkTone tone;
+  final double? progress;
 }
 
-class HomeMedicationProgress {
-  const HomeMedicationProgress({
-    required this.name,
-    required this.detail,
-    required this.time,
-    required this.status,
-    required this.progress,
-    required this.tone,
-    required this.completed,
-  });
-
-  final String name;
-  final String detail;
-  final String time;
-  final String status;
-  final double progress;
-  final DashboardTone tone;
-  final bool completed;
-}
-
-class HomeNotificationData {
-  const HomeNotificationData({
+class HomeAlert {
+  const HomeAlert({
     required this.title,
-    required this.message,
+    required this.copy,
     required this.time,
     required this.icon,
     required this.tone,
   });
 
   final String title;
-  final String message;
+  final String copy;
   final String time;
   final IconData icon;
-  final DashboardTone tone;
+  final PkTone tone;
+}
+
+class HomeMedicine {
+  const HomeMedicine({
+    required this.name,
+    required this.dose,
+    required this.time,
+    required this.status,
+    required this.progress,
+    required this.tone,
+    this.lowStock = false,
+  });
+
+  final String name;
+  final String dose;
+  final String time;
+  final String status;
+  final int progress;
+  final PkTone tone;
+  final bool lowStock;
 }
 
 class HomeQuickAction {
@@ -120,69 +95,71 @@ class HomeQuickAction {
   final String title;
   final String subtitle;
   final IconData icon;
-  final DashboardTone tone;
+  final PkTone tone;
   final HomeActionTarget target;
   final String? badge;
 }
 
-class HomeTimelineItem {
-  const HomeTimelineItem({
+class HomeHistoryItem {
+  const HomeHistoryItem({
     required this.title,
+    required this.copy,
     required this.time,
     required this.tone,
   });
 
   final String title;
+  final String copy;
   final String time;
-  final DashboardTone tone;
+  final PkTone tone;
 }
 
 class HomeDashboardData {
   const HomeDashboardData({
     required this.mode,
-    required this.modeBadge,
-    required this.name,
-    required this.subtitle,
-    required this.lastUpdatedLabel,
-    required this.overallScore,
-    required this.overallStatus,
-    required this.overallMessage,
+    required this.kicker,
+    required this.heroTitle,
+    required this.heroSubtitle,
+    required this.liveLabel,
     required this.heroStats,
+    required this.primaryButton,
+    required this.secondaryButton,
+    required this.summaryTitle,
+    required this.summarySubtitle,
+    required this.metrics,
     required this.alerts,
-    required this.healthMetrics,
-    required this.medications,
-    required this.notifications,
+    required this.medicines,
     required this.quickActions,
-    required this.timeline,
+    required this.history,
+    required this.aiEyebrow,
     required this.aiTitle,
-    required this.aiMessage,
-    required this.aiConfidence,
+    required this.aiCopy,
+    required this.aiBadge,
     required this.emergencyTitle,
-    required this.emergencySubtitle,
-    required this.primaryCtaLabel,
+    required this.emergencyCopy,
   });
 
   final AppUserMode mode;
-  final String modeBadge;
-  final String name;
-  final String subtitle;
-  final String lastUpdatedLabel;
-  final int overallScore;
-  final String overallStatus;
-  final String overallMessage;
+  final String kicker;
+  final String heroTitle;
+  final String heroSubtitle;
+  final String liveLabel;
   final List<HomeHeroStat> heroStats;
-  final List<HomeAlertData> alerts;
-  final List<HomeHealthMetric> healthMetrics;
-  final List<HomeMedicationProgress> medications;
-  final List<HomeNotificationData> notifications;
+  final String primaryButton;
+  final String secondaryButton;
+  final String summaryTitle;
+  final String summarySubtitle;
+  final List<HomeMetric> metrics;
+  final List<HomeAlert> alerts;
+  final List<HomeMedicine> medicines;
   final List<HomeQuickAction> quickActions;
-  final List<HomeTimelineItem> timeline;
+  final List<HomeHistoryItem> history;
+  final String aiEyebrow;
   final String aiTitle;
-  final String aiMessage;
-  final String aiConfidence;
+  final String aiCopy;
+  final String aiBadge;
   final String emergencyTitle;
-  final String emergencySubtitle;
-  final String primaryCtaLabel;
+  final String emergencyCopy;
 
   bool get isElder => mode == AppUserMode.elder;
 }
@@ -190,7 +167,7 @@ class HomeDashboardData {
 final class HomeDummyData {
   const HomeDummyData._();
 
-  static HomeDashboardData forMode({
+  static HomeDashboardData byMode({
     required AppUserMode mode,
     required DateTime now,
   }) {
@@ -201,416 +178,358 @@ final class HomeDummyData {
   }
 
   static HomeDashboardData _elder(DateTime now) {
-    final second = now.second;
-    final heartRate = 76 + (second % 5);
-    final bloodSugar = 116 + (second % 7);
-    final oxygen = 96 + (second % 3);
-    final score = 88 + (second % 5);
+    final pulse = 78 + (now.second % 4);
+    final sugar = 122 + (now.second % 5);
+    final oxygen = 97 + (now.second % 2);
 
     return HomeDashboardData(
       mode: AppUserMode.elder,
-      modeBadge: 'Mode Lansia — PeduliDiri',
-      name: 'Bapak Purwanto, 68 th',
-      subtitle: 'Hipertensi · Diabetes Tipe 2 · Kolesterol',
-      lastUpdatedLabel: 'Realtime • ${_formatClock(now)}',
-      overallScore: score,
-      overallStatus: 'Stabil dipantau',
-      overallMessage:
-          'Kondisi umum baik. Obat pagi sudah diminum, PeduliCek hari ini belum diisi.',
-      heroStats: const [
-        HomeHeroStat(
-          value: '98%',
-          label: 'Pantau aktif',
-          icon: Icons.sensors_rounded,
+      kicker: 'Mode Lansia — PeduliDiri',
+      heroTitle: 'Bapak Purwanto',
+      heroSubtitle:
+          '68 tahun · Hipertensi · Diabetes Tipe 2 · Kolesterol. Dashboard harian untuk menjaga rutinitas kesehatan tetap tenang, jelas, dan mudah diikuti.',
+      liveLabel: 'Live sync · ${_clock(now)}',
+      primaryButton: 'Mulai cek harian',
+      secondaryButton: 'Lihat obat hari ini',
+      heroStats: [
+        const HomeHeroStat(
+          value: '94%',
+          label: 'Kepatuhan obat',
+          icon: Icons.medication_outlined,
         ),
         HomeHeroStat(
-          value: '07:30',
-          label: 'Cek terakhir',
-          icon: Icons.schedule_rounded,
-        ),
-        HomeHeroStat(
-          value: '6/7',
-          label: 'Obat diminum',
-          icon: Icons.medication_rounded,
-        ),
-      ],
-      alerts: const [
-        HomeAlertData(
-          title: 'Simvastatin hampir habis',
-          message:
-              'Sisa 5 tablet. Minta Reza untuk pesan via PeduliAntar sebelum jadwal malam.',
-          icon: Icons.medication_liquid_outlined,
-          tone: DashboardTone.amber,
-        ),
-        HomeAlertData(
-          title: 'PeduliCek belum diisi',
-          message:
-              'Isi cek kesehatan singkat agar keluarga mendapat ringkasan terbaru.',
-          icon: Icons.medical_services_outlined,
-          tone: DashboardTone.teal,
-        ),
-      ],
-      healthMetrics: [
-        const HomeHealthMetric(
-          label: 'Tekanan darah',
-          value: '132/84',
-          unit: 'mmHg',
-          status: 'Normal tinggi',
-          trend: '+2 dari kemarin',
-          icon: Icons.monitor_heart_outlined,
-          progress: 0.72,
-          tone: DashboardTone.amber,
-        ),
-        HomeHealthMetric(
-          label: 'Gula darah',
-          value: '$bloodSugar',
-          unit: 'mg/dL',
-          status: bloodSugar > 120 ? 'Perlu pantau' : 'Aman',
-          trend: 'Simulasi realtime',
-          icon: Icons.bloodtype_outlined,
-          progress: bloodSugar > 120 ? 0.70 : 0.58,
-          tone: bloodSugar > 120 ? DashboardTone.amber : DashboardTone.teal,
-        ),
-        HomeHealthMetric(
-          label: 'Detak jantung',
-          value: '$heartRate',
-          unit: 'bpm',
-          status: 'Stabil',
-          trend: 'Live pulse',
+          value: '$pulse',
+          label: 'BPM sekarang',
           icon: Icons.favorite_border_rounded,
-          progress: 0.62,
-          tone: DashboardTone.green,
         ),
-        HomeHealthMetric(
+        const HomeHeroStat(
+          value: 'Low',
+          label: 'Risk score',
+          icon: Icons.shield_outlined,
+        ),
+      ],
+      summaryTitle: 'Hari ini terlihat cukup stabil',
+      summarySubtitle:
+          'Namun PeduliCek belum diisi dan stok Simvastatin perlu diperhatikan.',
+      metrics: [
+        const HomeMetric(
+          label: 'Tekanan darah',
+          value: '138/88',
+          unit: 'mmHg',
+          note: 'Sedikit lebih tinggi dari rata-rata minggu lalu.',
+          icon: Icons.monitor_heart_outlined,
+          tone: PkTone.amber,
+          progress: 0.72,
+        ),
+        HomeMetric(
+          label: 'Gula darah',
+          value: '$sugar',
+          unit: 'mg/dL',
+          note: 'Cenderung stabil di rentang target.',
+          icon: Icons.bloodtype_outlined,
+          tone: PkTone.brand,
+          progress: 0.61,
+        ),
+        HomeMetric(
           label: 'Oksigen',
           value: '$oxygen',
           unit: '%',
-          status: 'Baik',
-          trend: 'Terukur otomatis',
+          note: 'Terukur baik pada simulasi realtime.',
           icon: Icons.air_rounded,
+          tone: PkTone.blue,
           progress: 0.88,
-          tone: DashboardTone.blue,
         ),
       ],
-      medications: const [
-        HomeMedicationProgress(
-          name: 'Amlodipin 5mg',
-          detail: 'Tekanan darah · 1 tablet',
-          time: '07:30',
-          status: 'Sudah diminum',
-          progress: 1,
-          tone: DashboardTone.green,
-          completed: true,
+      alerts: const [
+        HomeAlert(
+          title: 'PeduliCek belum diisi',
+          copy:
+              'Isi cek harian supaya Reza tahu kondisi Bapak hari ini.',
+          time: '08:15',
+          icon: Icons.fact_check_outlined,
+          tone: PkTone.amber,
         ),
-        HomeMedicationProgress(
-          name: 'Metformin 500mg',
-          detail: 'Diabetes · setelah makan',
-          time: '07:30',
-          status: 'Sudah diminum',
-          progress: 1,
-          tone: DashboardTone.green,
-          completed: true,
-        ),
-        HomeMedicationProgress(
-          name: 'Simvastatin 20mg',
-          detail: 'Kolesterol · malam hari',
-          time: '19:00',
-          status: 'Menunggu',
-          progress: 0.32,
-          tone: DashboardTone.amber,
-          completed: false,
-        ),
-      ],
-      notifications: const [
-        HomeNotificationData(
-          title: 'Obat pagi selesai',
-          message: 'Amlodipin dan Metformin ditandai diminum pukul 07:30.',
+        HomeAlert(
+          title: 'Obat pagi sudah diminum',
+          copy: 'Amlodipin dan Metformin tercatat pukul 07:32.',
           time: '07:32',
           icon: Icons.check_circle_outline_rounded,
-          tone: DashboardTone.green,
+          tone: PkTone.green,
         ),
-        HomeNotificationData(
-          title: 'Stok obat menipis',
-          message: 'Simvastatin tersisa 5 tablet.',
+        HomeAlert(
+          title: 'Simvastatin hampir habis',
+          copy: 'Sisa 5 tablet. Disarankan pesan ulang hari ini.',
           time: 'Kemarin',
           icon: Icons.inventory_2_outlined,
-          tone: DashboardTone.amber,
+          tone: PkTone.amber,
         ),
-        HomeNotificationData(
-          title: 'Ringkasan keluarga',
-          message: 'Reza menerima update kesehatan terakhir.',
-          time: '2 jam lalu',
-          icon: Icons.family_restroom_rounded,
-          tone: DashboardTone.blue,
+      ],
+      medicines: const [
+        HomeMedicine(
+          name: 'Amlodipin',
+          dose: '5mg · tekanan darah',
+          time: '07:00',
+          status: 'Selesai',
+          progress: 100,
+          tone: PkTone.green,
+        ),
+        HomeMedicine(
+          name: 'Metformin',
+          dose: '500mg · setelah makan',
+          time: '07:30',
+          status: 'Selesai',
+          progress: 100,
+          tone: PkTone.green,
+        ),
+        HomeMedicine(
+          name: 'Simvastatin',
+          dose: '20mg · malam hari · sisa 5 tablet',
+          time: '19:00',
+          status: 'Pesan ulang',
+          progress: 26,
+          tone: PkTone.red,
+          lowStock: true,
         ),
       ],
       quickActions: const [
         HomeQuickAction(
           title: 'PeduliCek',
-          subtitle: 'Cek kesehatan harian',
+          subtitle: 'Cek harian adaptif',
           icon: Icons.medical_services_outlined,
-          tone: DashboardTone.teal,
+          tone: PkTone.brand,
           target: HomeActionTarget.peduliCek,
           badge: 'Belum diisi',
         ),
         HomeQuickAction(
           title: 'PeduliObat',
-          subtitle: 'Jadwal & stok obat',
+          subtitle: 'Jadwal dan stok',
           icon: Icons.medication_outlined,
-          tone: DashboardTone.teal,
+          tone: PkTone.green,
           target: HomeActionTarget.peduliObat,
           badge: 'Pagi ✓',
         ),
         HomeQuickAction(
           title: 'Family Alert',
-          subtitle: 'Hubungi keluarga',
+          subtitle: 'Bantuan darurat',
           icon: Icons.emergency_outlined,
-          tone: DashboardTone.red,
+          tone: PkTone.red,
           target: HomeActionTarget.familyAlert,
         ),
         HomeQuickAction(
-          title: 'Riwayat',
-          subtitle: 'Lihat tren kesehatan',
+          title: 'PeduliRiwayat',
+          subtitle: 'Tren kesehatan',
           icon: Icons.assignment_outlined,
-          tone: DashboardTone.blue,
+          tone: PkTone.blue,
           target: HomeActionTarget.peduliRiwayat,
         ),
       ],
-      timeline: const [
-        HomeTimelineItem(
-          title: 'Metformin diminum setelah sarapan',
-          time: '07:30',
-          tone: DashboardTone.green,
+      history: const [
+        HomeHistoryItem(
+          title: 'PeduliCek selesai',
+          copy: 'TD 138/88 · GD 124 · mood baik',
+          time: 'Hari ini 07:42',
+          tone: PkTone.green,
         ),
-        HomeTimelineItem(
-          title: 'Tekanan darah terakhir 132/84',
-          time: '07:28',
-          tone: DashboardTone.teal,
+        HomeHistoryItem(
+          title: 'Simvastatin hampir habis',
+          copy: 'Sisa 5 tablet, disarankan pesan ulang',
+          time: 'Kemarin',
+          tone: PkTone.amber,
         ),
-        HomeTimelineItem(
-          title: 'Simvastatin dijadwalkan malam',
-          time: '19:00',
-          tone: DashboardTone.amber,
+        HomeHistoryItem(
+          title: 'Metformin siang terlewat',
+          copy: 'Reminder terkirim ke Bapak dan Reza',
+          time: '2 hari lalu',
+          tone: PkTone.red,
         ),
       ],
-      aiTitle: 'AI Insight hari ini',
-      aiMessage:
-          'Pola tekanan darah cenderung stabil, tetapi gula darah pagi sedikit naik. Disarankan isi PeduliCek sebelum makan siang dan jaga hidrasi.',
-      aiConfidence: 'Keyakinan 87%',
-      emergencyTitle: 'Family Alert — Tombol Darurat',
-      emergencySubtitle: 'Tekan 1x untuk menghubungi keluarga & AhliPeduli.',
-      primaryCtaLabel: 'Mulai PeduliCek',
+      aiEyebrow: 'AI insight card',
+      aiTitle: 'Pola tekanan darah perlu dipantau ringan',
+      aiCopy:
+          'Tekanan darah 7 hari terakhir sedikit naik. Isi PeduliCek hari ini dan tandai untuk konsultasi dokter bila tren naik berulang. Saat ini status belum darurat.',
+      aiBadge: 'Monitor',
+      emergencyTitle: 'Butuh bantuan sekarang?',
+      emergencyCopy:
+          'Satu tombol untuk menghubungi keluarga dan tim AhliPeduli.',
     );
   }
 
   static HomeDashboardData _caregiver(DateTime now) {
-    final second = now.second;
-    final score = 84 + (second % 6);
-    final responseRate = 91 + (second % 5);
-    final alertCount = 3 + (second % 3);
+    final alertCount = 5 + (now.second % 2);
 
     return HomeDashboardData(
       mode: AppUserMode.caregiver,
-      modeBadge: 'Mode Anak — PeduliPenuh',
-      name: 'Reza Dwi Putra, 34 th',
-      subtitle: 'Memantau: Bapak Purwanto (68 th)',
-      lastUpdatedLabel: 'Live family sync • ${_formatClock(now)}',
-      overallScore: score,
-      overallStatus: 'Butuh perhatian ringan',
-      overallMessage:
-          'Bapak stabil, tetapi PeduliCek belum diisi dan stok Simvastatin hampir habis.',
+      kicker: 'Mode Anak — PeduliPenuh',
+      heroTitle: 'Reza Dwi Putra',
+      heroSubtitle:
+          'Memantau Bapak Purwanto dari jauh dengan ringkasan kesehatan, stok obat, Family Alert, dan rekomendasi AI yang bisa langsung ditindaklanjuti.',
+      liveLabel: 'Live family sync · ${_clock(now)}',
+      primaryButton: 'Lihat riwayat Bapak',
+      secondaryButton: 'Atur obat',
       heroStats: [
         const HomeHeroStat(
-          value: '87%',
-          label: 'Kepatuhan',
-          icon: Icons.verified_outlined,
-        ),
-        HomeHeroStat(
-          value: '$alertCount notif',
-          label: 'Perlu cek',
-          icon: Icons.notifications_active_outlined,
+          value: 'Low',
+          label: 'Risk score',
+          icon: Icons.shield_outlined,
         ),
         const HomeHeroStat(
-          value: 'AI ✓',
-          label: 'Insight aktif',
-          icon: Icons.auto_awesome_outlined,
+          value: '94%',
+          label: 'Adherence',
+          icon: Icons.medication_outlined,
+        ),
+        HomeHeroStat(
+          value: '$alertCount',
+          label: 'Alert aktif',
+          icon: Icons.notifications_active_outlined,
+        ),
+      ],
+      summaryTitle: 'Bapak aman, ada 2 hal yang perlu dibantu hari ini',
+      summarySubtitle:
+          'Fokus pada notifikasi, stok obat, dan tren kesehatan yang berubah.',
+      metrics: const [
+        HomeMetric(
+          label: 'Risk score',
+          value: 'Low',
+          note: 'Tidak ada tanda darurat.',
+          icon: Icons.shield_outlined,
+          tone: PkTone.green,
+          progress: 0.28,
+        ),
+        HomeMetric(
+          label: 'Adherence',
+          value: '94',
+          unit: '%',
+          note: 'Kepatuhan obat 30 hari.',
+          icon: Icons.medication_outlined,
+          tone: PkTone.brand,
+          progress: 0.94,
+        ),
+        HomeMetric(
+          label: 'Alert',
+          value: '5',
+          note: '2 butuh tindakan.',
+          icon: Icons.notifications_active_outlined,
+          tone: PkTone.amber,
+          progress: 0.55,
         ),
       ],
       alerts: const [
-        HomeAlertData(
-          title: 'Bapak belum mengisi PeduliCek',
-          message:
-              'Kirim pengingat lembut agar ringkasan kesehatan hari ini lengkap.',
-          icon: Icons.fact_check_outlined,
-          tone: DashboardTone.amber,
-        ),
-        HomeAlertData(
-          title: 'Simvastatin hampir habis',
-          message:
-              'Sisa 5 tablet. Anda bisa pesan ulang melalui PeduliAntar.',
-          icon: Icons.medication_outlined,
-          tone: DashboardTone.red,
-        ),
-      ],
-      healthMetrics: [
-        const HomeHealthMetric(
-          label: 'Tekanan darah',
-          value: '132/84',
-          unit: 'mmHg',
-          status: 'Normal tinggi',
-          trend: 'Dipantau 2 jam lalu',
-          icon: Icons.monitor_heart_outlined,
-          progress: 0.72,
-          tone: DashboardTone.amber,
-        ),
-        const HomeHealthMetric(
-          label: 'Gula darah',
-          value: '118',
-          unit: 'mg/dL',
-          status: 'Aman',
-          trend: 'Turun dari kemarin',
-          icon: Icons.bloodtype_outlined,
-          progress: 0.58,
-          tone: DashboardTone.teal,
-        ),
-        HomeHealthMetric(
-          label: 'Respons pantauan',
-          value: '$responseRate',
-          unit: '%',
-          status: 'Aktif',
-          trend: 'Simulasi realtime',
-          icon: Icons.sensors_rounded,
-          progress: responseRate / 100,
-          tone: DashboardTone.green,
-        ),
-        const HomeHealthMetric(
-          label: 'Risiko jatuh',
-          value: 'Rendah',
-          unit: '',
-          status: 'Tidak ada alert',
-          trend: '7 hari stabil',
-          icon: Icons.elderly_rounded,
-          progress: 0.28,
-          tone: DashboardTone.blue,
-        ),
-      ],
-      medications: const [
-        HomeMedicationProgress(
-          name: 'Amlodipin 5mg',
-          detail: 'Diminum oleh Bapak',
-          time: '07:30',
-          status: 'Selesai',
-          progress: 1,
-          tone: DashboardTone.green,
-          completed: true,
-        ),
-        HomeMedicationProgress(
-          name: 'Metformin 500mg',
-          detail: 'Jadwal pagi dan malam',
-          time: '07:30',
-          status: 'Pagi selesai',
-          progress: 0.55,
-          tone: DashboardTone.teal,
-          completed: false,
-        ),
-        HomeMedicationProgress(
-          name: 'Simvastatin 20mg',
-          detail: 'Stok 5 tablet',
-          time: '19:00',
-          status: 'Pesan ulang',
-          progress: 0.22,
-          tone: DashboardTone.red,
-          completed: false,
-        ),
-      ],
-      notifications: const [
-        HomeNotificationData(
-          title: 'Obat pagi sudah diminum',
-          message: 'Amlodipin & Metformin ditandai selesai.',
-          time: '07:32',
-          icon: Icons.check_circle_outline_rounded,
-          tone: DashboardTone.green,
-        ),
-        HomeNotificationData(
+        HomeAlert(
           title: 'PeduliCek belum diisi',
-          message: 'Belum ada jawaban cek kesehatan hari ini.',
+          copy: 'Kirim pengingat lembut agar data kesehatan hari ini lengkap.',
           time: '08:15',
           icon: Icons.pending_actions_outlined,
-          tone: DashboardTone.amber,
+          tone: PkTone.amber,
         ),
-        HomeNotificationData(
-          title: 'Stok obat menipis',
-          message: 'Simvastatin tersisa 5 tablet.',
+        HomeAlert(
+          title: 'Simvastatin hampir habis',
+          copy: 'Sisa 5 tablet. Pesankan melalui PeduliAntar hari ini.',
           time: 'Kemarin',
           icon: Icons.inventory_2_outlined,
-          tone: DashboardTone.red,
+          tone: PkTone.red,
+        ),
+        HomeAlert(
+          title: 'Obat pagi selesai',
+          copy: 'Amlodipin dan Metformin tercatat diminum.',
+          time: '07:32',
+          icon: Icons.check_circle_outline_rounded,
+          tone: PkTone.green,
+        ),
+      ],
+      medicines: const [
+        HomeMedicine(
+          name: 'Amlodipin',
+          dose: 'Bapak · 5mg',
+          time: '07:00',
+          status: 'Selesai',
+          progress: 100,
+          tone: PkTone.green,
+        ),
+        HomeMedicine(
+          name: 'Metformin',
+          dose: 'Bapak · 500mg · 2x sehari',
+          time: '07:30',
+          status: 'Pagi selesai',
+          progress: 55,
+          tone: PkTone.brand,
+        ),
+        HomeMedicine(
+          name: 'Simvastatin',
+          dose: 'Bapak · 20mg · stok rendah',
+          time: '19:00',
+          status: 'Pesan sekarang',
+          progress: 22,
+          tone: PkTone.red,
+          lowStock: true,
         ),
       ],
       quickActions: const [
         HomeQuickAction(
-          title: 'Riwayat',
-          subtitle: 'Tren kesehatan Bapak',
+          title: 'PeduliRiwayat',
+          subtitle: 'Tren kesehatan',
           icon: Icons.assignment_outlined,
-          tone: DashboardTone.blue,
+          tone: PkTone.blue,
           target: HomeActionTarget.peduliRiwayat,
           badge: '12 catatan',
         ),
         HomeQuickAction(
           title: 'PeduliObat',
-          subtitle: 'Atur jadwal obat',
+          subtitle: 'Atur jadwal',
           icon: Icons.medication_outlined,
-          tone: DashboardTone.teal,
+          tone: PkTone.brand,
           target: HomeActionTarget.peduliObat,
           badge: 'Stok rendah',
         ),
         HomeQuickAction(
           title: 'PeduliAntar',
-          subtitle: 'Pesan obat ke rumah',
+          subtitle: 'Pesan obat',
           icon: Icons.local_shipping_outlined,
-          tone: DashboardTone.amber,
+          tone: PkTone.amber,
           target: HomeActionTarget.peduliAntar,
         ),
         HomeQuickAction(
           title: 'AhliPeduli',
           subtitle: 'Dokter & homecare',
           icon: Icons.health_and_safety_outlined,
-          tone: DashboardTone.red,
+          tone: PkTone.purple,
           target: HomeActionTarget.ahliPeduli,
         ),
       ],
-      timeline: const [
-        HomeTimelineItem(
-          title: 'Obat pagi ditandai selesai',
+      history: const [
+        HomeHistoryItem(
+          title: 'Obat pagi sudah diminum',
+          copy: 'Amlodipin dan Metformin selesai pukul 07:32.',
           time: '07:32',
-          tone: DashboardTone.green,
+          tone: PkTone.green,
         ),
-        HomeTimelineItem(
+        HomeHistoryItem(
           title: 'PeduliCek belum diisi',
+          copy: 'Belum ada input cek kesehatan hari ini.',
           time: '08:15',
-          tone: DashboardTone.amber,
+          tone: PkTone.amber,
         ),
-        HomeTimelineItem(
-          title: 'Stok Simvastatin hampir habis',
+        HomeHistoryItem(
+          title: 'Stok Simvastatin rendah',
+          copy: 'Sisa 5 tablet, disarankan pesan ulang.',
           time: 'Kemarin',
-          tone: DashboardTone.red,
+          tone: PkTone.red,
         ),
       ],
-      aiTitle: 'AI Insight keluarga',
-      aiMessage:
-          'Tidak ada tanda bahaya akut. Prioritas hari ini: kirim pengingat PeduliCek dan pesan ulang Simvastatin agar tidak terlewat.',
-      aiConfidence: 'Keyakinan 91%',
+      aiEyebrow: 'AI insight card',
+      aiTitle: 'Saran tindak lanjut untuk Reza',
+      aiCopy:
+          'Pesankan Simvastatin hari ini karena stok tinggal 5 tablet. Minta Bapak isi PeduliCek untuk melengkapi tren tekanan darah minggu ini.',
+      aiBadge: 'Medium',
       emergencyTitle: 'Pantau Family Alert',
-      emergencySubtitle:
-          'Jika tombol darurat ditekan, keluarga dan AhliPeduli akan diberi notifikasi.',
-      primaryCtaLabel: 'Lihat Riwayat',
+      emergencyCopy:
+          'Jika tombol darurat ditekan, notifikasi keluarga dan AhliPeduli akan aktif otomatis.',
     );
   }
 
-  static String _formatClock(DateTime value) {
-    final hour = value.hour.toString().padLeft(2, '0');
-    final minute = value.minute.toString().padLeft(2, '0');
-    final second = value.second.toString().padLeft(2, '0');
-
-    return '$hour:$minute:$second';
+  static String _clock(DateTime value) {
+    final h = value.hour.toString().padLeft(2, '0');
+    final m = value.minute.toString().padLeft(2, '0');
+    final s = value.second.toString().padLeft(2, '0');
+    return '$h:$m:$s';
   }
 }

@@ -12,12 +12,13 @@ final homeRealtimeClockProvider = StreamProvider.autoDispose<DateTime>((ref) {
 
 final homeDashboardProvider = Provider<HomeDashboardData>((ref) {
   final mode = ref.watch(appModeControllerProvider);
+
   final now = ref.watch(homeRealtimeClockProvider).maybeWhen(
         data: (value) => value,
-        orElse: () => DateTime.now(),
+        orElse: DateTime.now,
       );
 
-  return HomeDummyData.forMode(
+  return HomeDummyData.byMode(
     mode: mode,
     now: now,
   );
