@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PeduliKeluarga — Prototype</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --teal: #0B7285; --teal-dark: #085041; --teal-mid: #0F6E56;
+  --teal-light: #E1F5EE; --teal-100: #9FE1CB; --teal-200: #5DCAA5;
+  --blue-light: #E6F1FB; --blue: #185FA5; --blue-dark: #0C447C;
+  --amber-light: #FAEEDA; --amber: #EF9F27; --amber-dark: #633806;
+  --red-light: #FCEBEB; --red: #E24B4A; --red-dark: #791F1F; --red-mid: #A32D2D;
+  --green-light: #EAF3DE; --green: #639922; --green-dark: #27500A;
+  --purple-light: #EEEDFE; --purple: #534AB7; --purple-dark: #3C3489;
+  --gray-bg: #F8F9FA; --gray-card: #FFFFFF; --gray-border: #E5E7EB;
+  --gray-border2: #D1D5DB; --text-primary: #111827; --text-secondary: #6B7280;
+  --text-muted: #9CA3AF; --radius: 12px; --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--gray-bg); color: var(--text-primary); min-height: 100vh; }
+
+/* NAV */
+.nav { background: #fff; border-bottom: 1px solid var(--gray-border); padding: 0 1.5rem; display: flex; align-items: center; gap: 0; height: 56px; position: sticky; top: 0; z-index: 100; }
+.nav-logo { font-size: 18px; font-weight: 700; color: var(--teal); margin-right: 2rem; display: flex; align-items: center; gap: 8px; }
+.nav-logo i { font-size: 20px; }
+.nav-tabs { display: flex; gap: 0; flex: 1; }
+.nav-tab { padding: 0 1rem; height: 56px; display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; transition: all .15s; background: none; border-top: none; border-left: none; border-right: none; white-space: nowrap; }
+.nav-tab:hover { color: var(--teal); }
+.nav-tab.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 500; }
+.nav-tab i { font-size: 16px; }
+.nav-mode { margin-left: auto; display: flex; background: var(--gray-bg); border-radius: 20px; padding: 3px; gap: 0; }
+.mode-btn { padding: 5px 14px; border-radius: 17px; border: none; cursor: pointer; font-size: 12px; font-weight: 500; transition: all .2s; background: transparent; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; }
+.mode-btn.active { background: var(--teal); color: #fff; }
+
+/* PAGES */
+.page { display: none; padding: 1.5rem; max-width: 800px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* CARDS */
+.card { background: var(--gray-card); border: 1px solid var(--gray-border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 12px; }
+.card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.card-icon.teal { background: var(--teal-light); color: var(--teal-dark); }
+.card-icon.blue { background: var(--blue-light); color: var(--blue-dark); }
+.card-icon.amber { background: var(--amber-light); color: var(--amber-dark); }
+.card-icon.red { background: var(--red-light); color: var(--red-mid); }
+.card-icon.purple { background: var(--purple-light); color: var(--purple-dark); }
+.card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.card-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+/* HERO */
+.hero { background: var(--teal); border-radius: var(--radius); padding: 1.5rem; color: #fff; margin-bottom: 1.25rem; }
+.hero h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.hero p { font-size: 13px; opacity: .8; margin-bottom: 1rem; }
+.hero-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; background: rgba(0,0,0,.15); border-radius: 10px; overflow: hidden; }
+.hero-stat { padding: 10px; text-align: center; border-right: 1px solid rgba(255,255,255,.1); }
+.hero-stat:last-child { border-right: none; }
+.hero-stat-val { font-size: 18px; font-weight: 700; }
+.hero-stat-lbl { font-size: 10px; opacity: .75; margin-top: 2px; }
+
+/* GRID */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 12px; }
+.full { grid-column: 1 / -1; }
+
+/* STAT MINI */
+.stat-mini { background: var(--gray-bg); border-radius: var(--radius-sm); padding: 10px 12px; text-align: center; }
+.stat-mini-val { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.stat-mini-val.ok { color: var(--teal-mid); }
+.stat-mini-val.warn { color: #854F0B; }
+.stat-mini-val.danger { color: var(--red-mid); }
+.stat-mini-lbl { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
+
+/* BADGES */
+.badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; }
+.badge.green { background: var(--teal-light); color: var(--teal-dark); }
+.badge.blue { background: var(--blue-light); color: var(--blue-dark); }
+.badge.amber { background: var(--amber-light); color: var(--amber-dark); }
+.badge.red { background: var(--red-light); color: var(--red-mid); }
+.badge.gray { background: var(--gray-bg); color: var(--text-secondary); border: 1px solid var(--gray-border); }
+
+/* SECTION LABEL */
+.section-label { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .05em; margin: 1.25rem 0 8px; }
+
+/* BUTTONS */
+.btn { padding: 10px 20px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; }
+.btn.primary { background: var(--teal); color: #fff; }
+.btn.primary:hover { background: var(--teal-mid); }
+.btn.outline { background: transparent; color: var(--teal); border: 1px solid var(--teal-200); }
+.btn.outline:hover { background: var(--teal-light); }
+.btn.danger { background: var(--red-mid); color: #fff; }
+.btn.danger:hover { background: var(--red-dark); }
+.btn.full { width: 100%; justify-content: center; }
+.btn.sm { padding: 7px 12px; font-size: 12px; }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn-row { display: flex; gap: 8px; margin-top: 10px; }
+
+/* ALERTS */
+.alert { border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px; }
+.alert.warn { background: var(--amber-light); border: 1px solid #FAC775; }
+.alert.danger { background: var(--red-light); border: 1px solid #F09595; }
+.alert.info { background: var(--teal-light); border: 1px solid var(--teal-100); }
+.alert i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.alert.warn i { color: #854F0B; }
+.alert.danger i { color: var(--red-mid); }
+.alert.info i { color: var(--teal-dark); }
+.alert-text { font-size: 12px; line-height: 1.6; }
+.alert.warn .alert-text { color: var(--amber-dark); }
+.alert.danger .alert-text { color: var(--red-dark); }
+.alert.info .alert-text { color: var(--teal-dark); }
+.alert-title { font-weight: 600; margin-bottom: 2px; }
+
+/* PROGRESS */
+.progress-wrap { margin-bottom: 10px; }
+.progress-top { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+.progress-bar { height: 6px; background: var(--gray-bg); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; }
+.progress-fill.teal { background: var(--teal); }
+.progress-fill.green { background: #1D9E75; }
+.progress-fill.amber { background: var(--amber); }
+.progress-fill.red { background: var(--red); }
+
+/* FORM */
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.form-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
+.options { display: flex; flex-wrap: wrap; gap: 7px; }
+.opt { padding: 8px 14px; border-radius: var(--radius-sm); border: 1px solid var(--gray-border); background: var(--gray-bg); color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all .15s; user-select: none; }
+.opt:hover { border-color: var(--teal-200); color: var(--teal-dark); }
+.opt.sel-ok { background: var(--teal-light); border-color: var(--teal-200); color: var(--teal-dark); font-weight: 500; }
+.opt.sel-warn { background: var(--amber-light); border-color: #FAC775; color: var(--amber-dark); font-weight: 500; }
+.opt.sel-danger { background: var(--red-light); border-color: #F09595; color: var(--red-dark); font-weight: 500; }
+.input-row { display: flex; gap: 8px; align-items: center; }
+.input-num { width: 80px; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--gray-border2); font-size: 16px; font-weight: 600; text-align: center; color: var(--text-primary); background: #fff; outline: none; }
+.input-num:focus { border-color: var(--teal); box-shadow: 0 0 0 2px rgba(11,114,133,.15); }
+.input-unit { font-size: 13px; color: var(--text-secondary); }
+.input-status { font-size: 11px; padding: 3px 9px; border-radius: 6px; }
+.input-status.ok { background: var(--teal-light); color: var(--teal-dark); }
+.input-status.warn { background: var(--amber-light); color: var(--amber-dark); }
+.input-status.danger { background: var(--red-light); color: var(--red-mid); }
+textarea.form-ctrl { width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--gray-border2); font-size: 13px; resize: none; min-height: 72px; font-family: inherit; outline: none; color: var(--text-primary); background: #fff; }
+textarea.form-ctrl:focus { border-color: var(--teal); }
+.scale-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.scale-btn { width: 40px; height: 40px; border-radius: var(--radius-sm); border: 1px solid var(--gray-border); background: var(--gray-bg); font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; color: var(--text-secondary); }
+.scale-btn:hover { border-color: var(--teal-200); }
+.scale-btn.active-low { background: var(--teal-light); border-color: var(--teal-200); color: var(--teal-dark); }
+.scale-btn.active-mid { background: var(--amber-light); border-color: #FAC775; color: var(--amber-dark); }
+.scale-btn.active-high { background: var(--red-light); border-color: #F09595; color: var(--red-mid); }
+.scale-legend { font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; width: 100%; margin-top: 4px; }
+
+/* SCHEDULE ROWS */
+.sched-row { display: flex; align-items: center; background: #fff; border: 1px solid var(--gray-border); border-radius: 10px; margin-bottom: 6px; overflow: hidden; }
+.sched-time { min-width: 70px; padding: 10px 12px; text-align: center; font-size: 12px; font-weight: 600; border-right: 1px solid var(--gray-border); flex-shrink: 0; }
+.sched-time.ok { background: var(--teal-light); color: var(--teal-dark); border-color: var(--teal-100); }
+.sched-time.upcoming { background: var(--amber-light); color: var(--amber-dark); border-color: #FAC775; }
+.sched-body { flex: 1; padding: 8px 12px; }
+.sched-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.sched-detail { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.sched-status { padding: 0 12px; font-size: 12px; flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
+.sched-status.ok { color: var(--teal-mid); }
+.sched-status.upcoming { color: #854F0B; }
+
+/* DRUG CARD */
+.drug-card { background: #fff; border: 1px solid var(--gray-border); border-radius: var(--radius); padding: 14px; margin-bottom: 8px; }
+.drug-card.warn-border { border: 2px solid #F09595; }
+
+/* CONTACT CARDS */
+.contact-row { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--gray-border); border-radius: 10px; padding: 12px; margin-bottom: 8px; }
+.contact-row.notified { background: var(--teal-light); border-color: var(--teal-100); }
+.avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+.avatar.teal { background: var(--teal-light); color: var(--teal-dark); }
+.avatar.blue { background: var(--blue-light); color: var(--blue-dark); }
+.avatar.red { background: var(--red-light); color: var(--red-mid); }
+.avatar.red-active { background: var(--red-mid); color: #fff; }
+.avatar.teal-active { background: var(--teal-mid); color: #fff; }
+
+/* SOS */
+.sos-btn { width: 100%; background: var(--red-mid); border: none; border-radius: var(--radius); padding: 1.5rem; cursor: pointer; text-align: center; transition: background .15s; margin-bottom: 12px; }
+.sos-btn:hover { background: var(--red-dark); }
+.sos-btn.triggered { background: var(--teal-mid); cursor: default; }
+
+/* AHLI CARD */
+.ahli-card { background: #fff; border: 1px solid var(--gray-border); border-radius: var(--radius); padding: 14px; margin-bottom: 8px; }
+.ahli-card.featured { border: 2px solid var(--teal-200); }
+.rating { color: #EF9F27; font-size: 13px; }
+.feat-badge { background: var(--teal-light); color: var(--teal-dark); font-size: 11px; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; }
+
+/* TIMELINE */
+.tl-row { display: flex; gap: 12px; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid var(--gray-border); }
+.tl-row:last-child { border-bottom: none; }
+.tl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.tl-dot.green { background: #1D9E75; }
+.tl-dot.amber { background: var(--amber); }
+.tl-dot.gray { background: var(--text-muted); }
+.tl-text { font-size: 12px; color: var(--text-primary); flex: 1; line-height: 1.5; }
+.tl-time { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+
+/* INFO TABLE */
+.info-table { width: 100%; }
+.info-table td { padding: 5px 0; font-size: 12px; vertical-align: top; }
+.info-table td:first-child { color: var(--text-secondary); width: 130px; }
+.info-table td:last-child { font-weight: 500; color: var(--text-primary); }
+.info-table td.ok { color: var(--teal-mid); }
+.info-table td.warn { color: #854F0B; }
+
+/* NOTIF ROW */
+.notif-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--gray-bg); border-radius: 8px; margin-bottom: 6px; }
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.notif-dot.green { background: #1D9E75; }
+.notif-dot.amber { background: var(--amber); }
+.notif-dot.red { background: var(--red); }
+.notif-text { font-size: 12px; flex: 1; }
+.notif-time { font-size: 11px; color: var(--text-muted); }
+
+/* RESULT */
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.result-item { background: #fff; border: 1px solid var(--gray-border); border-radius: 8px; padding: 10px 12px; }
+.result-item-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+.result-item-val { font-size: 16px; font-weight: 700; }
+.result-item-val.ok { color: var(--teal-mid); }
+.result-item-val.warn { color: #854F0B; }
+.result-item-val.danger { color: var(--red-mid); }
+
+/* LOG */
+.log-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--gray-border); }
+.log-row:last-child { border-bottom: none; }
+.log-name { font-size: 12px; flex: 1; }
+.log-time { font-size: 11px; color: var(--text-muted); }
+
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+.pulse { animation: pulse 1.4s infinite; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo"><i class="ti ti-heart-handshake"></i> PeduliKeluarga</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('home')"><i class="ti ti-home"></i> Beranda</button>
+    <button class="nav-tab" onclick="showPage('pedulicek')"><i class="ti ti-stethoscope"></i> PeduliCek</button>
+    <button class="nav-tab" onclick="showPage('peduliobat')"><i class="ti ti-pill"></i> PeduliObat</button>
+    <button class="nav-tab" onclick="showPage('ahlipeduli')"><i class="ti ti-nurse"></i> AhliPeduli</button>
+    <button class="nav-tab" onclick="showPage('familyalert')"><i class="ti ti-urgent"></i> Family Alert</button>
+    <button class="nav-tab" onclick="showPage('riwayat')"><i class="ti ti-report-medical"></i> PeduliRiwayat</button>
+  </div>
+  <div class="nav-mode">
+    <button class="mode-btn active" id="btn-lansia" onclick="setMode('lansia')"><i class="ti ti-heart-handshake"></i> Lansia</button>
+    <button class="mode-btn" id="btn-anak" onclick="setMode('anak')"><i class="ti ti-users"></i> Anak</button>
+  </div>
+</nav>
+
+<!-- ==================== HOME ==================== -->
+<div class="page active" id="page-home">
+  <div class="hero" id="home-hero">
+    <div style="font-size:12px;opacity:.75;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+      <span id="home-mode-badge" style="background:rgba(255,255,255,.2);padding:2px 10px;border-radius:20px">Mode Lansia — PeduliDiri</span>
+    </div>
+    <h1 id="home-name">Bapak Purwanto, 68 th</h1>
+    <p id="home-cond">Hipertensi · Diabetes Tipe 2 · Kolesterol</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val" id="hs1">98%</div><div class="hero-stat-lbl">Pantau aktif</div></div>
+      <div class="hero-stat"><div class="hero-stat-val" id="hs2">07:30</div><div class="hero-stat-lbl">Cek terakhir</div></div>
+      <div class="hero-stat"><div class="hero-stat-val" id="hs3">6/7</div><div class="hero-stat-lbl">Obat diminum</div></div>
+    </div>
+  </div>
+
+  <!-- LANSIA HOME -->
+  <div id="home-lansia">
+    <div class="alert warn"><i class="ti ti-pill"></i><div class="alert-text"><span class="alert-title">Simvastatin hampir habis</span> Sisa 5 tablet. Minta Reza untuk pesan via PeduliAntar.</div></div>
+    <div class="section-label">Menu utama</div>
+    <div class="grid-2">
+      <div class="card" style="cursor:pointer" onclick="showPage('pedulicek')">
+        <div class="card-icon teal"><i class="ti ti-stethoscope"></i></div>
+        <div class="card-title">PeduliCek</div>
+        <div class="card-sub">Cek kesehatan harian adaptif</div>
+        <span class="badge amber" style="margin-top:8px"><i class="ti ti-clock"></i> Belum diisi hari ini</span>
+      </div>
+      <div class="card" style="cursor:pointer" onclick="showPage('peduliobat')">
+        <div class="card-icon teal"><i class="ti ti-pill"></i></div>
+        <div class="card-title">PeduliObat</div>
+        <div class="card-sub">Jadwal & reminder obat</div>
+        <span class="badge green" style="margin-top:8px"><i class="ti ti-check"></i> Pagi sudah ✓</span>
+      </div>
+    </div>
+    <div class="section-label">Obat hari ini</div>
+    <div class="progress-wrap"><div class="progress-top"><span>Amlodipin 5mg</span><span style="color:var(--teal-mid);font-size:12px;font-weight:600">✓ 07:30</span></div><div class="progress-bar"><div class="progress-fill green" style="width:100%"></div></div></div>
+    <div class="progress-wrap"><div class="progress-top"><span>Metformin 500mg</span><span style="color:var(--teal-mid);font-size:12px;font-weight:600">✓ 07:30</span></div><div class="progress-bar"><div class="progress-fill green" style="width:100%"></div></div></div>
+    <div class="progress-wrap"><div class="progress-top"><span>Simvastatin 20mg</span><span style="color:#854F0B;font-size:12px;font-weight:600">⏰ 19:00</span></div><div class="progress-bar"><div class="progress-fill amber" style="width:30%"></div></div></div>
+    <div class="section-label">Tombol darurat</div>
+    <button class="sos-btn" onclick="showPage('familyalert')">
+      <div style="font-size:32px;color:#fff;margin-bottom:6px"><i class="ti ti-urgent"></i></div>
+      <div style="color:#fff;font-size:16px;font-weight:700">Family Alert — Tombol Darurat</div>
+      <div style="color:rgba(255,255,255,.75);font-size:12px;margin-top:4px">Tekan 1x → hubungi keluarga & AhliPeduli</div>
+    </button>
+  </div>
+
+  <!-- ANAK HOME -->
+  <div id="home-anak" class="hidden">
+    <div class="section-label">Notifikasi terkini</div>
+    <div class="notif-row"><div class="notif-dot amber"></div><div class="notif-text">Bapak belum mengisi PeduliCek hari ini</div><div class="notif-time">08:15</div></div>
+    <div class="notif-row"><div class="notif-dot green"></div><div class="notif-text">Obat pagi sudah diminum — Amlodipin & Metformin ✓</div><div class="notif-time">07:32</div></div>
+    <div class="notif-row"><div class="notif-dot amber"></div><div class="notif-text">Stok Simvastatin hampir habis — sisa 5 tablet</div><div class="notif-time">Kemarin</div></div>
+    <div class="section-label">Menu utama</div>
+    <div class="grid-2">
+      <div class="card" style="cursor:pointer" onclick="showPage('riwayat')"><div class="card-icon blue"><i class="ti ti-report-medical"></i></div><div class="card-title">PeduliRiwayat</div><div class="card-sub">Riwayat & tren kesehatan</div><span class="badge green" style="margin-top:8px">12 catatan bulan ini</span></div>
+      <div class="card" style="cursor:pointer" onclick="showPage('peduliobat')"><div class="card-icon teal"><i class="ti ti-pill"></i></div><div class="card-title">PeduliObat</div><div class="card-sub">Atur jadwal obat orang tua</div><span class="badge amber" style="margin-top:8px">Stok hampir habis</span></div>
+      <div class="card" style="cursor:pointer"><div class="card-icon amber"><i class="ti ti-motorbike"></i></div><div class="card-title">PeduliAntar</div><div class="card-sub">Beli & antar obat ke rumah</div><span class="badge red" style="margin-top:8px">Pesan Simvastatin</span></div>
+      <div class="card" style="cursor:pointer" onclick="showPage('ahlipeduli')"><div class="card-icon red"><i class="ti ti-nurse"></i></div><div class="card-title">AhliPeduli</div><div class="card-sub">Perawat, dokter, ambulans</div><span class="badge green" style="margin-top:8px">23 mitra aktif</span></div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="showPage('riwayat')">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div class="card-icon purple" style="margin-bottom:0"><i class="ti ti-brain"></i></div>
+        <div><div class="card-title">AI Early Warning — PeduliRiwayat</div><div class="card-sub">Berdasarkan data 30 hari terakhir</div></div>
+      </div>
+      <div style="background:var(--gray-bg);border-radius:8px;padding:10px;font-size:12px;color:var(--text-secondary);line-height:1.7">⚠️ Tekanan darah sistolik cenderung naik di pagi hari dalam 2 minggu terakhir (rata-rata +8 mmHg). Disarankan konsultasi dokter untuk penyesuaian dosis Amlodipin.</div>
+      <span class="badge amber" style="margin-top:8px">Lihat detail →</span>
+    </div>
+    <button class="sos-btn" onclick="showPage('familyalert')">
+      <div style="font-size:28px;color:#fff;margin-bottom:6px"><i class="ti ti-urgent"></i></div>
+      <div style="color:#fff;font-size:15px;font-weight:700">Family Alert — Terima & Koordinasi Darurat</div>
+      <div style="color:rgba(255,255,255,.75);font-size:12px;margin-top:4px">Terima notif darurat orang tua · Hubungkan ke AhliPeduli</div>
+    </button>
+  </div>
+</div>
+
+<!-- ==================== PEDULICEK ==================== -->
+<div class="page" id="page-pedulicek">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem">
+    <div class="card-icon teal"><i class="ti ti-stethoscope"></i></div>
+    <div><div style="font-size:18px;font-weight:700">PeduliCek</div><div style="font-size:12px;color:var(--text-secondary)">Bapak Purwanto · Sabtu, 9 Mei 2026</div></div>
+  </div>
+  <div class="progress-wrap" style="margin-bottom:1rem">
+    <div class="progress-top"><span id="cek-prog-label">Pertanyaan 1 dari 7</span><span id="cek-prog-pct" style="font-weight:600;color:var(--teal)">0%</span></div>
+    <div class="progress-bar"><div class="progress-fill teal" id="cek-prog-bar" style="width:0%"></div></div>
+  </div>
+
+  <div id="cek-form">
+    <div class="card"><span class="badge green" style="margin-bottom:8px"><i class="ti ti-heart-rate"></i> Umum</span>
+      <div class="form-label">Bagaimana perasaan Bapak hari ini?</div>
+      <div class="options">
+        <div class="opt" onclick="cekOpt(this,'q1','Sangat baik','ok')">Sangat baik</div>
+        <div class="opt" onclick="cekOpt(this,'q1','Baik','ok')">Baik</div>
+        <div class="opt" onclick="cekOpt(this,'q1','Cukup','warn')">Cukup</div>
+        <div class="opt" onclick="cekOpt(this,'q1','Kurang baik','warn')">Kurang baik</div>
+        <div class="opt" onclick="cekOpt(this,'q1','Tidak baik','danger')">Tidak baik</div>
+      </div>
+    </div>
+
+    <div class="card"><span class="badge green" style="margin-bottom:8px"><i class="ti ti-activity"></i> Hipertensi — Tekanan Darah</span>
+      <div class="form-label">Berapa tekanan darah Bapak pagi ini?</div>
+      <div class="input-row">
+        <input class="input-num" type="number" id="td-s" placeholder="120" min="80" max="220" oninput="updateTD()">
+        <span class="input-unit">/</span>
+        <input class="input-num" type="number" id="td-d" placeholder="80" min="50" max="140" oninput="updateTD()">
+        <span class="input-unit">mmHg</span>
+        <span class="input-status" id="td-st"></span>
+      </div>
+      <div class="form-hint">Target: Sistolik 120–139 · Diastolik 70–89</div>
+    </div>
+
+    <div class="card"><span class="badge blue" style="margin-bottom:8px"><i class="ti ti-droplet"></i> Diabetes — Gula Darah</span>
+      <div class="form-label">Berapa kadar gula darah Bapak?</div>
+      <div class="input-row">
+        <input class="input-num" type="number" id="gd-v" placeholder="130" min="50" max="500" oninput="updateGD()" style="width:90px">
+        <span class="input-unit">mg/dL</span>
+        <span class="input-status" id="gd-st"></span>
+      </div>
+      <div style="margin-top:8px">
+        <div class="form-label">Kondisi pengukuran:</div>
+        <div class="options">
+          <div class="opt" onclick="cekOpt(this,'q3w','Puasa','ok')">Puasa</div>
+          <div class="opt" onclick="cekOpt(this,'q3w','2 jam setelah makan','ok')">2 jam setelah makan</div>
+          <div class="opt" onclick="cekOpt(this,'q3w','Acak','ok')">Acak</div>
+          <div class="opt" onclick="cekOpt(this,'q3w','Belum cek','warn')">Belum cek</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card"><span class="badge green" style="margin-bottom:8px"><i class="ti ti-pill"></i> Kepatuhan Obat</span>
+      <div class="form-label">Apakah sudah minum semua obat pagi?</div>
+      <div class="options">
+        <div class="opt" onclick="cekOpt(this,'q4','Semua sudah','ok')">✓ Semua sudah diminum</div>
+        <div class="opt" onclick="cekOpt(this,'q4','Lupa Amlodipin','warn')">Lupa Amlodipin</div>
+        <div class="opt" onclick="cekOpt(this,'q4','Lupa Metformin','warn')">Lupa Metformin</div>
+        <div class="opt" onclick="cekOpt(this,'q4','Belum minum','danger')">Belum minum keduanya</div>
+      </div>
+    </div>
+
+    <div class="card"><span class="badge amber" style="margin-bottom:8px"><i class="ti ti-activity"></i> Gejala Hipertensi</span>
+      <div class="form-label">Gejala yang dirasakan hari ini (boleh lebih dari satu):</div>
+      <div class="options">
+        <div class="opt" onclick="cekMulti(this,'q5')">Sakit kepala / pusing</div>
+        <div class="opt" onclick="cekMulti(this,'q5')">Penglihatan buram</div>
+        <div class="opt" onclick="cekMulti(this,'q5')">Dada terasa berat</div>
+        <div class="opt" onclick="cekMulti(this,'q5')">Tengkuk kaku</div>
+        <div class="opt" onclick="cekMulti(this,'q5')">Sulit tidur</div>
+        <div class="opt" onclick="cekOpt(this,'q5','Tidak ada','ok')">Tidak ada gejala</div>
+      </div>
+    </div>
+
+    <div class="card"><span class="badge blue" style="margin-bottom:8px"><i class="ti ti-droplet"></i> Gejala Diabetes</span>
+      <div class="form-label">Tanda yang dirasakan (boleh lebih dari satu):</div>
+      <div class="options">
+        <div class="opt" onclick="cekMulti(this,'q6')">Sangat haus</div>
+        <div class="opt" onclick="cekMulti(this,'q6')">Sering kencing</div>
+        <div class="opt" onclick="cekMulti(this,'q6')">Lemas / lesu</div>
+        <div class="opt" onclick="cekMulti(this,'q6')">Kesemutan</div>
+        <div class="opt" onclick="cekMulti(this,'q6')">Luka lama sembuh</div>
+        <div class="opt" onclick="cekOpt(this,'q6','Tidak ada','ok')">Tidak ada gejala</div>
+      </div>
+    </div>
+
+    <div class="card"><span class="badge gray" style="margin-bottom:8px"><i class="ti ti-run"></i> Aktivitas & Tidur</span>
+      <div class="form-label">Kualitas tidur semalam (1=buruk, 5=nyenyak):</div>
+      <div class="scale-row" id="scale-tidur">
+        <button class="scale-btn" onclick="cekScale('scale-tidur',1,this,'low')">1</button>
+        <button class="scale-btn" onclick="cekScale('scale-tidur',2,this,'low')">2</button>
+        <button class="scale-btn" onclick="cekScale('scale-tidur',3,this,'mid')">3</button>
+        <button class="scale-btn" onclick="cekScale('scale-tidur',4,this,'low')">4</button>
+        <button class="scale-btn" onclick="cekScale('scale-tidur',5,this,'low')">5</button>
+        <div class="scale-legend"><span>Buruk sekali</span><span>Sangat nyenyak</span></div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="form-label">Aktivitas fisik hari ini:</div>
+        <div class="options">
+          <div class="opt" onclick="cekOpt(this,'q7a','Jalan kaki / senam','ok')">Jalan kaki / senam pagi</div>
+          <div class="opt" onclick="cekOpt(this,'q7a','Aktivitas ringan','ok')">Aktivitas ringan di rumah</div>
+          <div class="opt" onclick="cekOpt(this,'q7a','Duduk/tiduran','warn')">Sebagian besar duduk/tiduran</div>
+          <div class="opt" onclick="cekOpt(this,'q7a','Sangat lelah','danger')">Terlalu lelah untuk bergerak</div>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="form-label">Catatan untuk anak / dokter (opsional):</div>
+        <textarea class="form-ctrl" id="cek-note" placeholder="Contoh: Semalam susah tidur karena kepala agak sakit..."></textarea>
+      </div>
+    </div>
+
+    <button class="btn primary full" id="cek-submit" onclick="submitCek()" disabled style="margin-top:4px;padding:13px">
+      <i class="ti ti-send"></i> Kirim PeduliCek Hari Ini
+    </button>
+  </div>
+
+  <div id="cek-result" class="hidden">
+    <div class="card" id="cek-res-card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div id="cek-res-icon" style="width:44px;height:44px;border-radius:50%;background:var(--teal-light);color:var(--teal-dark);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0"><i class="ti ti-circle-check"></i></div>
+        <div><div style="font-size:15px;font-weight:700" id="cek-res-title">PeduliCek selesai</div><div style="font-size:12px;color:var(--text-secondary)">Laporan dikirim ke Reza · Sabtu, 9 Mei 2026</div></div>
+      </div>
+      <div class="result-grid">
+        <div class="result-item"><div class="result-item-label"><i class="ti ti-activity"></i> Tekanan darah</div><div class="result-item-val ok" id="r-td">—</div></div>
+        <div class="result-item"><div class="result-item-label"><i class="ti ti-droplet"></i> Gula darah</div><div class="result-item-val ok" id="r-gd">—</div></div>
+        <div class="result-item"><div class="result-item-label"><i class="ti ti-pill"></i> Obat pagi</div><div class="result-item-val ok" id="r-obat">—</div></div>
+        <div class="result-item"><div class="result-item-label"><i class="ti ti-heart"></i> Kondisi umum</div><div class="result-item-val ok" id="r-umum">—</div></div>
+      </div>
+      <div class="alert info" style="margin-top:0;margin-bottom:0"><i class="ti ti-brain"></i><div class="alert-text"><span class="alert-title">Analisis AI</span><span id="r-ai"> —</span></div></div>
+    </div>
+    <div class="btn-row" style="margin-top:10px">
+      <button class="btn outline" style="flex:1" onclick="showPage('riwayat')"><i class="ti ti-chart-bar"></i> Lihat tren PeduliRiwayat</button>
+      <button class="btn outline" style="flex:1" onclick="showPage('peduliobat')"><i class="ti ti-pill"></i> Jadwal obat berikutnya</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PEDULIOBAT ==================== -->
+<div class="page" id="page-peduliobat">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem">
+    <div class="card-icon teal"><i class="ti ti-pill"></i></div>
+    <div><div style="font-size:18px;font-weight:700">PeduliObat</div><div style="font-size:12px;color:var(--text-secondary)">Bapak Purwanto · 3 obat aktif</div></div>
+  </div>
+  <div class="grid-3" style="margin-bottom:1rem">
+    <div class="stat-mini"><div class="stat-mini-val ok">2/3</div><div class="stat-mini-lbl">Diminum hari ini</div></div>
+    <div class="stat-mini"><div class="stat-mini-val warn">1</div><div class="stat-mini-lbl">Stok hampir habis</div></div>
+    <div class="stat-mini"><div class="stat-mini-val ok">94%</div><div class="stat-mini-lbl">Kepatuhan 30 hari</div></div>
+  </div>
+  <div class="alert warn"><i class="ti ti-alert-circle"></i><div class="alert-text"><span class="alert-title">Stok Simvastatin hampir habis</span> Sisa 5 tablet — cukup 5 hari. Segera pesan via PeduliAntar.</div></div>
+  <div class="section-label">Jadwal hari ini</div>
+  <div class="sched-row"><div class="sched-time ok">07:00<br>Pagi</div><div class="sched-body"><div class="sched-name">Amlodipin 5mg + Metformin 500mg</div><div class="sched-detail">Sesudah sarapan · 2 tablet</div></div><div class="sched-status ok"><i class="ti ti-check"></i> Sudah</div></div>
+  <div class="sched-row"><div class="sched-time upcoming">13:00<br>Siang</div><div class="sched-body"><div class="sched-name">Metformin 500mg</div><div class="sched-detail">Sesudah makan siang · 1 tablet</div></div><div class="sched-status upcoming"><i class="ti ti-clock"></i> 4 jam lagi</div></div>
+  <div class="sched-row"><div class="sched-time upcoming">19:00<br>Malam</div><div class="sched-body"><div class="sched-name">Simvastatin 20mg + Metformin 500mg</div><div class="sched-detail">Sesudah makan malam · 2 tablet</div></div><div class="sched-status upcoming"><i class="ti ti-clock"></i> 10 jam lagi</div></div>
+
+  <div class="section-label">Detail stok</div>
+
+  <div class="drug-card">
+    <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px">
+      <div class="card-icon teal" style="margin-bottom:0"><i class="ti ti-pill"></i></div>
+      <div style="flex:1"><div class="card-title">Amlodipin 5mg</div><div class="card-sub">1x sehari · Pagi sesudah makan</div><span class="badge green" style="margin-top:4px">Hipertensi</span></div>
+    </div>
+    <div class="progress-wrap" style="margin-bottom:0">
+      <div class="progress-top"><span>Stok tersisa</span><span style="color:var(--teal-mid);font-weight:600;font-size:12px">28 tablet · 28 hari</span></div>
+      <div class="progress-bar"><div class="progress-fill green" style="width:93%"></div></div>
+    </div>
+    <div class="btn-row"><button class="btn outline sm" style="flex:1">Riwayat konsumsi</button><button class="btn outline sm" style="flex:1">Ubah jadwal</button><button class="btn primary sm" style="flex:1">Pesan via PeduliAntar</button></div>
+  </div>
+
+  <div class="drug-card">
+    <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px">
+      <div class="card-icon blue" style="margin-bottom:0"><i class="ti ti-pill"></i></div>
+      <div style="flex:1"><div class="card-title">Metformin 500mg</div><div class="card-sub">3x sehari · Pagi, Siang, Malam sesudah makan</div><span class="badge blue" style="margin-top:4px">Diabetes</span></div>
+    </div>
+    <div class="progress-wrap" style="margin-bottom:0">
+      <div class="progress-top"><span>Stok tersisa</span><span style="color:var(--teal-mid);font-weight:600;font-size:12px">72 tablet · 24 hari</span></div>
+      <div class="progress-bar"><div class="progress-fill green" style="width:80%"></div></div>
+    </div>
+    <div class="btn-row"><button class="btn outline sm" style="flex:1">Riwayat konsumsi</button><button class="btn outline sm" style="flex:1">Ubah jadwal</button><button class="btn primary sm" style="flex:1">Pesan via PeduliAntar</button></div>
+  </div>
+
+  <div class="drug-card warn-border">
+    <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px">
+      <div class="card-icon amber" style="margin-bottom:0"><i class="ti ti-pill"></i></div>
+      <div style="flex:1"><div class="card-title">Simvastatin 20mg</div><div class="card-sub">1x sehari · Malam sesudah makan</div><span class="badge amber" style="margin-top:4px">Kolesterol</span></div>
+      <span class="badge red">Hampir habis</span>
+    </div>
+    <div class="progress-wrap" style="margin-bottom:0">
+      <div class="progress-top"><span>Stok tersisa</span><span style="color:var(--red-mid);font-weight:600;font-size:12px">5 tablet · 5 hari</span></div>
+      <div class="progress-bar"><div class="progress-fill red" style="width:17%"></div></div>
+    </div>
+    <div class="btn-row"><button class="btn outline sm" style="flex:1">Riwayat konsumsi</button><button class="btn outline sm" style="flex:1">Ubah jadwal</button><button class="btn danger sm" style="flex:1"><i class="ti ti-urgent"></i> Pesan sekarang!</button></div>
+  </div>
+
+  <div class="section-label">Log 3 hari terakhir</div>
+  <div class="card">
+    <div class="log-row"><div class="notif-dot green" style="flex-shrink:0"></div><div class="log-name">Amlodipin 5mg · Pagi</div><div class="log-time">Hari ini 07:32</div><span class="badge green">Diminum</span></div>
+    <div class="log-row"><div class="notif-dot green" style="flex-shrink:0"></div><div class="log-name">Metformin 500mg · Pagi</div><div class="log-time">Hari ini 07:32</div><span class="badge green">Diminum</span></div>
+    <div class="log-row"><div class="notif-dot amber" style="flex-shrink:0"></div><div class="log-name">Metformin 500mg · Siang</div><div class="log-time">Hari ini 13:00</div><span class="badge amber">Menunggu</span></div>
+    <div class="log-row"><div class="notif-dot amber" style="flex-shrink:0"></div><div class="log-name">Simvastatin 20mg · Malam</div><div class="log-time">Hari ini 19:00</div><span class="badge amber">Menunggu</span></div>
+    <div class="log-row"><div class="notif-dot green" style="flex-shrink:0"></div><div class="log-name">Semua obat lengkap</div><div class="log-time">Kemarin</div><span class="badge green">Lengkap</span></div>
+    <div class="log-row"><div class="notif-dot red" style="flex-shrink:0"></div><div class="log-name">Metformin 500mg · Siang</div><div class="log-time">2 hari lalu</div><span class="badge red">Terlewat</span></div>
+  </div>
+  <div class="btn-row"><button class="btn primary" style="flex:1"><i class="ti ti-motorbike"></i> Pesan Simvastatin via PeduliAntar</button><button class="btn outline" style="flex:1"><i class="ti ti-plus"></i> Tambah obat baru</button></div>
+</div>
+
+<!-- ==================== AHLIPEDULI ==================== -->
+<div class="page" id="page-ahlipeduli">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem">
+    <div class="card-icon red"><i class="ti ti-nurse"></i></div>
+    <div><div style="font-size:18px;font-weight:700">AhliPeduli</div><div style="font-size:12px;color:var(--text-secondary)">23 mitra aktif · Jakarta</div></div>
+  </div>
+  <button class="sos-btn" onclick="showPage('familyalert')">
+    <div style="font-size:24px;color:#fff;margin-bottom:4px"><i class="ti ti-ambulance"></i></div>
+    <div style="color:#fff;font-size:14px;font-weight:700">Darurat? Panggil ambulans sekarang</div>
+    <div style="color:rgba(255,255,255,.75);font-size:11px;margin-top:2px">Respons rata-rata 8–12 menit di Jakarta</div>
+  </button>
+
+  <div class="section-label">Homecare — datang ke rumah</div>
+
+  <div class="ahli-card featured">
+    <div class="feat-badge"><i class="ti ti-star"></i> Paling direkomendasikan</div>
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <div class="avatar teal" style="font-size:12px">MC</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700">MEDI-CALL Jakarta</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Homecare dokter & perawat · 24 jam</div>
+        <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:5px">
+          <span class="badge green">Homecare</span><span class="badge blue">Hipertensi</span><span class="badge blue">Diabetes</span>
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0"><div class="rating">★★★★★</div><div style="font-size:11px;color:var(--text-muted)">4.9 · 647 ulasan</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-secondary);margin-top:8px;display:flex;align-items:center;gap:4px"><i class="ti ti-map-pin" style="font-size:12px"></i> SCBD, Sudirman · ±3.2 km · +62 811-1446-777</div>
+    <div class="btn-row"><button class="btn outline sm" style="flex:1">Lihat profil</button><button class="btn primary sm" style="flex:1">Pesan layanan</button></div>
+  </div>
+
+  <div class="ahli-card">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <div class="avatar teal" style="font-size:11px">KV</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:700">Kavacare Homecare</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Perawat & fisioterapis · Medical travel</div><div style="margin-top:6px;display:flex;gap:5px"><span class="badge green">Homecare</span><span class="badge blue">Fisioterapi</span></div></div>
+      <div style="text-align:right;flex-shrink:0"><div class="rating">★★★★★</div><div style="font-size:11px;color:var(--text-muted)">4.9 · 309 ulasan</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-secondary);margin-top:8px"><i class="ti ti-map-pin" style="font-size:12px"></i> Kemayoran, Jakarta Pusat · ±5.8 km · +62 811-1446-777</div>
+    <div class="btn-row"><button class="btn outline sm" style="flex:1">Lihat profil</button><button class="btn primary sm" style="flex:1">Pesan layanan</button></div>
+  </div>
+
+  <div class="ahli-card">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <div class="avatar blue" style="font-size:12px">SM</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:700">Sehat Medika Homecare</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Perawat lansia · Pasca rawat inap · 24 jam</div><div style="margin-top:6px;display:flex;gap:5px"><span class="badge green">Homecare</span><span class="badge gray">Lansia</span></div></div>
+      <div style="text-align:right;flex-shrink:0"><div class="rating">★★★★★</div><div style="font-size:11px;color:var(--text-muted)">4.9 · 163 ulasan</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-secondary);margin-top:8px"><i class="ti ti-map-pin" style="font-size:12px"></i> Panglima Polim, Jaksel · ±4.1 km · +62 812-9090-6098</div>
+    <div class="btn-row"><button class="btn outline sm" style="flex:1">Lihat profil</button><button class="btn primary sm" style="flex:1">Pesan layanan</button></div>
+  </div>
+
+  <div class="section-label">Klinik terdekat — 24 jam</div>
+
+  <div class="ahli-card">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <div class="avatar teal" style="font-size:12px">KF</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:700">Klinik Pratama Fakhira Al-Barkah</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Klinik umum + apotek · Buka 24 jam</div><div style="margin-top:6px;display:flex;gap:5px"><span class="badge green">24 jam</span><span class="badge gray">BPJS</span></div></div>
+      <div style="text-align:right;flex-shrink:0"><div class="rating">★★★★★</div><div style="font-size:11px;color:var(--text-muted)">4.7 · 2.442 ulasan</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-secondary);margin-top:8px"><i class="ti ti-map-pin" style="font-size:12px"></i> Manggarai, Tebet Jaksel · ±2.1 km · +62 21-83707848</div>
+    <div class="btn-row"><button class="btn outline sm" style="flex:1">Lihat profil</button><button class="btn primary sm" style="flex:1">Buat janji</button></div>
+  </div>
+
+  <div class="ahli-card">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <div class="avatar" style="background:var(--amber-light);color:var(--amber-dark);font-size:12px">KU</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:700">Klinik Utama Fakhira</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Klinik utama + spesialis · Buka 24 jam</div><div style="margin-top:6px;display:flex;gap:5px"><span class="badge green">24 jam</span><span class="badge blue">Spesialis</span></div></div>
+      <div style="text-align:right;flex-shrink:0"><div class="rating">★★★★½</div><div style="font-size:11px;color:var(--text-muted)">4.5 · 1.162 ulasan</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-secondary);margin-top:8px"><i class="ti ti-map-pin" style="font-size:12px"></i> Sawah Lunto, Setiabudi · ±1.8 km · +62 21-83707368</div>
+    <div class="btn-row"><button class="btn outline sm" style="flex:1">Lihat profil</button><button class="btn primary sm" style="flex:1">Buat janji</button></div>
+  </div>
+</div>
+
+<!-- ==================== FAMILY ALERT ==================== -->
+<div class="page" id="page-familyalert">
+  <div id="fa-standby">
+    <div class="alert warn" id="fa-status-bar" style="margin-bottom:1rem">
+      <div style="width:10px;height:10px;border-radius:50%;background:#EF9F27;flex-shrink:0;margin-top:3px"></div>
+      <div class="alert-text"><span class="alert-title">Family Alert — Mode Standby</span><br>Tekan tombol merah jika Bapak Purwanto membutuhkan bantuan darurat.</div>
+    </div>
+    <button class="sos-btn" id="fa-sos-btn" onclick="triggerFA()">
+      <div style="font-size:40px;color:#fff;margin-bottom:8px"><i class="ti ti-urgent"></i></div>
+      <div style="color:#fff;font-size:18px;font-weight:700">Tekan untuk Darurat</div>
+      <div style="color:rgba(255,255,255,.75);font-size:12px;margin-top:4px">1 klik → langsung hubungi keluarga & AhliPeduli</div>
+    </button>
+    <div class="section-label">Kontak darurat terdaftar</div>
+    <div class="contact-row"><div class="avatar teal">RD</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Reza Dwi Putra</div><div style="font-size:11px;color:var(--text-secondary)">Anak · +62 812-3456-7890</div></div><span class="badge green">Prioritas 1</span></div>
+    <div class="contact-row"><div class="avatar blue">SR</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Siti Rahayu</div><div style="font-size:11px;color:var(--text-secondary)">Anak · +62 813-9876-5432</div></div><span class="badge blue">Prioritas 2</span></div>
+    <div class="contact-row"><div class="avatar red">AP</div><div style="flex:1"><div style="font-size:13px;font-weight:600">AhliPeduli — Tim Darurat</div><div style="font-size:11px;color:var(--text-secondary)">Respons &lt;10 menit</div></div><span class="badge gray">Auto-dispatch</span></div>
+    <div class="section-label">Info medis untuk tim darurat</div>
+    <div class="card"><table class="info-table">
+      <tr><td><i class="ti ti-map-pin" style="font-size:12px"></i> Alamat</td><td>Jl. Cendana No. 12, Tebet, Jakarta Selatan</td></tr>
+      <tr><td><i class="ti ti-heart-rate" style="font-size:12px"></i> Kondisi</td><td>Hipertensi · Diabetes Tipe 2 · Kolesterol</td></tr>
+      <tr><td><i class="ti ti-pill" style="font-size:12px"></i> Obat rutin</td><td>Amlodipin · Metformin · Simvastatin</td></tr>
+      <tr><td><i class="ti ti-activity" style="font-size:12px"></i> TD terakhir</td><td class="warn">138/88 mmHg · 07:30</td></tr>
+      <tr><td><i class="ti ti-droplet" style="font-size:12px"></i> GD terakhir</td><td class="ok">124 mg/dL · 07:30</td></tr>
+      <tr><td><i class="ti ti-alert-triangle" style="font-size:12px"></i> Alergi</td><td>Penisilin</td></tr>
+    </table></div>
+  </div>
+
+  <div id="fa-active" class="hidden">
+    <div style="background:var(--red-mid);border-radius:var(--radius);padding:1.5rem;text-align:center;margin-bottom:1rem">
+      <div style="font-size:36px;color:#fff;margin-bottom:6px"><i class="ti ti-urgent"></i></div>
+      <div style="color:#fff;font-size:17px;font-weight:700;margin-bottom:4px">Family Alert AKTIF</div>
+      <div style="color:rgba(255,255,255,.8);font-size:12px;margin-bottom:10px">Menghubungi semua kontak darurat…</div>
+      <div style="color:#fff;font-size:30px;font-weight:700" id="fa-timer">00:00</div>
+      <div style="color:rgba(255,255,255,.65);font-size:11px;margin-top:2px">Waktu sejak alert dikirim</div>
+    </div>
+    <div class="section-label">Status notifikasi</div>
+    <div class="contact-row notified"><div class="avatar teal-active">RD</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--teal-dark)">Reza Dwi Putra</div><div style="font-size:11px;color:var(--teal-mid)">Notifikasi dikirim</div></div><span class="badge green"><i class="ti ti-check"></i> Terkirim</span></div>
+    <div class="contact-row notified"><div class="avatar teal-active">SR</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--teal-dark)">Siti Rahayu</div><div style="font-size:11px;color:var(--teal-mid)">Notifikasi dikirim</div></div><span class="badge green"><i class="ti ti-check"></i> Terkirim</span></div>
+    <div class="contact-row" id="fa-ahli-row"><div class="avatar red-active">AP</div><div style="flex:1"><div style="font-size:13px;font-weight:600">AhliPeduli — Tim Darurat</div><div style="font-size:11px;color:var(--text-secondary)" id="fa-ahli-sub">Mencari mitra terdekat…</div></div><span class="badge amber" id="fa-ahli-badge"><i class="ti ti-loader pulse"></i> Menghubungi</span></div>
+    <div class="section-label">Timeline</div>
+    <div class="card" id="fa-timeline">
+      <div class="tl-row"><div class="tl-dot green"></div><div class="tl-text">Family Alert ditekan</div><div class="tl-time" id="ft0"></div></div>
+      <div class="tl-row"><div class="tl-dot green"></div><div class="tl-text">Notifikasi dikirim ke Reza & Siti</div><div class="tl-time" id="ft1"></div></div>
+      <div class="tl-row"><div class="tl-dot green"></div><div class="tl-text">Data medis dikirim ke AhliPeduli</div><div class="tl-time" id="ft2"></div></div>
+      <div class="tl-row" id="ft3-row"><div class="tl-dot amber pulse"></div><div class="tl-text">Mencari mitra terdekat dari lokasi Bapak</div><div class="tl-time" id="ft3"></div></div>
+    </div>
+    <div class="btn-row"><button class="btn primary" style="flex:1" onclick="showPage('ahlipeduli')"><i class="ti ti-nurse"></i> Hubungi AhliPeduli</button><button class="btn outline" style="flex:1"><i class="ti ti-report-medical"></i> Kirim rekam medis</button></div>
+    <button class="btn full" style="background:var(--gray-bg);color:var(--text-secondary);border:1px solid var(--gray-border);margin-top:8px" onclick="cancelFA()">Batalkan alert — situasi sudah aman</button>
+  </div>
+
+  <div id="fa-done" class="hidden">
+    <div style="background:var(--teal-light);border-radius:var(--radius);padding:1.5rem;text-align:center;margin-bottom:1rem">
+      <div style="font-size:30px;color:var(--teal-dark);margin-bottom:8px"><i class="ti ti-circle-check"></i></div>
+      <div style="font-size:15px;font-weight:700;color:var(--teal-dark)">Alert dibatalkan — situasi aman</div>
+      <div style="font-size:12px;color:var(--teal-mid);margin-top:4px">Notifikasi pembatalan dikirim ke Reza & Siti</div>
+    </div>
+    <button class="btn primary full" onclick="resetFA()"><i class="ti ti-refresh"></i> Kembali ke standby</button>
+  </div>
+</div>
+
+<!-- ==================== RIWAYAT ==================== -->
+<div class="page" id="page-riwayat">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem">
+    <div class="card-icon blue"><i class="ti ti-report-medical"></i></div>
+    <div><div style="font-size:18px;font-weight:700">PeduliRiwayat</div><div style="font-size:12px;color:var(--text-secondary)">Bapak Purwanto · Rekam medis digital</div></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div class="card-icon purple" style="margin-bottom:0"><i class="ti ti-brain"></i></div>
+      <div><div class="card-title">AI Early Warning</div><div class="card-sub">Analisis tren 30 hari terakhir</div></div>
+    </div>
+    <div class="alert warn" style="margin-bottom:8px"><i class="ti ti-alert-circle"></i><div class="alert-text"><span class="alert-title">Tren tekanan darah meningkat</span> Sistolik rata-rata naik +8 mmHg di pagi hari dalam 2 minggu terakhir. Disarankan konsultasi dokter.</div></div>
+    <div class="alert info" style="margin-bottom:0"><i class="ti ti-check"></i><div class="alert-text"><span class="alert-title">Gula darah stabil</span> Rata-rata gula darah puasa dalam 30 hari: 118 mg/dL — dalam target Bapak.</div></div>
+  </div>
+  <div class="grid-2" style="margin:12px 0">
+    <div class="stat-mini"><div class="stat-mini-val warn">138/88</div><div class="stat-mini-lbl">TD rata-rata (mmHg)</div></div>
+    <div class="stat-mini"><div class="stat-mini-val ok">118</div><div class="stat-mini-lbl">GD rata-rata (mg/dL)</div></div>
+    <div class="stat-mini"><div class="stat-mini-val ok">94%</div><div class="stat-mini-lbl">Kepatuhan obat</div></div>
+    <div class="stat-mini"><div class="stat-mini-val ok">28</div><div class="stat-mini-lbl">Hari PeduliCek diisi</div></div>
+  </div>
+  <div class="section-label">Riwayat PeduliCek — Mei 2026</div>
+  <div class="card">
+    <div class="log-row"><div class="notif-dot green" style="flex-shrink:0"></div><div class="log-name">9 Mei — TD: 138/88 · GD: 124</div><div class="log-time">Hari ini</div><span class="badge green">Normal</span></div>
+    <div class="log-row"><div class="notif-dot green" style="flex-shrink:0"></div><div class="log-name">8 Mei — TD: 135/85 · GD: 121</div><div class="log-time">Kemarin</div><span class="badge green">Normal</span></div>
+    <div class="log-row"><div class="notif-dot amber" style="flex-shrink:0"></div><div class="log-name">7 Mei — TD: 145/92 · GD: 135</div><div class="log-time">2 hari lalu</div><span class="badge amber">Perlu pantau</span></div>
+    <div class="log-row"><div class="notif-dot green" style="flex-shrink:0"></div><div class="log-name">6 Mei — TD: 132/83 · GD: 118</div><div class="log-time">3 hari lalu</div><span class="badge green">Normal</span></div>
+    <div class="log-row"><div class="notif-dot amber" style="flex-shrink:0"></div><div class="log-name">5 Mei — TD: 148/95 · GD: 142</div><div class="log-time">4 hari lalu</div><span class="badge amber">Perlu pantau</span></div>
+  </div>
+  <div class="section-label">Riwayat kunjungan dokter</div>
+  <div class="card">
+    <div class="log-row"><div class="notif-dot green" style="flex-shrink:0"></div><div class="log-name">Kontrol bulanan — Klinik Utama Fakhira</div><div class="log-time">2 Mei 2026</div></div>
+    <div class="log-row"><div class="notif-dot green" style="flex-shrink:0"></div><div class="log-name">Kontrol bulanan — Klinik Utama Fakhira</div><div class="log-time">4 Apr 2026</div></div>
+    <div class="log-row"><div class="notif-dot green" style="flex-shrink:0"></div><div class="log-name">Kontrol bulanan — Klinik Utama Fakhira</div><div class="log-time">7 Mar 2026</div></div>
+  </div>
+  <div class="btn-row"><button class="btn primary" style="flex:1"><i class="ti ti-download"></i> Ekspor rekam medis PDF</button><button class="btn outline" style="flex:1" onclick="showPage('ahlipeduli')"><i class="ti ti-nurse"></i> Buat janji dokter</button></div>
+</div>
+
+<script>
+let currentMode = 'lansia';
+let faTimerInt = null;
+let faStart = null;
+const cekAnswers = {};
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const map = {home:0,pedulicek:1,peduliobat:2,ahlipeduli:3,familyalert:4,riwayat:5};
+  if(map[id] !== undefined) document.querySelectorAll('.nav-tab')[map[id]].classList.add('active');
+}
+
+function setMode(m) {
+  currentMode = m;
+  document.getElementById('btn-lansia').classList.toggle('active', m==='lansia');
+  document.getElementById('btn-anak').classList.toggle('active', m==='anak');
+  document.getElementById('home-lansia').classList.toggle('hidden', m!=='lansia');
+  document.getElementById('home-anak').classList.toggle('hidden', m==='lansia');
+  if(m==='lansia'){
+    document.getElementById('home-mode-badge').textContent='Mode Lansia — PeduliDiri';
+    document.getElementById('home-name').textContent='Bapak Purwanto, 68 th';
+    document.getElementById('home-cond').textContent='Hipertensi · Diabetes Tipe 2 · Kolesterol';
+    document.getElementById('hs1').textContent='98%';
+    document.getElementById('hs2').textContent='07:30';
+    document.getElementById('hs3').textContent='6/7';
+  } else {
+    document.getElementById('home-mode-badge').textContent='Mode Anak — PeduliPenuh';
+    document.getElementById('home-name').textContent='Reza Dwi Putra, 34 th';
+    document.getElementById('home-cond').textContent='Memantau: Bapak Purwanto (68 th)';
+    document.getElementById('hs1').textContent='87%';
+    document.getElementById('hs2').textContent='5 notif';
+    document.getElementById('hs3').textContent='AI ✓';
+  }
+}
+
+function getNow(){
+  const n=new Date();
+  return n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0')+':'+n.getSeconds().toString().padStart(2,'0');
+}
+
+// PeduliCek
+function cekOpt(el, key, val, level){
+  const opts = el.closest('.options').querySelectorAll('.opt');
+  opts.forEach(o=>o.className='opt');
+  el.className='opt sel-'+(level||'ok');
+  cekAnswers[key]={val,level};
+  updateCekProgress();
+}
+function cekMulti(el, key){
+  el.classList.toggle('sel-ok');
+  if(!cekAnswers[key]) cekAnswers[key]={};
+  cekAnswers[key].filled=true;
+  updateCekProgress();
+}
+function cekScale(id, val, el, type){
+  document.getElementById(id).querySelectorAll('.scale-btn').forEach(b=>b.className='scale-btn');
+  el.className='scale-btn active-'+(val<=2?'low':val==3?'mid':'low');
+  if(val>=4) el.className='scale-btn active-low';
+  if(val==3) el.className='scale-btn active-mid';
+  if(val<=2) el.className='scale-btn active-high';
+  cekAnswers['tidur']=val;
+  updateCekProgress();
+}
+function updateCekProgress(){
+  const keys=['q1','td-s','q3w','q4','q5','q6','q7a'];
+  let filled=0;
+  if(cekAnswers['q1']) filled++;
+  if(document.getElementById('td-s').value && document.getElementById('td-d').value) filled++;
+  if(cekAnswers['q3w']) filled++;
+  if(cekAnswers['q4']) filled++;
+  if(cekAnswers['q5']||document.querySelector('#page-pedulicek .sel-ok')) filled++;
+  if(cekAnswers['q5']) filled++;
+  if(cekAnswers['q6']) filled++;
+  if(cekAnswers['q7a']) filled++;
+  const total=7;
+  const pct=Math.min(Math.round((Object.keys(cekAnswers).length/total)*100),100);
+  document.getElementById('cek-prog-bar').style.width=pct+'%';
+  document.getElementById('cek-prog-pct').textContent=pct+'%';
+  const done=Object.keys(cekAnswers).length>=5;
+  document.getElementById('cek-submit').disabled=!done;
+}
+function updateTD(){
+  const s=parseInt(document.getElementById('td-s').value)||0;
+  const d=parseInt(document.getElementById('td-d').value)||0;
+  const el=document.getElementById('td-st');
+  if(!s||!d){el.textContent='';el.className='input-status';return;}
+  cekAnswers['td']=1;
+  if(s>=160||d>=100){el.textContent='Tinggi!';el.className='input-status danger';}
+  else if(s>=140||d>=90){el.textContent='Di atas normal';el.className='input-status warn';}
+  else{el.textContent='Normal';el.className='input-status ok';}
+  updateCekProgress();
+}
+function updateGD(){
+  const v=parseInt(document.getElementById('gd-v').value)||0;
+  const el=document.getElementById('gd-st');
+  if(!v){el.textContent='';el.className='input-status';return;}
+  if(v>300){el.textContent='Sangat tinggi!';el.className='input-status danger';}
+  else if(v>180){el.textContent='Tinggi';el.className='input-status warn';}
+  else if(v<70){el.textContent='Rendah';el.className='input-status danger';}
+  else{el.textContent='Normal';el.className='input-status ok';}
+}
+function submitCek(){
+  const s=document.getElementById('td-s').value||'—';
+  const d=document.getElementById('td-d').value||'—';
+  const gd=document.getElementById('gd-v').value||'—';
+  const obat=cekAnswers['q4']?.val||'—';
+  const umum=cekAnswers['q1']?.val||'—';
+  document.getElementById('r-td').textContent=s+'/'+d+' mmHg';
+  document.getElementById('r-gd').textContent=gd+' mg/dL';
+  document.getElementById('r-obat').textContent=obat;
+  document.getElementById('r-umum').textContent=umum;
+  const hasWarn=Object.values(cekAnswers).some(a=>a?.level==='warn'||a?.level==='danger');
+  document.getElementById('r-ai').textContent=hasWarn
+    ? ' Beberapa nilai perlu dipantau. Reza sudah mendapat notifikasi.'
+    : ' Semua nilai dalam batas normal. Tetap jaga pola makan & olahraga ringan ya Pak!';
+  document.getElementById('cek-form').classList.add('hidden');
+  document.getElementById('cek-result').classList.remove('hidden');
+  document.getElementById('cek-prog-bar').style.width='100%';
+  document.getElementById('cek-prog-pct').textContent='100%';
+  document.getElementById('cek-prog-label').textContent='Selesai!';
+}
+
+// Family Alert
+function triggerFA(){
+  faStart=Date.now();
+  document.getElementById('fa-standby').classList.add('hidden');
+  document.getElementById('fa-active').classList.remove('hidden');
+  document.getElementById('ft0').textContent=getNow();
+  setTimeout(()=>document.getElementById('ft1').textContent=getNow(),600);
+  setTimeout(()=>document.getElementById('ft2').textContent=getNow(),1200);
+  setTimeout(()=>{
+    document.getElementById('ft3').textContent=getNow();
+    setTimeout(()=>{
+      document.getElementById('fa-ahli-sub').textContent='dr. Andi Santoso · 1.8 km — dalam perjalanan';
+      document.getElementById('fa-ahli-badge').innerHTML='<i class="ti ti-check"></i> Terhubung';
+      document.getElementById('fa-ahli-badge').className='badge green';
+      const row=document.createElement('div');
+      row.className='tl-row';
+      row.innerHTML='<div class="tl-dot green"></div><div class="tl-text">dr. Andi Santoso terhubung — ETA 8 menit</div><div class="tl-time">'+getNow()+'</div>';
+      document.getElementById('fa-timeline').appendChild(row);
+    },2000);
+  },2000);
+  faTimerInt=setInterval(()=>{
+    const e=Math.round((Date.now()-faStart)/1000);
+    document.getElementById('fa-timer').textContent=Math.floor(e/60).toString().padStart(2,'0')+':'+( e%60).toString().padStart(2,'0');
+  },1000);
+}
+function cancelFA(){
+  clearInterval(faTimerInt);
+  document.getElementById('fa-active').classList.add('hidden');
+  document.getElementById('fa-done').classList.remove('hidden');
+}
+function resetFA(){
+  document.getElementById('fa-done').classList.add('hidden');
+  document.getElementById('fa-standby').classList.remove('hidden');
+  document.getElementById('fa-timer').textContent='00:00';
+  document.getElementById('fa-ahli-sub').textContent='Mencari mitra terdekat…';
+  document.getElementById('fa-ahli-badge').innerHTML='<i class="ti ti-loader pulse"></i> Menghubungi';
+  document.getElementById('fa-ahli-badge').className='badge amber';
+  ['ft0','ft1','ft2','ft3'].forEach(id=>document.getElementById(id).textContent='');
+  const rows=document.getElementById('fa-timeline').querySelectorAll('.tl-row');
+  if(rows.length>4) rows[rows.length-1].remove();
+}
+</script>
+</body>
+</html>

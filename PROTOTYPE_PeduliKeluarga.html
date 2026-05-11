@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PeduliKeluarga — Healthcare Dashboard Prototype</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    :root {
+      --bg: #f5f8f7;
+      --bg-2: #eef6f4;
+      --surface: #ffffff;
+      --surface-soft: #f9fbfb;
+      --surface-tint: #f0fbf7;
+      --line: rgba(16, 36, 32, .10);
+      --line-strong: rgba(16, 36, 32, .16);
+      --text: #10201d;
+      --text-2: #4e625d;
+      --muted: #7d8c88;
+      --brand: #08746b;
+      --brand-2: #15a58e;
+      --brand-3: #70d3bf;
+      --brand-soft: #e6f6f2;
+      --blue: #2867b2;
+      --blue-soft: #eaf2ff;
+      --amber: #c77b16;
+      --amber-soft: #fff4dd;
+      --red: #c33d3d;
+      --red-soft: #fff0f0;
+      --purple: #6656d9;
+      --purple-soft: #f0edff;
+      --green: #2f9a64;
+      --green-soft: #e9f8ef;
+      --shadow-xs: 0 1px 2px rgba(18, 40, 36, .06);
+      --shadow-sm: 0 8px 24px rgba(21, 52, 46, .08);
+      --shadow-md: 0 18px 48px rgba(21, 52, 46, .12);
+      --radius-xs: 10px;
+      --radius-sm: 14px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 8% 4%, rgba(112, 211, 191, .30), transparent 28rem),
+        radial-gradient(circle at 92% 8%, rgba(40, 103, 178, .14), transparent 30rem),
+        linear-gradient(180deg, #fbfdfc 0%, var(--bg) 48%, #f7faf9 100%);
+      letter-spacing: -.01em;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+    .hidden { display: none !important; }
+
+    .app-shell { min-height: 100vh; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgba(8, 116, 107, .10);
+      background: rgba(255, 255, 255, .82);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: max-content;
+      font-weight: 820;
+      font-size: 1.04rem;
+      color: var(--brand);
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.35), transparent 34%),
+        linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: 0 10px 25px rgba(8, 116, 107, .22);
+    }
+
+    .nav-tabs {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(245, 248, 247, .82);
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+
+    .nav-tab {
+      border: 0;
+      background: transparent;
+      color: var(--text-2);
+      min-width: max-content;
+      border-radius: 999px;
+      padding: 9px 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .86rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .18s ease, color .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+    .nav-tab:hover { color: var(--brand); transform: translateY(-1px); }
+    .nav-tab.active {
+      color: var(--brand);
+      background: var(--surface);
+      box-shadow: var(--shadow-xs), 0 8px 18px rgba(8, 116, 107, .08);
+    }
+
+    .mode-switch {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border-radius: 999px;
+      background: #10201d;
+      box-shadow: var(--shadow-xs);
+      min-width: max-content;
+    }
+    .mode-btn {
+      border: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: .82rem;
+      font-weight: 800;
+      color: rgba(255,255,255,.62);
+      background: transparent;
+      transition: .18s ease;
+    }
+    .mode-btn.active { color: #10201d; background: #ffffff; }
+
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 26px 20px 72px;
+    }
+
+    .page { display: none; animation: pageIn .32s ease both; }
+    .page.active { display: block; }
+    @keyframes pageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .page-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+    .page-kicker {
+      color: var(--brand);
+      font-size: .76rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+    .page-title { margin: 0; font-size: clamp(1.6rem, 3vw, 2.35rem); line-height: 1.05; letter-spacing: -.04em; }
+    .page-copy { margin: 8px 0 0; color: var(--text-2); line-height: 1.7; max-width: 60ch; }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.76);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-xs);
+      color: var(--text-2);
+      font-size: .82rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .live-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(47, 154, 100, .12);
+      animation: pulseDot 1.8s infinite ease-in-out;
+    }
+    @keyframes pulseDot { 50% { transform: scale(.72); opacity: .62; } }
+
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      min-height: 340px;
+      padding: clamp(22px, 4vw, 36px);
+      color: #fff;
+      background:
+        radial-gradient(circle at 82% 18%, rgba(255, 255, 255, .28), transparent 12rem),
+        radial-gradient(circle at 12% 92%, rgba(112, 211, 191, .36), transparent 16rem),
+        linear-gradient(135deg, #064d49 0%, #08746b 48%, #17a58e 100%);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 22px;
+    }
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(90deg, transparent, black 24%, black 72%, transparent);
+      opacity: .55;
+    }
+    .hero-card > * { position: relative; z-index: 1; }
+
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr); gap: 26px; align-items: end; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .16);
+      color: rgba(255,255,255,.92);
+      font-size: .82rem;
+      font-weight: 800;
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(10px);
+      margin-bottom: 18px;
+    }
+    .hero-title { margin: 0; font-size: clamp(2.15rem, 5vw, 4.3rem); line-height: .96; letter-spacing: -.065em; max-width: 10ch; }
+    .hero-sub { margin: 16px 0 0; color: rgba(255,255,255,.78); font-size: 1rem; line-height: 1.7; max-width: 62ch; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+
+    .hero-panel {
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.13);
+      border-radius: 24px;
+      padding: 16px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 18px 42px rgba(0,0,0,.12);
+    }
+    .hero-panel-top { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 14px; color: rgba(255,255,255,.76); font-size: .82rem; font-weight: 800; }
+    .hero-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .hero-stat {
+      border-radius: 18px;
+      padding: 14px 12px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+    .hero-stat-value { font-size: 1.5rem; line-height: 1; font-weight: 920; letter-spacing: -.05em; }
+    .hero-stat-label { margin-top: 8px; color: rgba(255,255,255,.70); font-size: .74rem; line-height: 1.35; font-weight: 720; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 26px 0 12px;
+    }
+    .section-title h2 { margin: 0; font-size: 1.05rem; letter-spacing: -.03em; }
+    .section-title span { color: var(--muted); font-size: .82rem; font-weight: 720; }
+
+    .grid-12 { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; align-items: stretch; }
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: 1 / -1; }
+
+    .card {
+      position: relative;
+      background: rgba(255,255,255,.86);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: 18px;
+      overflow: hidden;
+    }
+    .card.clean { box-shadow: var(--shadow-xs); }
+    .card.soft { background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(249,251,251,.92)); }
+    .card-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .card-eyebrow { color: var(--muted); font-size: .76rem; font-weight: 850; text-transform: uppercase; letter-spacing: .10em; }
+    .card-title { margin: 4px 0 0; font-size: 1.05rem; line-height: 1.25; font-weight: 900; letter-spacing: -.035em; }
+    .card-sub { margin: 4px 0 0; color: var(--text-2); font-size: .88rem; line-height: 1.55; }
+
+    .icon-box {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      flex: 0 0 auto;
+      font-size: 1.25rem;
+      border: 1px solid rgba(0,0,0,.04);
+    }
+    .icon-brand { color: var(--brand); background: var(--brand-soft); }
+    .icon-blue { color: var(--blue); background: var(--blue-soft); }
+    .icon-amber { color: var(--amber); background: var(--amber-soft); }
+    .icon-red { color: var(--red); background: var(--red-soft); }
+    .icon-purple { color: var(--purple); background: var(--purple-soft); }
+    .icon-green { color: var(--green); background: var(--green-soft); }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .metric {
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      border-radius: 18px;
+      padding: 15px;
+      min-height: 122px;
+    }
+    .metric-top { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: .78rem; font-weight: 800; }
+    .metric-value { margin-top: 14px; font-size: clamp(1.65rem, 3vw, 2.35rem); font-weight: 940; line-height: .92; letter-spacing: -.06em; }
+    .metric-value small { font-size: .82rem; letter-spacing: -.01em; color: var(--muted); font-weight: 800; }
+    .metric-note { margin-top: 10px; color: var(--text-2); font-size: .82rem; line-height: 1.45; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: .76rem;
+      line-height: 1;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+    .badge.green { color: #17613f; background: var(--green-soft); }
+    .badge.brand { color: #075d56; background: var(--brand-soft); }
+    .badge.blue { color: #174f91; background: var(--blue-soft); }
+    .badge.amber { color: #84500e; background: var(--amber-soft); }
+    .badge.red { color: #923131; background: var(--red-soft); }
+    .badge.purple { color: #4939a3; background: var(--purple-soft); }
+    .badge.gray { color: var(--text-2); background: #eef2f1; }
+
+    .btn {
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      min-height: 42px;
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 870;
+      font-size: .9rem;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease, color .18s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { color: white; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: 0 12px 28px rgba(8, 116, 107, .20); }
+    .btn-secondary { color: var(--brand); background: var(--brand-soft); }
+    .btn-outline { color: var(--text); background: rgba(255,255,255,.58); border: 1px solid var(--line-strong); }
+    .btn-danger { color: white; background: linear-gradient(135deg, #a92f32, #d44848); box-shadow: 0 12px 28px rgba(195, 61, 61, .20); }
+    .btn-ghost { color: var(--text-2); background: transparent; border: 1px solid var(--line); }
+    .btn-block { width: 100%; }
+    .btn-sm { min-height: 34px; padding: 0 12px; font-size: .78rem; }
+    .btn:disabled { opacity: .44; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .quick-action {
+      cursor: pointer;
+      text-align: left;
+      min-height: 134px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px;
+      background: var(--surface);
+      box-shadow: var(--shadow-xs);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .quick-action:hover { transform: translateY(-3px); box-shadow: var(--shadow-sm); border-color: rgba(8, 116, 107, .22); }
+    .quick-action .icon-box { margin-bottom: 14px; }
+    .quick-title { font-size: .95rem; font-weight: 900; letter-spacing: -.025em; }
+    .quick-copy { color: var(--muted); font-size: .8rem; line-height: 1.45; margin-top: 5px; }
+
+    .notification-list, .schedule-list, .history-list, .provider-list, .timeline-list { display: grid; gap: 10px; }
+    .notif-item, .schedule-item, .history-item, .provider-card, .timeline-item, .contact-item {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.76);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .notif-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; }
+    .dot-green { background: var(--green); box-shadow: 0 0 0 5px rgba(47,154,100,.12); }
+    .dot-amber { background: #d99724; box-shadow: 0 0 0 5px rgba(201,123,22,.12); }
+    .dot-red { background: var(--red); box-shadow: 0 0 0 5px rgba(195,61,61,.12); }
+    .notif-body, .schedule-body, .history-body { min-width: 0; flex: 1; }
+    .notif-title, .schedule-title, .history-title { font-weight: 880; font-size: .9rem; letter-spacing: -.02em; }
+    .notif-copy, .schedule-copy, .history-copy { color: var(--muted); font-size: .79rem; line-height: 1.45; margin-top: 3px; }
+    .notif-time, .schedule-time, .history-time { color: var(--muted); font-size: .76rem; font-weight: 850; white-space: nowrap; }
+
+    .progress-block { display: grid; gap: 11px; }
+    .progress-row { display: grid; gap: 7px; }
+    .progress-meta { display: flex; justify-content: space-between; gap: 10px; align-items: center; font-size: .82rem; color: var(--text-2); font-weight: 800; }
+    .progress-bar { height: 9px; border-radius: 999px; background: #ecf1ef; overflow: hidden; position: relative; }
+    .progress-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--brand), var(--brand-2)); min-width: 2%; transition: width .45s ease; }
+    .progress-fill.green { background: linear-gradient(90deg, #28975f, #49b777); }
+    .progress-fill.amber { background: linear-gradient(90deg, #c77b16, #e6a83f); }
+    .progress-fill.red { background: linear-gradient(90deg, #ae3436, #d75252); }
+    .progress-fill.blue { background: linear-gradient(90deg, #2867b2, #5b95d2); }
+
+    .ai-card {
+      background:
+        radial-gradient(circle at 100% 0%, rgba(102,86,217,.14), transparent 12rem),
+        linear-gradient(180deg, rgba(255,255,255,.92), rgba(250,249,255,.92));
+    }
+    .ai-copy { color: var(--text-2); line-height: 1.74; margin: 12px 0 0; font-size: .93rem; }
+    .ai-points { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+    .emergency-card {
+      border: 0;
+      color: #fff;
+      background:
+        radial-gradient(circle at 88% 12%, rgba(255,255,255,.25), transparent 10rem),
+        linear-gradient(135deg, #8f2427, #c43d3d 52%, #e15b54 100%);
+      box-shadow: 0 18px 44px rgba(195,61,61,.20);
+    }
+    .emergency-card .card-sub, .emergency-card .card-eyebrow { color: rgba(255,255,255,.78); }
+
+    .status-ring {
+      width: 124px;
+      height: 124px;
+      border-radius: 999px;
+      background: conic-gradient(var(--brand-2) 0 87%, rgba(8, 116, 107, .12) 87% 100%);
+      display: grid;
+      place-items: center;
+      margin: 4px auto 0;
+      box-shadow: inset 0 0 0 1px rgba(8,116,107,.08);
+    }
+    .status-ring-inner {
+      width: 94px;
+      height: 94px;
+      border-radius: inherit;
+      background: var(--surface);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: inset 0 0 0 1px var(--line);
+    }
+    .status-score { font-size: 1.85rem; font-weight: 940; letter-spacing: -.06em; color: var(--brand); }
+    .status-label { margin-top: -7px; color: var(--muted); font-size: .72rem; font-weight: 800; }
+
+    .form-stack { display: grid; gap: 14px; }
+    .field-card {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow-xs);
+    }
+    .field-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .field-label { font-weight: 900; line-height: 1.35; letter-spacing: -.025em; }
+    .field-help { color: var(--muted); font-size: .82rem; margin-top: 5px; line-height: 1.5; }
+    .chip-list { display: flex; flex-wrap: wrap; gap: 9px; }
+    .choice-chip {
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      color: var(--text-2);
+      border-radius: 999px;
+      padding: 10px 13px;
+      cursor: pointer;
+      font-size: .86rem;
+      font-weight: 820;
+      transition: .18s ease;
+    }
+    .choice-chip:hover { color: var(--brand); border-color: rgba(8,116,107,.28); transform: translateY(-1px); }
+    .choice-chip.selected-ok { color: #17613f; border-color: rgba(47,154,100,.30); background: var(--green-soft); }
+    .choice-chip.selected-warn { color: #84500e; border-color: rgba(199,123,22,.32); background: var(--amber-soft); }
+    .choice-chip.selected-danger { color: #923131; border-color: rgba(195,61,61,.32); background: var(--red-soft); }
+    .input-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .num-input {
+      width: 100px;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      border-radius: 16px;
+      padding: 12px;
+      color: var(--text);
+      font-size: 1.15rem;
+      font-weight: 900;
+      text-align: center;
+      outline: 0;
+      transition: box-shadow .18s ease, border-color .18s ease;
+    }
+    .num-input:focus, textarea:focus { border-color: var(--brand); box-shadow: 0 0 0 5px rgba(8,116,107,.10); }
+    .unit { color: var(--muted); font-weight: 800; }
+    .status-pill { min-height: 32px; display: inline-flex; align-items: center; border-radius: 999px; padding: 0 10px; font-size: .78rem; font-weight: 900; }
+    .status-ok { color: #17613f; background: var(--green-soft); }
+    .status-warn { color: #84500e; background: var(--amber-soft); }
+    .status-danger { color: #923131; background: var(--red-soft); }
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      min-height: 104px;
+      border-radius: 18px;
+      padding: 14px;
+      resize: vertical;
+      outline: 0;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.6;
+    }
+    .scale { display: flex; gap: 9px; flex-wrap: wrap; }
+    .scale-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      color: var(--text-2);
+      font-weight: 920;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+    .scale-btn.active { background: var(--brand); border-color: var(--brand); color: white; }
+
+    .result-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+    .result-tile { border: 1px solid var(--line); background: var(--surface-soft); border-radius: 18px; padding: 14px; }
+    .result-label { color: var(--muted); font-size: .76rem; font-weight: 850; }
+    .result-value { margin-top: 8px; font-size: 1.05rem; font-weight: 940; letter-spacing: -.035em; }
+
+    .medicine-card {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 22px;
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+      box-shadow: var(--shadow-xs);
+    }
+    .medicine-card.low-stock { border-color: rgba(195,61,61,.26); box-shadow: 0 12px 30px rgba(195,61,61,.08); }
+    .medicine-top { display: flex; align-items: flex-start; gap: 12px; }
+    .medicine-actions { display: flex; gap: 9px; flex-wrap: wrap; }
+
+    .provider-card { align-items: flex-start; }
+    .provider-card.featured { border-color: rgba(8,116,107,.26); background: linear-gradient(180deg, #fff, #f6fffc); }
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      font-weight: 950;
+      color: var(--brand);
+      background: var(--brand-soft);
+    }
+    .rating { color: #e3a124; letter-spacing: .04em; font-size: .88rem; }
+    .provider-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+    .provider-actions { display: flex; gap: 9px; margin-top: 12px; flex-wrap: wrap; }
+
+    .alert-panel {
+      border-radius: var(--radius-lg);
+      padding: clamp(22px, 4vw, 34px);
+      text-align: center;
+      color: white;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,.22), transparent 12rem),
+        linear-gradient(135deg, #95282b, #d44848);
+      box-shadow: 0 22px 52px rgba(195,61,61,.22);
+    }
+    .alert-panel.safe { color: var(--brand); background: linear-gradient(180deg, #f4fffb, #e9f9f4); border: 1px solid rgba(8,116,107,.13); box-shadow: var(--shadow-sm); }
+    .alert-icon { width: 76px; height: 76px; border-radius: 27px; margin: 0 auto 14px; display: grid; place-items: center; font-size: 2.15rem; background: rgba(255,255,255,.15); }
+    .alert-title-big { margin: 0; font-size: clamp(1.55rem, 3vw, 2.5rem); letter-spacing: -.05em; }
+    .alert-copy { color: rgba(255,255,255,.78); line-height: 1.65; margin: 10px auto 20px; max-width: 56ch; }
+    .alert-panel.safe .alert-copy { color: var(--text-2); }
+    .timer { font-size: 2.45rem; font-weight: 950; letter-spacing: -.05em; margin-top: 6px; }
+
+    .contact-item.notified { background: #f2fffb; border-color: rgba(47,154,100,.22); }
+    .contact-info { flex: 1; min-width: 0; }
+    .contact-name { font-weight: 920; }
+    .contact-role { color: var(--muted); font-size: .82rem; margin-top: 3px; }
+
+    .info-table { width: 100%; border-collapse: collapse; }
+    .info-table td { padding: 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; font-size: .88rem; }
+    .info-table tr:last-child td { border-bottom: 0; }
+    .info-table td:first-child { color: var(--muted); font-weight: 850; width: 170px; }
+    .info-table td:last-child { font-weight: 850; line-height: 1.45; }
+
+    .trend-card {
+      display: flex;
+      align-items: end;
+      gap: 10px;
+      min-height: 190px;
+      padding: 18px 12px 12px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.65), rgba(240,246,244,.75));
+      border: 1px solid var(--line);
+    }
+    .bar {
+      flex: 1;
+      min-width: 18px;
+      border-radius: 999px 999px 8px 8px;
+      background: linear-gradient(180deg, var(--brand-2), var(--brand));
+      position: relative;
+      transition: height .45s ease;
+    }
+    .bar.warn { background: linear-gradient(180deg, #e7ad45, #c77b16); }
+    .bar::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 50%;
+      bottom: -24px;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: .68rem;
+      font-weight: 800;
+    }
+
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      z-index: 60;
+      padding: 8px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.86);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(18px);
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+    }
+    .mobile-nav button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 17px;
+      min-height: 48px;
+      display: grid;
+      place-items: center;
+      font-size: 1.25rem;
+    }
+    .mobile-nav button.active { color: var(--brand); background: var(--brand-soft); }
+
+    @media (max-width: 1024px) {
+      .topbar-inner { align-items: stretch; flex-wrap: wrap; }
+      .nav-tabs { order: 3; flex-basis: 100%; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 6; }
+      .quick-grid { grid-template-columns: repeat(2, 1fr); }
+      .metric-grid, .result-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 700px) {
+      main { padding: 18px 14px 96px; }
+      .topbar-inner { padding: 12px 14px; }
+      .brand span { display: none; }
+      .nav-tabs { display: none; }
+      .mobile-nav { display: grid; }
+      .mode-switch { margin-left: auto; }
+      .mode-btn { padding: 8px 10px; }
+      .mode-btn span { display: none; }
+      .page-head { display: block; }
+      .live-pill { margin-top: 12px; }
+      .hero-card { border-radius: 24px; min-height: auto; }
+      .hero-title { max-width: 100%; }
+      .hero-stat-grid { grid-template-columns: 1fr; }
+      .grid-12 { grid-template-columns: 1fr; }
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8, .span-12 { grid-column: 1 / -1; }
+      .metric-grid, .quick-grid, .result-grid { grid-template-columns: 1fr; }
+      .notif-item, .schedule-item, .history-item, .contact-item { align-items: flex-start; }
+      .notif-time, .schedule-time, .history-time { white-space: normal; }
+      .medicine-actions, .provider-actions, .hero-actions { display: grid; grid-template-columns: 1fr; }
+      .btn { width: 100%; }
+      .info-table td { display: block; width: 100%; }
+      .info-table td:first-child { padding-bottom: 2px; }
+      .info-table td:last-child { padding-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand" aria-label="PeduliKeluarga">
+          <div class="brand-mark"><i class="ti ti-heart-handshake"></i></div>
+          <span>PeduliKeluarga</span>
+        </div>
+        <nav class="nav-tabs" aria-label="Navigasi utama">
+          <button class="nav-tab active" data-page="home"><i class="ti ti-home"></i> Beranda</button>
+          <button class="nav-tab" data-page="pedulicek"><i class="ti ti-stethoscope"></i> PeduliCek</button>
+          <button class="nav-tab" data-page="peduliobat"><i class="ti ti-pill"></i> PeduliObat</button>
+          <button class="nav-tab" data-page="ahlipeduli"><i class="ti ti-nurse"></i> AhliPeduli</button>
+          <button class="nav-tab" data-page="familyalert"><i class="ti ti-urgent"></i> Family Alert</button>
+          <button class="nav-tab" data-page="riwayat"><i class="ti ti-report-medical"></i> PeduliRiwayat</button>
+        </nav>
+        <div class="mode-switch" aria-label="Pilih mode pengguna">
+          <button class="mode-btn active" data-mode="lansia"><i class="ti ti-user-heart"></i><span>Lansia</span></button>
+          <button class="mode-btn" data-mode="anak"><i class="ti ti-users"></i><span>Anak</span></button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="page active" id="page-home">
+        <div class="hero-card">
+          <div class="hero-grid">
+            <div>
+              <div class="hero-badge"><i class="ti ti-sparkles"></i><span id="hero-mode-label">Mode Lansia — PeduliDiri</span></div>
+              <h1 class="hero-title" id="hero-title">Bapak Purwanto</h1>
+              <p class="hero-sub" id="hero-subtitle">68 tahun · Hipertensi · Diabetes Tipe 2 · Kolesterol. Dashboard harian untuk menjaga rutinitas kesehatan tetap tenang, jelas, dan mudah diikuti.</p>
+              <div class="hero-actions">
+                <button class="btn btn-primary" onclick="navigate('pedulicek')"><i class="ti ti-stethoscope"></i> Mulai cek harian</button>
+                <button class="btn btn-outline" onclick="navigate('peduliobat')"><i class="ti ti-pill"></i> Lihat obat hari ini</button>
+              </div>
+            </div>
+            <aside class="hero-panel" aria-label="Ringkasan real-time">
+              <div class="hero-panel-top"><span>Live care snapshot</span><span id="hero-sync">Sinkron 07:42</span></div>
+              <div class="hero-stat-grid">
+                <div class="hero-stat"><div class="hero-stat-value" id="hero-stat-1">98%</div><div class="hero-stat-label">Pantau aktif</div></div>
+                <div class="hero-stat"><div class="hero-stat-value" id="hero-stat-2">07:30</div><div class="hero-stat-label">Cek terakhir</div></div>
+                <div class="hero-stat"><div class="hero-stat-value" id="hero-stat-3">6/7</div><div class="hero-stat-label">Obat diminum</div></div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div id="dashboard-lansia">
+          <div class="section-title"><h2>Dashboard Lansia</h2><span>Dirancang ringkas, tenang, dan mudah ditekan</span></div>
+          <div class="grid-12">
+            <section class="card span-8">
+              <div class="card-title-row">
+                <div><div class="card-eyebrow">Health summary</div><h3 class="card-title">Kondisi pagi ini stabil, tetapi PeduliCek belum diisi</h3><p class="card-sub">Ringkasan vital terbaru dari simulasi harian Bapak Purwanto.</p></div>
+                <div class="icon-box icon-brand"><i class="ti ti-heart-rate-monitor"></i></div>
+              </div>
+              <div class="metric-grid">
+                <div class="metric"><div class="metric-top"><span>Tekanan darah</span><i class="ti ti-activity"></i></div><div class="metric-value">138/88 <small>mmHg</small></div><div class="metric-note">Sedikit tinggi, pantau lagi malam ini.</div></div>
+                <div class="metric"><div class="metric-top"><span>Gula darah</span><i class="ti ti-droplet"></i></div><div class="metric-value">124 <small>mg/dL</small></div><div class="metric-note">Dalam target setelah sarapan.</div></div>
+                <div class="metric"><div class="metric-top"><span>Aktivitas</span><i class="ti ti-walk"></i></div><div class="metric-value">2.840 <small>langkah</small></div><div class="metric-note">Target ringan 3.500 langkah.</div></div>
+              </div>
+            </section>
+
+            <aside class="card span-4 soft">
+              <div class="card-title-row">
+                <div><div class="card-eyebrow">Health status</div><h3 class="card-title">Skor aman</h3><p class="card-sub">Berdasarkan tekanan darah, gula darah, obat, dan gejala.</p></div>
+              </div>
+              <div class="status-ring"><div class="status-ring-inner"><div><div class="status-score">87</div><div class="status-label">Aman</div></div></div></div>
+              <div class="ai-points" style="justify-content:center"><span class="badge brand">Normal</span><span class="badge amber">Pantau TD</span></div>
+            </aside>
+
+            <section class="card span-5">
+              <div class="card-title-row">
+                <div><div class="card-eyebrow">Notification summary</div><h3 class="card-title">Yang perlu diperhatikan</h3></div>
+                <span class="badge amber">3 update</span>
+              </div>
+              <div class="notification-list" id="notif-lansia"></div>
+            </section>
+
+            <section class="card span-7">
+              <div class="card-title-row">
+                <div><div class="card-eyebrow">Medication progress</div><h3 class="card-title">Obat hari ini</h3><p class="card-sub">Progress konsumsi obat rutin dan stok di rumah.</p></div>
+                <button class="btn btn-secondary btn-sm" onclick="navigate('peduliobat')">Detail</button>
+              </div>
+              <div class="progress-block" id="med-progress-lansia"></div>
+            </section>
+
+            <section class="card ai-card span-7">
+              <div class="card-title-row">
+                <div><div class="card-eyebrow">AI insight</div><h3 class="card-title">Pola tekanan darah pagi sedikit meningkat</h3></div>
+                <div class="icon-box icon-purple"><i class="ti ti-brain"></i></div>
+              </div>
+              <p class="ai-copy">Dalam 14 hari terakhir, nilai sistolik pagi rata-rata naik sekitar 8 mmHg. Belum darurat, tetapi baik untuk dicatat saat konsultasi berikutnya.</p>
+              <div class="ai-points"><span class="badge purple">Tren 14 hari</span><span class="badge amber">Prioritas sedang</span><span class="badge brand">Saran: cek malam</span></div>
+            </section>
+
+            <section class="card emergency-card span-5">
+              <div class="card-title-row">
+                <div><div class="card-eyebrow">Emergency CTA</div><h3 class="card-title">Butuh bantuan sekarang?</h3><p class="card-sub">Satu tombol untuk menghubungi keluarga dan tim AhliPeduli.</p></div>
+                <div class="icon-box" style="background:rgba(255,255,255,.18);color:white"><i class="ti ti-urgent"></i></div>
+              </div>
+              <button class="btn btn-danger btn-block" onclick="navigate('familyalert')"><i class="ti ti-phone-call"></i> Buka Family Alert</button>
+            </section>
+          </div>
+
+          <div class="section-title"><h2>Quick action menu</h2><span>Akses utama tanpa bingung</span></div>
+          <div class="quick-grid" id="quick-lansia"></div>
+        </div>
+
+        <div id="dashboard-anak" class="hidden">
+          <div class="section-title"><h2>Dashboard Anak</h2><span>Monitoring keluarga dengan konteks yang bisa langsung ditindaklanjuti</span></div>
+          <div class="grid-12">
+            <section class="card span-7">
+              <div class="card-title-row">
+                <div><div class="card-eyebrow">Parent monitoring</div><h3 class="card-title">Bapak aman, ada 2 hal yang perlu dibantu hari ini</h3><p class="card-sub">Fokus pada notifikasi, stok obat, dan tren kesehatan yang berubah.</p></div>
+                <div class="icon-box icon-blue"><i class="ti ti-users-group"></i></div>
+              </div>
+              <div class="metric-grid">
+                <div class="metric"><div class="metric-top"><span>Risk score</span><i class="ti ti-shield-check"></i></div><div class="metric-value">Low</div><div class="metric-note">Tidak ada tanda darurat.</div></div>
+                <div class="metric"><div class="metric-top"><span>Adherence</span><i class="ti ti-pill"></i></div><div class="metric-value">94%</div><div class="metric-note">Kepatuhan obat 30 hari.</div></div>
+                <div class="metric"><div class="metric-top"><span>Alert</span><i class="ti ti-bell"></i></div><div class="metric-value">5</div><div class="metric-note">2 butuh tindakan.</div></div>
+              </div>
+            </section>
+            <aside class="card span-5 ai-card">
+              <div class="card-title-row">
+                <div><div class="card-eyebrow">AI insight card</div><h3 class="card-title">Saran tindak lanjut untuk Reza</h3></div>
+                <span class="badge amber">Medium</span>
+              </div>
+              <p class="ai-copy">Pesankan Simvastatin hari ini karena stok tinggal 5 tablet. Minta Bapak isi PeduliCek untuk melengkapi tren tekanan darah minggu ini.</p>
+              <div class="hero-actions"><button class="btn btn-primary" onclick="navigate('peduliobat')"><i class="ti ti-motorbike"></i> Pesan obat</button><button class="btn btn-outline" onclick="navigate('riwayat')"><i class="ti ti-chart-line"></i> Lihat tren</button></div>
+            </aside>
+            <section class="card span-5">
+              <div class="card-title-row"><div><div class="card-eyebrow">Notification summary</div><h3 class="card-title">Notifikasi terkini</h3></div><span class="badge amber">Perlu respons</span></div>
+              <div class="notification-list" id="notif-anak"></div>
+            </section>
+            <section class="card span-7">
+              <div class="card-title-row"><div><div class="card-eyebrow">Medication progress</div><h3 class="card-title">Kepatuhan & stok obat</h3></div><button class="btn btn-secondary btn-sm" onclick="navigate('peduliobat')">Kelola</button></div>
+              <div class="progress-block" id="med-progress-anak"></div>
+            </section>
+          </div>
+          <div class="section-title"><h2>Quick action menu</h2><span>Untuk keluarga pendamping</span></div>
+          <div class="quick-grid" id="quick-anak"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-pedulicek">
+        <div class="page-head">
+          <div>
+            <div class="page-kicker">PeduliCek</div>
+            <h1 class="page-title">Cek kesehatan harian yang terasa manusiawi</h1>
+            <p class="page-copy">Form adaptif untuk mencatat kondisi umum, tekanan darah, gula darah, obat, gejala, tidur, dan aktivitas. Hasilnya langsung diringkas untuk keluarga.</p>
+          </div>
+          <div class="live-pill"><span class="live-dot"></span><span id="cek-date-label">Senin, 11 Mei 2026</span></div>
+        </div>
+
+        <div class="card span-12" style="margin-bottom:16px">
+          <div class="progress-row">
+            <div class="progress-meta"><span id="cek-progress-label">0 dari 7 bagian terisi</span><span id="cek-progress-percent">0%</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="cek-progress-bar" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <div id="cek-form" class="form-stack">
+          <section class="field-card" data-question="mood">
+            <div class="field-head"><div><div class="badge brand"><i class="ti ti-heart"></i> Umum</div><div class="field-label" style="margin-top:12px">Bagaimana perasaan Bapak hari ini?</div></div></div>
+            <div class="chip-list" data-choice-group="mood">
+              <button class="choice-chip" data-value="Sangat baik" data-level="ok">Sangat baik</button>
+              <button class="choice-chip" data-value="Baik" data-level="ok">Baik</button>
+              <button class="choice-chip" data-value="Cukup" data-level="warn">Cukup</button>
+              <button class="choice-chip" data-value="Kurang baik" data-level="warn">Kurang baik</button>
+              <button class="choice-chip" data-value="Tidak baik" data-level="danger">Tidak baik</button>
+            </div>
+          </section>
+
+          <section class="field-card" data-question="bp">
+            <div class="field-head"><div><div class="badge brand"><i class="ti ti-activity"></i> Tekanan darah</div><div class="field-label" style="margin-top:12px">Berapa tekanan darah pagi ini?</div><div class="field-help">Target ringan: sistolik 120–139 dan diastolik 70–89.</div></div></div>
+            <div class="input-row">
+              <input class="num-input" id="bp-s" type="number" min="80" max="220" placeholder="138" />
+              <span class="unit">/</span>
+              <input class="num-input" id="bp-d" type="number" min="50" max="140" placeholder="88" />
+              <span class="unit">mmHg</span>
+              <span class="status-pill" id="bp-status"></span>
+            </div>
+          </section>
+
+          <section class="field-card" data-question="glucose">
+            <div class="field-head"><div><div class="badge blue"><i class="ti ti-droplet"></i> Gula darah</div><div class="field-label" style="margin-top:12px">Berapa kadar gula darah Bapak?</div></div></div>
+            <div class="input-row" style="margin-bottom:12px">
+              <input class="num-input" id="glucose-value" type="number" min="50" max="500" placeholder="124" />
+              <span class="unit">mg/dL</span>
+              <span class="status-pill" id="glucose-status"></span>
+            </div>
+            <div class="chip-list" data-choice-group="glucoseMoment">
+              <button class="choice-chip" data-value="Puasa" data-level="ok">Puasa</button>
+              <button class="choice-chip" data-value="2 jam setelah makan" data-level="ok">2 jam setelah makan</button>
+              <button class="choice-chip" data-value="Acak" data-level="ok">Acak</button>
+              <button class="choice-chip" data-value="Belum cek" data-level="warn">Belum cek</button>
+            </div>
+          </section>
+
+          <section class="field-card" data-question="meds">
+            <div class="field-head"><div><div class="badge green"><i class="ti ti-pill"></i> Kepatuhan obat</div><div class="field-label" style="margin-top:12px">Apakah obat pagi sudah diminum?</div></div></div>
+            <div class="chip-list" data-choice-group="meds">
+              <button class="choice-chip" data-value="Semua sudah diminum" data-level="ok">✓ Semua sudah</button>
+              <button class="choice-chip" data-value="Lupa Amlodipin" data-level="warn">Lupa Amlodipin</button>
+              <button class="choice-chip" data-value="Lupa Metformin" data-level="warn">Lupa Metformin</button>
+              <button class="choice-chip" data-value="Belum minum" data-level="danger">Belum minum</button>
+            </div>
+          </section>
+
+          <section class="field-card" data-question="symptomsBp">
+            <div class="field-head"><div><div class="badge amber"><i class="ti ti-alert-circle"></i> Gejala hipertensi</div><div class="field-label" style="margin-top:12px">Gejala yang dirasakan hari ini</div><div class="field-help">Boleh pilih lebih dari satu.</div></div></div>
+            <div class="chip-list" data-multi-group="symptomsBp">
+              <button class="choice-chip" data-value="Sakit kepala / pusing" data-level="warn">Sakit kepala</button>
+              <button class="choice-chip" data-value="Penglihatan buram" data-level="warn">Penglihatan buram</button>
+              <button class="choice-chip" data-value="Dada terasa berat" data-level="danger">Dada berat</button>
+              <button class="choice-chip" data-value="Tengkuk kaku" data-level="warn">Tengkuk kaku</button>
+              <button class="choice-chip" data-value="Tidak ada gejala" data-level="ok">Tidak ada</button>
+            </div>
+          </section>
+
+          <section class="field-card" data-question="symptomsDm">
+            <div class="field-head"><div><div class="badge blue"><i class="ti ti-droplet-half-2"></i> Gejala diabetes</div><div class="field-label" style="margin-top:12px">Tanda yang dirasakan</div></div></div>
+            <div class="chip-list" data-multi-group="symptomsDm">
+              <button class="choice-chip" data-value="Sangat haus" data-level="warn">Sangat haus</button>
+              <button class="choice-chip" data-value="Sering kencing" data-level="warn">Sering kencing</button>
+              <button class="choice-chip" data-value="Lemas / lesu" data-level="warn">Lemas</button>
+              <button class="choice-chip" data-value="Kesemutan" data-level="warn">Kesemutan</button>
+              <button class="choice-chip" data-value="Tidak ada gejala" data-level="ok">Tidak ada</button>
+            </div>
+          </section>
+
+          <section class="field-card" data-question="lifestyle">
+            <div class="field-head"><div><div class="badge gray"><i class="ti ti-moon-stars"></i> Tidur & aktivitas</div><div class="field-label" style="margin-top:12px">Kualitas tidur semalam</div></div></div>
+            <div class="scale" data-scale="sleep">
+              <button class="scale-btn" data-value="1">1</button><button class="scale-btn" data-value="2">2</button><button class="scale-btn" data-value="3">3</button><button class="scale-btn" data-value="4">4</button><button class="scale-btn" data-value="5">5</button>
+            </div>
+            <div class="field-help">1 = buruk sekali, 5 = sangat nyenyak.</div>
+            <div class="field-label" style="margin-top:18px;margin-bottom:10px">Aktivitas fisik hari ini</div>
+            <div class="chip-list" data-choice-group="activity">
+              <button class="choice-chip" data-value="Jalan kaki / senam pagi" data-level="ok">Jalan kaki / senam</button>
+              <button class="choice-chip" data-value="Aktivitas ringan" data-level="ok">Aktivitas ringan</button>
+              <button class="choice-chip" data-value="Sebagian besar duduk/tiduran" data-level="warn">Banyak duduk</button>
+              <button class="choice-chip" data-value="Terlalu lelah untuk bergerak" data-level="danger">Sangat lelah</button>
+            </div>
+            <div class="field-label" style="margin-top:18px;margin-bottom:10px">Catatan tambahan</div>
+            <textarea id="cek-note" placeholder="Contoh: Semalam susah tidur karena kepala agak sakit..."></textarea>
+          </section>
+
+          <button class="btn btn-primary btn-block" id="cek-submit" disabled><i class="ti ti-send"></i> Kirim PeduliCek hari ini</button>
+        </div>
+
+        <div id="cek-result" class="hidden">
+          <section class="card ai-card">
+            <div class="card-title-row">
+              <div><div class="card-eyebrow">Hasil PeduliCek</div><h3 class="card-title" id="cek-result-title">Laporan terkirim ke keluarga</h3><p class="card-sub">Ringkasan otomatis untuk Reza dan catatan PeduliRiwayat.</p></div>
+              <div class="icon-box icon-green"><i class="ti ti-circle-check"></i></div>
+            </div>
+            <div class="result-grid">
+              <div class="result-tile"><div class="result-label">Tekanan darah</div><div class="result-value" id="result-bp">—</div></div>
+              <div class="result-tile"><div class="result-label">Gula darah</div><div class="result-value" id="result-glucose">—</div></div>
+              <div class="result-tile"><div class="result-label">Obat pagi</div><div class="result-value" id="result-meds">—</div></div>
+              <div class="result-tile"><div class="result-label">Kondisi umum</div><div class="result-value" id="result-mood">—</div></div>
+            </div>
+            <p class="ai-copy" id="result-ai">—</p>
+            <div class="hero-actions"><button class="btn btn-secondary" onclick="navigate('riwayat')"><i class="ti ti-chart-line"></i> Lihat PeduliRiwayat</button><button class="btn btn-outline" onclick="resetCek()"><i class="ti ti-refresh"></i> Isi ulang simulasi</button></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-peduliobat">
+        <div class="page-head">
+          <div><div class="page-kicker">PeduliObat</div><h1 class="page-title">Jadwal obat, stok, dan kepatuhan dalam satu layar</h1><p class="page-copy">Tampilan dibuat lebih jelas agar lansia tahu obat berikutnya, sementara anak bisa langsung melihat stok yang harus dipesan.</p></div>
+          <div class="live-pill"><span class="live-dot"></span><span>3 obat aktif</span></div>
+        </div>
+        <div class="grid-12">
+          <section class="card span-4"><div class="card-eyebrow">Hari ini</div><h3 class="card-title">2 dari 3 jadwal selesai</h3><p class="card-sub">Obat malam masih menunggu pukul 19:00.</p><div class="progress-row" style="margin-top:18px"><div class="progress-meta"><span>Kepatuhan hari ini</span><span>67%</span></div><div class="progress-bar"><div class="progress-fill green" style="width:67%"></div></div></div></section>
+          <section class="card span-4"><div class="card-eyebrow">Stok kritis</div><h3 class="card-title">Simvastatin tinggal 5 tablet</h3><p class="card-sub">Cukup 5 hari. Disarankan pesan hari ini agar tidak putus obat.</p><button class="btn btn-danger btn-block" style="margin-top:18px"><i class="ti ti-motorbike"></i> Pesan sekarang</button></section>
+          <section class="card span-4"><div class="card-eyebrow">Kepatuhan 30 hari</div><h3 class="card-title">94% konsisten</h3><p class="card-sub">Satu jadwal siang terlewat 2 hari lalu.</p><div class="status-ring" style="width:106px;height:106px"><div class="status-ring-inner" style="width:78px;height:78px"><div><div class="status-score" style="font-size:1.5rem">94</div><div class="status-label">bagus</div></div></div></div></section>
+          <section class="card span-5"><div class="card-title-row"><div><div class="card-eyebrow">Jadwal hari ini</div><h3 class="card-title">Obat berikutnya</h3></div></div><div class="schedule-list" id="schedule-list"></div></section>
+          <section class="card span-7"><div class="card-title-row"><div><div class="card-eyebrow">Detail stok</div><h3 class="card-title">Daftar obat aktif</h3></div></div><div class="progress-block" id="medicine-list"></div></section>
+          <section class="card span-12"><div class="card-title-row"><div><div class="card-eyebrow">Log konsumsi</div><h3 class="card-title">3 hari terakhir</h3></div></div><div class="history-list" id="med-log-list"></div></section>
+        </div>
+      </section>
+
+      <section class="page" id="page-ahlipeduli">
+        <div class="page-head">
+          <div><div class="page-kicker">AhliPeduli</div><h1 class="page-title">Akses bantuan profesional tanpa tampilan ramai</h1><p class="page-copy">Daftar mitra dibuat seperti concierge healthcare: prioritas, jarak, layanan, dan tombol tindakan jelas.</p></div>
+          <button class="btn btn-danger" onclick="navigate('familyalert')"><i class="ti ti-ambulance"></i> Darurat</button>
+        </div>
+        <div class="grid-12">
+          <section class="card emergency-card span-12"><div class="card-title-row"><div><div class="card-eyebrow">Emergency network</div><h3 class="card-title">Panggil ambulans atau homecare darurat</h3><p class="card-sub">Simulasi respons rata-rata 8–12 menit untuk area Jakarta.</p></div><div class="icon-box" style="background:rgba(255,255,255,.18);color:white"><i class="ti ti-ambulance"></i></div></div><button class="btn btn-danger" onclick="navigate('familyalert')"><i class="ti ti-phone-call"></i> Aktifkan Family Alert</button></section>
+          <section class="card span-7"><div class="card-title-row"><div><div class="card-eyebrow">Homecare</div><h3 class="card-title">Mitra datang ke rumah</h3></div></div><div class="provider-list" id="provider-homecare"></div></section>
+          <section class="card span-5"><div class="card-title-row"><div><div class="card-eyebrow">Klinik terdekat</div><h3 class="card-title">Buka 24 jam</h3></div></div><div class="provider-list" id="provider-clinic"></div></section>
+        </div>
+      </section>
+
+      <section class="page" id="page-familyalert">
+        <div class="page-head">
+          <div><div class="page-kicker">Family Alert</div><h1 class="page-title">Tombol darurat yang jelas dan tidak bikin panik</h1><p class="page-copy">Satu alur: kirim notifikasi keluarga, bagikan data medis, lalu hubungkan ke mitra AhliPeduli.</p></div>
+          <div class="live-pill"><span class="live-dot"></span><span id="fa-status-label">Standby</span></div>
+        </div>
+
+        <div id="fa-standby" class="grid-12">
+          <section class="alert-panel span-7">
+            <div class="alert-icon"><i class="ti ti-urgent"></i></div>
+            <h2 class="alert-title-big">Tekan untuk darurat</h2>
+            <p class="alert-copy">Gunakan hanya saat Bapak Purwanto membutuhkan bantuan segera. Kontak keluarga dan AhliPeduli akan menerima notifikasi.</p>
+            <button class="btn btn-danger" id="trigger-alert"><i class="ti ti-phone-call"></i> Aktifkan Family Alert</button>
+          </section>
+          <aside class="card span-5"><div class="card-title-row"><div><div class="card-eyebrow">Kontak darurat</div><h3 class="card-title">Urutan notifikasi</h3></div></div><div class="timeline-list" id="contact-list"></div></aside>
+          <section class="card span-12"><div class="card-title-row"><div><div class="card-eyebrow">Info medis</div><h3 class="card-title">Data yang dikirim ke tim darurat</h3></div></div><table class="info-table"><tr><td>Alamat</td><td>Jl. Cendana No. 12, Tebet, Jakarta Selatan</td></tr><tr><td>Kondisi</td><td>Hipertensi · Diabetes Tipe 2 · Kolesterol</td></tr><tr><td>Obat rutin</td><td>Amlodipin · Metformin · Simvastatin</td></tr><tr><td>TD terakhir</td><td>138/88 mmHg · 07:30</td></tr><tr><td>GD terakhir</td><td>124 mg/dL · 07:30</td></tr><tr><td>Alergi</td><td>Penisilin</td></tr></table></section>
+        </div>
+
+        <div id="fa-active" class="hidden">
+          <section class="alert-panel">
+            <div class="alert-icon"><i class="ti ti-urgent"></i></div>
+            <h2 class="alert-title-big">Family Alert aktif</h2>
+            <p class="alert-copy">Menghubungi kontak keluarga dan tim AhliPeduli terdekat.</p>
+            <div class="timer" id="fa-timer">00:00</div>
+          </section>
+          <div class="grid-12" style="margin-top:16px">
+            <section class="card span-5"><div class="card-title-row"><div><div class="card-eyebrow">Status notifikasi</div><h3 class="card-title">Semua pihak dihubungi</h3></div></div><div class="timeline-list" id="fa-notify-list"></div></section>
+            <section class="card span-7"><div class="card-title-row"><div><div class="card-eyebrow">Timeline</div><h3 class="card-title">Alur respons</h3></div></div><div class="timeline-list" id="fa-timeline"></div><div class="hero-actions"><button class="btn btn-primary" onclick="navigate('ahlipeduli')"><i class="ti ti-nurse"></i> Hubungi AhliPeduli</button><button class="btn btn-outline"><i class="ti ti-file-medical"></i> Kirim rekam medis</button><button class="btn btn-ghost" id="cancel-alert"><i class="ti ti-circle-check"></i> Situasi aman</button></div></section>
+          </div>
+        </div>
+
+        <div id="fa-done" class="hidden">
+          <section class="alert-panel safe">
+            <div class="alert-icon" style="background:rgba(8,116,107,.10)"><i class="ti ti-circle-check"></i></div>
+            <h2 class="alert-title-big">Alert dibatalkan</h2>
+            <p class="alert-copy">Notifikasi pembatalan dikirim ke kontak keluarga. Sistem kembali ke mode standby.</p>
+            <button class="btn btn-primary" id="reset-alert"><i class="ti ti-refresh"></i> Kembali ke standby</button>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-riwayat">
+        <div class="page-head">
+          <div><div class="page-kicker">PeduliRiwayat</div><h1 class="page-title">Rekam medis digital yang mudah dibaca keluarga</h1><p class="page-copy">Tren dibuat lebih visual sehingga keluarga dan tenaga kesehatan bisa melihat perubahan tanpa harus membaca tabel panjang.</p></div>
+          <button class="btn btn-outline"><i class="ti ti-download"></i> Ekspor PDF</button>
+        </div>
+        <div class="grid-12">
+          <section class="card span-8"><div class="card-title-row"><div><div class="card-eyebrow">Tren tekanan darah</div><h3 class="card-title">Sistolik pagi 7 hari terakhir</h3><p class="card-sub">Masih aman, tetapi tiga hari terakhir bergerak naik.</p></div><span class="badge amber">Naik ringan</span></div><div class="trend-card" id="bp-chart"></div></section>
+          <aside class="card span-4 ai-card"><div class="card-title-row"><div><div class="card-eyebrow">AI early warning</div><h3 class="card-title">Pantau pola pagi</h3></div><div class="icon-box icon-purple"><i class="ti ti-brain"></i></div></div><p class="ai-copy">Jika nilai sistolik terus di atas 140 selama beberapa hari, tandai untuk konsultasi dokter. Saat ini status belum darurat.</p><div class="ai-points"><span class="badge amber">Monitor</span><span class="badge blue">7 hari</span></div></aside>
+          <section class="card span-4"><div class="card-eyebrow">Rata-rata TD</div><h3 class="card-title">136/86 mmHg</h3><p class="card-sub">Lebih tinggi 4 poin dibanding minggu lalu.</p></section>
+          <section class="card span-4"><div class="card-eyebrow">Gula darah</div><h3 class="card-title">124 mg/dL</h3><p class="card-sub">Cenderung stabil di rentang target.</p></section>
+          <section class="card span-4"><div class="card-eyebrow">Kepatuhan obat</div><h3 class="card-title">94%</h3><p class="card-sub">Baik, hanya satu jadwal terlewat.</p></section>
+          <section class="card span-12"><div class="card-title-row"><div><div class="card-eyebrow">Timeline kesehatan</div><h3 class="card-title">Catatan terbaru</h3></div></div><div class="history-list" id="history-list"></div><div class="hero-actions"><button class="btn btn-primary"><i class="ti ti-download"></i> Ekspor rekam medis PDF</button><button class="btn btn-outline" onclick="navigate('ahlipeduli')"><i class="ti ti-nurse"></i> Buat janji dokter</button></div></section>
+        </div>
+      </section>
+    </main>
+
+    <nav class="mobile-nav" aria-label="Navigasi mobile">
+      <button class="active" data-page="home" aria-label="Beranda"><i class="ti ti-home"></i></button>
+      <button data-page="pedulicek" aria-label="PeduliCek"><i class="ti ti-stethoscope"></i></button>
+      <button data-page="peduliobat" aria-label="PeduliObat"><i class="ti ti-pill"></i></button>
+      <button data-page="ahlipeduli" aria-label="AhliPeduli"><i class="ti ti-nurse"></i></button>
+      <button data-page="familyalert" aria-label="Family Alert"><i class="ti ti-urgent"></i></button>
+      <button data-page="riwayat" aria-label="PeduliRiwayat"><i class="ti ti-report-medical"></i></button>
+    </nav>
+  </div>
+
+  <script>
+    const state = {
+      mode: 'lansia',
+      page: 'home',
+      cek: {},
+      alertTimer: null,
+      alertStartedAt: null,
+      realtimeIndex: 0
+    };
+
+    const data = {
+      notifications: {
+        lansia: [
+          { tone:'amber', title:'PeduliCek belum diisi', copy:'Isi cek harian supaya Reza tahu kondisi Bapak hari ini.', time:'08:15' },
+          { tone:'green', title:'Obat pagi sudah diminum', copy:'Amlodipin dan Metformin tercatat pukul 07:32.', time:'07:32' },
+          { tone:'amber', title:'Simvastatin hampir habis', copy:'Sisa 5 tablet. Minta keluarga pesan via PeduliAntar.', time:'Kemarin' }
+        ],
+        anak: [
+          { tone:'amber', title:'Bapak belum mengisi PeduliCek', copy:'Kirim pengingat lembut agar data hari ini lengkap.', time:'08:15' },
+          { tone:'green', title:'Obat pagi sudah diminum', copy:'Amlodipin dan Metformin sudah tercatat.', time:'07:32' },
+          { tone:'red', title:'Stok Simvastatin kritis', copy:'Sisa 5 tablet. Buat pesanan sebelum akhir minggu.', time:'Kemarin' }
+        ]
+      },
+      meds: [
+        { name:'Amlodipin 5mg', detail:'Pagi · sesudah makan', progress:100, status:'✓ 07:32', color:'green', stock:'28 tablet · 28 hari', category:'Hipertensi' },
+        { name:'Metformin 500mg', detail:'Pagi, siang, malam · sesudah makan', progress:67, status:'2/3 jadwal', color:'brand', stock:'72 tablet · 24 hari', category:'Diabetes' },
+        { name:'Simvastatin 20mg', detail:'Malam · sesudah makan', progress:17, status:'Stok 5 hari', color:'red', stock:'5 tablet · 5 hari', category:'Kolesterol', low:true }
+      ],
+      quick: {
+        lansia: [
+          { icon:'ti-stethoscope', tone:'brand', title:'PeduliCek', copy:'Isi cek harian adaptif', page:'pedulicek' },
+          { icon:'ti-pill', tone:'green', title:'PeduliObat', copy:'Lihat jadwal obat', page:'peduliobat' },
+          { icon:'ti-phone-call', tone:'red', title:'Family Alert', copy:'Bantuan darurat keluarga', page:'familyalert' },
+          { icon:'ti-nurse', tone:'blue', title:'AhliPeduli', copy:'Cari perawat / klinik', page:'ahlipeduli' }
+        ],
+        anak: [
+          { icon:'ti-report-medical', tone:'blue', title:'PeduliRiwayat', copy:'Pantau tren kesehatan', page:'riwayat' },
+          { icon:'ti-motorbike', tone:'amber', title:'PeduliAntar', copy:'Pesan obat hampir habis', page:'peduliobat' },
+          { icon:'ti-brain', tone:'purple', title:'AI Insight', copy:'Lihat warning terbaru', page:'riwayat' },
+          { icon:'ti-phone-call', tone:'red', title:'Family Alert', copy:'Koordinasi darurat', page:'familyalert' }
+        ]
+      },
+      schedules: [
+        { time:'07:00', title:'Amlodipin 5mg + Metformin 500mg', copy:'Sesudah sarapan · 2 tablet', badge:'Sudah diminum', tone:'green' },
+        { time:'13:00', title:'Metformin 500mg', copy:'Sesudah makan siang · 1 tablet', badge:'Menunggu', tone:'amber' },
+        { time:'19:00', title:'Simvastatin 20mg + Metformin 500mg', copy:'Sesudah makan malam · 2 tablet', badge:'Berikutnya', tone:'amber' }
+      ],
+      medLogs: [
+        { title:'Amlodipin 5mg · Pagi', copy:'Diminum tepat waktu', time:'Hari ini 07:32', tone:'green' },
+        { title:'Metformin 500mg · Pagi', copy:'Diminum tepat waktu', time:'Hari ini 07:32', tone:'green' },
+        { title:'Metformin 500mg · Siang', copy:'Reminder aktif', time:'Hari ini 13:00', tone:'amber' },
+        { title:'Metformin 500mg · Siang', copy:'Terlewat', time:'2 hari lalu', tone:'red' }
+      ],
+      providers: {
+        homecare: [
+          { init:'MC', name:'MEDI-CALL Jakarta', desc:'Homecare dokter & perawat · 24 jam', meta:['Homecare','Hipertensi','Diabetes'], rating:'4.9 · 647 ulasan', location:'SCBD, Sudirman · ±3.2 km', featured:true },
+          { init:'KV', name:'Kavacare Homecare', desc:'Perawat & fisioterapis · medical travel', meta:['Homecare','Fisioterapi'], rating:'4.9 · 309 ulasan', location:'Kemayoran · ±5.8 km' },
+          { init:'SM', name:'Sehat Medika Homecare', desc:'Perawat lansia · pasca rawat inap', meta:['Lansia','24 jam'], rating:'4.8 · 163 ulasan', location:'Panglima Polim · ±4.1 km' }
+        ],
+        clinic: [
+          { init:'KF', name:'Klinik Pratama Fakhira Al-Barkah', desc:'Klinik umum + apotek · buka 24 jam', meta:['24 jam','BPJS'], rating:'4.7 · 2.442 ulasan', location:'Manggarai, Tebet · ±2.1 km' },
+          { init:'KU', name:'Klinik Utama Fakhira', desc:'Klinik utama + spesialis · buka 24 jam', meta:['Spesialis','24 jam'], rating:'4.5 · 1.162 ulasan', location:'Setiabudi · ±1.8 km' }
+        ]
+      },
+      contacts: [
+        { init:'RD', name:'Reza Dwi Putra', role:'Anak · Prioritas 1', badge:'Prioritas 1' },
+        { init:'SR', name:'Siti Rahayu', role:'Anak · Prioritas 2', badge:'Prioritas 2' },
+        { init:'AP', name:'AhliPeduli — Tim Darurat', role:'Auto-dispatch · respons <10 menit', badge:'Auto' }
+      ],
+      history: [
+        { title:'PeduliCek selesai', copy:'TD 138/88 · GD 124 · mood baik', time:'Hari ini 07:42', tone:'green' },
+        { title:'Simvastatin hampir habis', copy:'Sisa 5 tablet, disarankan pesan ulang', time:'Kemarin', tone:'amber' },
+        { title:'Metformin siang terlewat', copy:'Reminder terkirim ke Bapak dan Reza', time:'2 hari lalu', tone:'red' },
+        { title:'Kontrol bulanan', copy:'Klinik Utama Fakhira · tekanan darah stabil', time:'7 Mar 2026', tone:'green' }
+      ],
+      bpTrend: [128, 132, 134, 136, 138, 141, 139]
+    };
+
+    function qs(selector, root = document) { return root.querySelector(selector); }
+    function qsa(selector, root = document) { return [...root.querySelectorAll(selector)]; }
+
+    function navigate(page) {
+      state.page = page;
+      qsa('.page').forEach(el => el.classList.toggle('active', el.id === `page-${page}`));
+      qsa('[data-page]').forEach(el => el.classList.toggle('active', el.dataset.page === page));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      qsa('[data-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === mode));
+      const isLansia = mode === 'lansia';
+      qs('#dashboard-lansia').classList.toggle('hidden', !isLansia);
+      qs('#dashboard-anak').classList.toggle('hidden', isLansia);
+      qs('#hero-mode-label').textContent = isLansia ? 'Mode Lansia — PeduliDiri' : 'Mode Anak — PeduliPenuh';
+      qs('#hero-title').textContent = isLansia ? 'Bapak Purwanto' : 'Reza Dwi Putra';
+      qs('#hero-subtitle').textContent = isLansia
+        ? '68 tahun · Hipertensi · Diabetes Tipe 2 · Kolesterol. Dashboard harian untuk menjaga rutinitas kesehatan tetap tenang, jelas, dan mudah diikuti.'
+        : 'Memantau Bapak Purwanto dari jauh dengan notifikasi, tren kesehatan, stok obat, dan akses bantuan profesional.';
+      qs('#hero-stat-1').textContent = isLansia ? '98%' : '87%';
+      qs('#hero-stat-2').textContent = isLansia ? '07:30' : '5';
+      qs('#hero-stat-3').textContent = isLansia ? '6/7' : 'AI';
+    }
+
+    function renderNotifications(target, items) {
+      qs(target).innerHTML = items.map(item => `
+        <article class="notif-item">
+          <span class="notif-dot dot-${item.tone}"></span>
+          <div class="notif-body"><div class="notif-title">${item.title}</div><div class="notif-copy">${item.copy}</div></div>
+          <div class="notif-time">${item.time}</div>
+        </article>`).join('');
+    }
+
+    function renderMedProgress(target) {
+      qs(target).innerHTML = data.meds.map(med => `
+        <div class="progress-row">
+          <div class="progress-meta"><span>${med.name}</span><span>${med.status}</span></div>
+          <div class="progress-bar"><div class="progress-fill ${med.color === 'red' ? 'red' : med.color === 'green' ? 'green' : ''}" style="width:${med.progress}%"></div></div>
+        </div>`).join('');
+    }
+
+    function renderQuick(target, items) {
+      qs(target).innerHTML = items.map(item => `
+        <button class="quick-action" onclick="navigate('${item.page}')">
+          <div class="icon-box icon-${item.tone}"><i class="ti ${item.icon}"></i></div>
+          <div class="quick-title">${item.title}</div>
+          <div class="quick-copy">${item.copy}</div>
+        </button>`).join('');
+    }
+
+    function renderSchedule() {
+      qs('#schedule-list').innerHTML = data.schedules.map(item => `
+        <article class="schedule-item">
+          <div class="icon-box icon-${item.tone === 'green' ? 'green' : 'amber'}" style="width:52px;height:52px"><strong>${item.time}</strong></div>
+          <div class="schedule-body"><div class="schedule-title">${item.title}</div><div class="schedule-copy">${item.copy}</div></div>
+          <span class="badge ${item.tone}">${item.badge}</span>
+        </article>`).join('');
+    }
+
+    function renderMedicineList() {
+      qs('#medicine-list').innerHTML = data.meds.map(med => `
+        <article class="medicine-card ${med.low ? 'low-stock' : ''}">
+          <div class="medicine-top">
+            <div class="icon-box ${med.low ? 'icon-red' : med.category === 'Diabetes' ? 'icon-blue' : 'icon-brand'}"><i class="ti ti-pill"></i></div>
+            <div style="flex:1;min-width:0"><div class="schedule-title">${med.name}</div><div class="schedule-copy">${med.detail}</div><div class="ai-points"><span class="badge ${med.low ? 'red' : med.category === 'Diabetes' ? 'blue' : 'brand'}">${med.category}</span>${med.low ? '<span class="badge red">Hampir habis</span>' : ''}</div></div>
+          </div>
+          <div class="progress-row"><div class="progress-meta"><span>Stok tersisa</span><span>${med.stock}</span></div><div class="progress-bar"><div class="progress-fill ${med.low ? 'red' : 'green'}" style="width:${med.progress}%"></div></div></div>
+          <div class="medicine-actions"><button class="btn btn-outline btn-sm">Riwayat</button><button class="btn btn-outline btn-sm">Ubah jadwal</button><button class="btn ${med.low ? 'btn-danger' : 'btn-secondary'} btn-sm">${med.low ? 'Pesan sekarang' : 'Pesan via PeduliAntar'}</button></div>
+        </article>`).join('');
+    }
+
+    function renderHistoryList(target, items) {
+      qs(target).innerHTML = items.map(item => `
+        <article class="history-item">
+          <span class="notif-dot dot-${item.tone}"></span>
+          <div class="history-body"><div class="history-title">${item.title}</div><div class="history-copy">${item.copy}</div></div>
+          <div class="history-time">${item.time}</div>
+        </article>`).join('');
+    }
+
+    function renderProviders(target, items) {
+      qs(target).innerHTML = items.map(item => `
+        <article class="provider-card ${item.featured ? 'featured' : ''}">
+          <div class="avatar">${item.init}</div>
+          <div style="flex:1;min-width:0">
+            ${item.featured ? '<span class="badge brand" style="margin-bottom:8px"><i class="ti ti-star"></i> Paling direkomendasikan</span>' : ''}
+            <div class="history-title">${item.name}</div>
+            <div class="history-copy">${item.desc}</div>
+            <div class="provider-meta">${item.meta.map(m => `<span class="badge gray">${m}</span>`).join('')}</div>
+            <div class="history-copy" style="margin-top:9px"><i class="ti ti-map-pin"></i> ${item.location}</div>
+            <div class="provider-actions"><button class="btn btn-outline btn-sm">Lihat profil</button><button class="btn btn-primary btn-sm">Pesan layanan</button></div>
+          </div>
+          <div style="text-align:right;white-space:nowrap"><div class="rating">★★★★★</div><div class="history-copy">${item.rating}</div></div>
+        </article>`).join('');
+    }
+
+    function renderContacts() {
+      qs('#contact-list').innerHTML = data.contacts.map(c => `
+        <article class="contact-item"><div class="avatar">${c.init}</div><div class="contact-info"><div class="contact-name">${c.name}</div><div class="contact-role">${c.role}</div></div><span class="badge brand">${c.badge}</span></article>`).join('');
+    }
+
+    function renderFaActive() {
+      qs('#fa-notify-list').innerHTML = data.contacts.map((c, index) => `
+        <article class="contact-item notified"><div class="avatar">${c.init}</div><div class="contact-info"><div class="contact-name">${c.name}</div><div class="contact-role">${index < 2 ? 'Notifikasi terkirim' : 'Mencari mitra terdekat'}</div></div><span class="badge ${index < 2 ? 'green' : 'amber'}">${index < 2 ? 'Terkirim' : 'Menghubungi'}</span></article>`).join('');
+      const now = new Date();
+      const time = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+      const timeline = [
+        ['Family Alert ditekan', time, 'green'],
+        ['Notifikasi dikirim ke Reza & Siti', time, 'green'],
+        ['Data medis dikirim ke AhliPeduli', time, 'green'],
+        ['Mencari mitra terdekat dari lokasi Bapak', 'proses', 'amber']
+      ];
+      qs('#fa-timeline').innerHTML = timeline.map(t => `<article class="history-item"><span class="notif-dot dot-${t[2]}"></span><div class="history-body"><div class="history-title">${t[0]}</div></div><div class="history-time">${t[1]}</div></article>`).join('');
+    }
+
+    function renderChart() {
+      const values = data.bpTrend;
+      const min = 118;
+      const max = 148;
+      qs('#bp-chart').innerHTML = values.map((v, i) => {
+        const height = Math.max(24, Math.round(((v - min) / (max - min)) * 145));
+        return `<div class="bar ${v >= 140 ? 'warn' : ''}" style="height:${height}px" data-label="H${i + 1}" title="${v} mmHg"></div>`;
+      }).join('');
+    }
+
+    function updateCekProgress() {
+      const keys = ['mood','bp','glucose','meds','symptomsBp','symptomsDm','lifestyle'];
+      const filled = keys.filter(key => state.cek[key]).length;
+      const pct = Math.round((filled / keys.length) * 100);
+      qs('#cek-progress-label').textContent = `${filled} dari ${keys.length} bagian terisi`;
+      qs('#cek-progress-percent').textContent = `${pct}%`;
+      qs('#cek-progress-bar').style.width = `${pct}%`;
+      qs('#cek-submit').disabled = filled < 5;
+    }
+
+    function setChoice(group, value, level, button) {
+      qsa(`[data-choice-group="${group}"] .choice-chip`).forEach(btn => btn.className = 'choice-chip');
+      button.classList.add(`selected-${level}`);
+      state.cek[group] = { value, level };
+      if (group === 'glucoseMoment') state.cek.glucose = state.cek.glucose || { value: qs('#glucose-value').value || 'Belum diisi', level: level };
+      if (group === 'activity') state.cek.lifestyle = { value, level };
+      updateCekProgress();
+    }
+
+    function setMulti(group, value, level, button) {
+      const noneValue = value.toLowerCase().includes('tidak ada');
+      if (noneValue) {
+        qsa(`[data-multi-group="${group}"] .choice-chip`).forEach(btn => btn.className = 'choice-chip');
+        button.classList.add('selected-ok');
+        state.cek[group] = { value, level:'ok' };
+      } else {
+        qsa(`[data-multi-group="${group}"] .choice-chip`).filter(btn => btn.textContent.toLowerCase().includes('tidak ada')).forEach(btn => btn.className = 'choice-chip');
+        const isSelected = button.classList.contains(`selected-${level}`);
+        button.className = 'choice-chip';
+        if (!isSelected) button.classList.add(`selected-${level}`);
+        const selected = qsa(`[data-multi-group="${group}"] .choice-chip`).filter(btn => btn.className.includes('selected'));
+        if (selected.length) {
+          const worst = selected.some(btn => btn.dataset.level === 'danger') ? 'danger' : 'warn';
+          state.cek[group] = { value: selected.map(btn => btn.dataset.value).join(', '), level: worst };
+        } else {
+          delete state.cek[group];
+        }
+      }
+      updateCekProgress();
+    }
+
+    function evaluateBp() {
+      const s = Number(qs('#bp-s').value);
+      const d = Number(qs('#bp-d').value);
+      const el = qs('#bp-status');
+      el.textContent = '';
+      el.className = 'status-pill';
+      if (!s || !d) { delete state.cek.bp; updateCekProgress(); return; }
+      let level = 'ok', label = 'Normal';
+      if (s >= 160 || d >= 100) { level = 'danger'; label = 'Tinggi'; }
+      else if (s >= 140 || d >= 90) { level = 'warn'; label = 'Di atas normal'; }
+      el.textContent = label;
+      el.classList.add(`status-${level}`);
+      state.cek.bp = { value: `${s}/${d} mmHg`, level };
+      updateCekProgress();
+    }
+
+    function evaluateGlucose() {
+      const v = Number(qs('#glucose-value').value);
+      const el = qs('#glucose-status');
+      el.textContent = '';
+      el.className = 'status-pill';
+      if (!v) { delete state.cek.glucose; updateCekProgress(); return; }
+      let level = 'ok', label = 'Normal';
+      if (v < 70 || v > 300) { level = 'danger'; label = v < 70 ? 'Rendah' : 'Sangat tinggi'; }
+      else if (v > 180) { level = 'warn'; label = 'Tinggi'; }
+      el.textContent = label;
+      el.classList.add(`status-${level}`);
+      state.cek.glucose = { value: `${v} mg/dL`, level };
+      updateCekProgress();
+    }
+
+    function submitCek() {
+      const hasRisk = Object.values(state.cek).some(answer => ['warn','danger'].includes(answer.level));
+      qs('#result-bp').textContent = state.cek.bp?.value || '—';
+      qs('#result-glucose').textContent = state.cek.glucose?.value || '—';
+      qs('#result-meds').textContent = state.cek.meds?.value || '—';
+      qs('#result-mood').textContent = state.cek.mood?.value || '—';
+      qs('#result-ai').textContent = hasRisk
+        ? 'Analisis AI: ada beberapa nilai yang perlu dipantau. Reza menerima ringkasan dan saran tindak lanjut untuk memastikan kondisi tetap aman.'
+        : 'Analisis AI: data hari ini terlihat stabil. Pertahankan pola makan, minum obat sesuai jadwal, dan aktivitas ringan.';
+      qs('#cek-result-title').textContent = hasRisk ? 'Laporan terkirim dengan catatan pemantauan' : 'Laporan terkirim — kondisi stabil';
+      qs('#cek-form').classList.add('hidden');
+      qs('#cek-result').classList.remove('hidden');
+      qs('#cek-progress-label').textContent = 'PeduliCek selesai';
+      qs('#cek-progress-percent').textContent = '100%';
+      qs('#cek-progress-bar').style.width = '100%';
+    }
+
+    function resetCek() {
+      state.cek = {};
+      qsa('.choice-chip').forEach(btn => btn.className = 'choice-chip');
+      qsa('.scale-btn').forEach(btn => btn.classList.remove('active'));
+      ['#bp-s','#bp-d','#glucose-value','#cek-note'].forEach(sel => qs(sel).value = '');
+      ['#bp-status','#glucose-status'].forEach(sel => { qs(sel).textContent = ''; qs(sel).className = 'status-pill'; });
+      qs('#cek-form').classList.remove('hidden');
+      qs('#cek-result').classList.add('hidden');
+      updateCekProgress();
+    }
+
+    function triggerAlert() {
+      qs('#fa-standby').classList.add('hidden');
+      qs('#fa-done').classList.add('hidden');
+      qs('#fa-active').classList.remove('hidden');
+      qs('#fa-status-label').textContent = 'Alert aktif';
+      state.alertStartedAt = Date.now();
+      renderFaActive();
+      clearInterval(state.alertTimer);
+      state.alertTimer = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - state.alertStartedAt) / 1000);
+        const mm = String(Math.floor(elapsed / 60)).padStart(2, '0');
+        const ss = String(elapsed % 60).padStart(2, '0');
+        qs('#fa-timer').textContent = `${mm}:${ss}`;
+      }, 250);
+    }
+
+    function cancelAlert() {
+      clearInterval(state.alertTimer);
+      qs('#fa-active').classList.add('hidden');
+      qs('#fa-done').classList.remove('hidden');
+      qs('#fa-status-label').textContent = 'Aman';
+    }
+
+    function resetAlert() {
+      qs('#fa-active').classList.add('hidden');
+      qs('#fa-done').classList.add('hidden');
+      qs('#fa-standby').classList.remove('hidden');
+      qs('#fa-status-label').textContent = 'Standby';
+      qs('#fa-timer').textContent = '00:00';
+    }
+
+    function updateRealtime() {
+      const times = ['07:42', '07:44', '07:46', '07:48'];
+      state.realtimeIndex = (state.realtimeIndex + 1) % times.length;
+      qs('#hero-sync').textContent = `Sinkron ${times[state.realtimeIndex]}`;
+    }
+
+    function initInteractions() {
+      qsa('[data-page]').forEach(btn => btn.addEventListener('click', () => navigate(btn.dataset.page)));
+      qsa('[data-mode]').forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.mode)));
+      qsa('[data-choice-group] .choice-chip').forEach(btn => btn.addEventListener('click', () => setChoice(btn.parentElement.dataset.choiceGroup, btn.dataset.value, btn.dataset.level, btn)));
+      qsa('[data-multi-group] .choice-chip').forEach(btn => btn.addEventListener('click', () => setMulti(btn.parentElement.dataset.multiGroup, btn.dataset.value, btn.dataset.level, btn)));
+      qsa('[data-scale="sleep"] .scale-btn').forEach(btn => btn.addEventListener('click', () => {
+        qsa('[data-scale="sleep"] .scale-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.cek.sleep = { value: btn.dataset.value, level: Number(btn.dataset.value) <= 2 ? 'warn' : 'ok' };
+        state.cek.lifestyle = state.cek.lifestyle || { value: `Tidur ${btn.dataset.value}/5`, level: state.cek.sleep.level };
+        updateCekProgress();
+      }));
+      qs('#bp-s').addEventListener('input', evaluateBp);
+      qs('#bp-d').addEventListener('input', evaluateBp);
+      qs('#glucose-value').addEventListener('input', evaluateGlucose);
+      qs('#cek-submit').addEventListener('click', submitCek);
+      qs('#trigger-alert').addEventListener('click', triggerAlert);
+      qs('#cancel-alert').addEventListener('click', cancelAlert);
+      qs('#reset-alert').addEventListener('click', resetAlert);
+      setInterval(updateRealtime, 4500);
+    }
+
+    function init() {
+      renderNotifications('#notif-lansia', data.notifications.lansia);
+      renderNotifications('#notif-anak', data.notifications.anak);
+      renderMedProgress('#med-progress-lansia');
+      renderMedProgress('#med-progress-anak');
+      renderQuick('#quick-lansia', data.quick.lansia);
+      renderQuick('#quick-anak', data.quick.anak);
+      renderSchedule();
+      renderMedicineList();
+      renderHistoryList('#med-log-list', data.medLogs);
+      renderProviders('#provider-homecare', data.providers.homecare);
+      renderProviders('#provider-clinic', data.providers.clinic);
+      renderContacts();
+      renderHistoryList('#history-list', data.history);
+      renderChart();
+      initInteractions();
+      updateCekProgress();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

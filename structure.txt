@@ -1,0 +1,92 @@
+lib/
+│
+├── main.dart
+├── app.dart
+│
+├── core/
+│   ├── config/
+│   ├── constants/
+│   ├── theme/
+│   ├── utils/
+│   ├── extensions/
+│   ├── services/
+│   ├── network/
+│   ├── storage/
+│   ├── errors/
+│   ├── animations/
+│   ├── accessibility/
+│   └── routing/
+│
+├── shared/
+│   ├── widgets/
+│   ├── components/
+│   ├── layouts/
+│   ├── cards/
+│   ├── buttons/
+│   ├── modals/
+│   ├── forms/
+│   ├── charts/
+│   ├── loaders/
+│   ├── empty_states/
+│   └── notifications/
+│
+├── models/
+│   ├── user/
+│   ├── health/
+│   ├── medication/
+│   ├── emergency/
+│   ├── notification/
+│   ├── pharmacy/
+│   ├── doctor/
+│   └── ai/
+│
+├── features/
+│   │
+│   ├── onboarding/
+│   │
+│   ├── authentication/
+│   │
+│   ├── home/
+│   │
+│   ├── pedulicek/
+│   │
+│   ├── peduliobat/
+│   │
+│   ├── peduliriwayat/
+│   │
+│   ├── family_alert/
+│   │
+│   ├── ahli_peduli/
+│   │
+│   ├── peduli_antar/
+│   │
+│   ├── ai_insight/
+│   │
+│   ├── notifications/
+│   │
+│   ├── profile/
+│   │
+│   ├── settings/
+│   │
+│   └── family_management/
+│
+├── state/
+│   ├── providers/
+│   ├── notifiers/
+│   ├── controllers/
+│   └── global/
+│
+├── mock/
+│   ├── dummy_data/
+│   ├── fake_api/
+│   └── json/
+│
+├── assets/
+│   ├── icons/
+│   ├── images/
+│   ├── illustrations/
+│   ├── animations/
+│   ├── fonts/
+│   └── sounds/
+│
+└── l10n/
