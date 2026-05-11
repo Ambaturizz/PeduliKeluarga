@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,7 +13,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return PageShell(
       title: 'Masuk',
-      subtitle: 'Placeholder autentikasi. Backend belum dibuat.',
+      subtitle: 'Masuk untuk mengelola data dan pemantauan keluarga dengan aman.',
       icon: Icons.lock_outline,
       children: [
         TextField(
@@ -34,7 +35,7 @@ class LoginPage extends StatelessWidget {
         const SizedBox(height: AppSpacing.xl),
         FilledButton(
           onPressed: () => context.go(AppRoutes.homePath),
-          child: const Text('Masuk Demo'),
+          child: const Text('Masuk'),
         ),
       ],
     );

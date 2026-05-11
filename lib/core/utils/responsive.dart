@@ -30,12 +30,37 @@ extension ResponsiveContext on BuildContext {
   bool get isExpanded =>
       breakpoint == AppBreakpoint.expanded || breakpoint == AppBreakpoint.large;
 
+  bool get isLarge => breakpoint == AppBreakpoint.large;
+
   double get horizontalPagePadding {
     return switch (breakpoint) {
       AppBreakpoint.compact => 16,
       AppBreakpoint.medium => 24,
       AppBreakpoint.expanded => 32,
       AppBreakpoint.large => 40,
+    };
+  }
+
+  double get contentMaxWidth {
+    return switch (breakpoint) {
+      AppBreakpoint.compact => AppConstants.maxContentWidth,
+      AppBreakpoint.medium => 920,
+      AppBreakpoint.expanded => 1180,
+      AppBreakpoint.large => 1240,
+    };
+  }
+
+  int responsiveColumns({
+    int compact = 1,
+    int medium = 2,
+    int expanded = 3,
+    int large = 4,
+  }) {
+    return switch (breakpoint) {
+      AppBreakpoint.compact => compact,
+      AppBreakpoint.medium => medium,
+      AppBreakpoint.expanded => expanded,
+      AppBreakpoint.large => large,
     };
   }
 }

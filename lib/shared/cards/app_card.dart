@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/animations/app_motion.dart';
 import '../../core/theme/app_spacing.dart';
 
 class AppCard extends StatelessWidget {
@@ -7,28 +8,41 @@ class AppCard extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.all(AppSpacing.xl),
     this.onTap,
+    this.semanticLabel,
+    this.clipBehavior = Clip.antiAlias,
     super.key,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final VoidCallback? onTap;
+  final String? semanticLabel;
+  final Clip clipBehavior;
 
   @override
   Widget build(BuildContext context) {
-    final card = Card(
+    final content = Card(
+      clipBehavior: clipBehavior,
       child: Padding(
         padding: padding,
         child: child,
       ),
     );
 
-    if (onTap == null) return card;
+    final wrapped = RepaintBoundary(
+      child: Semantics(
+        button: onTap != null,
+        label: semanticLabel,
+        child: content,
+      ),
+    );
 
-    return InkWell(
+    if (onTap == null) return wrapped;
+
+    return AppPressable(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: card,
+      semanticLabel: semanticLabel,
+      child: wrapped,
     );
   }
 }

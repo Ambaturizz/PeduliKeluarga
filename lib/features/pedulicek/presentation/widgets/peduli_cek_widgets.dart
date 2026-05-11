@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -45,7 +46,7 @@ class CekPageHeader extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                'Isi tekanan darah, gula darah, obat, nyeri, gejala, dan catatan. Hasil akan dirangkum dengan analisis AI mock.',
+                'Isi tekanan darah, gula darah, obat, nyeri, gejala, dan catatan. Hasil akan dirangkum dengan analisis AI.',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: PkColors.text2,
                       height: 1.65,

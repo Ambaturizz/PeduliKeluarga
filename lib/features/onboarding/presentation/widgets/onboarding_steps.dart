@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -449,7 +450,7 @@ class ConnectFamilyOnboardingScreen extends ConsumerWidget {
         OnboardingInfoCard(
           title: 'Scan QR',
           subtitle:
-              'Mock action untuk prototype. Integrasi kamera bisa ditambah nanti.',
+              'Fitur kamera akan diaktifkan saat integrasi perangkat siap.',
           icon: Icons.qr_code_scanner_rounded,
           color: AppColors.teal,
           trailing: const Icon(
@@ -459,7 +460,7 @@ class ConnectFamilyOnboardingScreen extends ConsumerWidget {
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Scanner QR masih mock untuk prototype.'),
+                content: Text('Scanner QR akan diaktifkan saat integrasi perangkat siap.'),
               ),
             );
           },

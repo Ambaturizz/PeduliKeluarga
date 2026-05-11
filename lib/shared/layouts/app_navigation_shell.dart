@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/animations/app_motion.dart';
 import '../../core/routing/app_navigation_destination.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/utils/responsive.dart';
 import '../../state/providers/app_mode_provider.dart';
@@ -25,17 +25,24 @@ class AppNavigationShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mode = ref.watch(appModeControllerProvider);
     final destinations = AppNavigationDestinations.forMode(mode);
+    final theme = Theme.of(context);
 
     final body = AnimatedSwitcher(
-      duration: const Duration(milliseconds: 180),
-      switchInCurve: Curves.easeOut,
-      switchOutCurve: Curves.easeIn,
-      child: navigationShell,
+      duration: AppMotion.fast,
+      switchInCurve: AppMotion.standard,
+      switchOutCurve: AppMotion.exit,
+      transitionBuilder: (child, animation) {
+        return AppFadeSlideTransition(animation: animation, child: child);
+      },
+      child: KeyedSubtree(
+        key: ValueKey<int>(navigationShell.currentIndex),
+        child: RepaintBoundary(child: navigationShell),
+      ),
     );
 
     if (context.isExpanded) {
       return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
         body: Row(
           children: [
             AppNavigationRail(
@@ -57,15 +64,13 @@ class AppNavigationShell extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: const AppTopBar(),
       body: body,
       bottomNavigationBar: DecoratedBox(
-        decoration: const BoxDecoration(
-          color: AppColors.grayCard,
-          border: Border(
-            top: BorderSide(color: AppColors.grayBorder),
-          ),
+        decoration: BoxDecoration(
+          color: theme.navigationBarTheme.backgroundColor ?? theme.colorScheme.surface,
+          border: Border(top: BorderSide(color: theme.dividerColor)),
         ),
         child: SafeArea(
           top: false,

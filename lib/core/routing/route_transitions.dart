@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../animations/app_motion.dart';
 import '../constants/app_constants.dart';
 
 final class RouteTransitions {
@@ -14,15 +15,14 @@ final class RouteTransitions {
       key: key,
       transitionDuration: AppConstants.shortAnimationDuration,
       reverseTransitionDuration: AppConstants.shortAnimationDuration,
-      child: child,
+      child: RepaintBoundary(child: child),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOut,
-          ),
-          child: child,
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: AppMotion.standard,
+          reverseCurve: AppMotion.exit,
         );
+        return FadeTransition(opacity: curved, child: child);
       },
     );
   }
@@ -35,22 +35,12 @@ final class RouteTransitions {
       key: key,
       transitionDuration: AppConstants.mediumAnimationDuration,
       reverseTransitionDuration: AppConstants.shortAnimationDuration,
-      child: child,
+      child: RepaintBoundary(child: child),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final curvedAnimation = CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeOutCubic,
-        );
-
-        return FadeTransition(
-          opacity: curvedAnimation,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0.03, 0),
-              end: Offset.zero,
-            ).animate(curvedAnimation),
-            child: child,
-          ),
+        return AppFadeSlideTransition(
+          animation: animation,
+          beginOffset: const Offset(0.035, 0),
+          child: child,
         );
       },
     );

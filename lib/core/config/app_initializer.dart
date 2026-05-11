@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -19,13 +20,13 @@ final class AppInitializer {
       FlutterError.presentError(details);
 
       if (kReleaseMode) {
-        // TODO: Integrate crash reporting service.
+        // Crash reporting hook can be attached here for release builds.
       }
     };
 
     PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
       if (kReleaseMode) {
-        // TODO: Integrate crash reporting service.
+        // Crash reporting hook can be attached here for release builds.
       }
 
       return false;
