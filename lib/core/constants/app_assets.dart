@@ -3,6 +3,7 @@ final class AppAssets {
 
   static const String iconsPath = 'lib/assets/icons';
   static const String imagesPath = 'lib/assets/images';
+  static const String logoPeduliKeluarga = '$imagesPath/LOGO PeduliKeluarga.png';
   static const String illustrationsPath = 'lib/assets/illustrations';
   static const String animationsPath = 'lib/assets/animations';
   static const String soundsPath = 'lib/assets/sounds';

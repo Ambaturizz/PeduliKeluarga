@@ -176,6 +176,14 @@ class _FormView extends StatelessWidget {
           progressPercent: state.progressPercent,
         ),
         const SizedBox(height: 16),
+        CekPointSummaryCard(
+          totalPoints: state.totalPoints,
+          streak: state.currentStreak,
+          reward: state.nextRewardEstimate,
+          canSubmit: state.canSubmit,
+          submitted: false,
+        ),
+        const SizedBox(height: 16),
         _PeduliCekGuidanceCard(profile: profile),
         const PkSectionTitle(
           title: 'Form kesehatan',
@@ -536,6 +544,14 @@ class _ResultView extends StatelessWidget {
               ),
             ],
           ),
+        ),
+        const SizedBox(height: 16),
+        CekPointSummaryCard(
+          totalPoints: state.totalPoints,
+          streak: state.currentStreak,
+          reward: state.lastRewardPoints,
+          canSubmit: true,
+          submitted: true,
         ),
         const PkSectionTitle(
           title: 'Ringkasan hasil',

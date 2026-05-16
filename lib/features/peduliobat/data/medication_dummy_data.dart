@@ -138,6 +138,48 @@ class MedicationReminderModel {
   final IconData icon;
 }
 
+class MedicationPrescriptionPreset {
+  const MedicationPrescriptionPreset({
+    required this.medicationId,
+    required this.disease,
+    required this.times,
+    required this.durationDays,
+    required this.tabletsPerDose,
+    required this.instruction,
+  });
+
+  final String medicationId;
+  final String disease;
+  final List<String> times;
+  final int durationDays;
+  final int tabletsPerDose;
+  final String instruction;
+}
+
+class GeneratedMedicationEntry {
+  const GeneratedMedicationEntry({
+    required this.id,
+    required this.date,
+    required this.time,
+    required this.medicationId,
+    required this.medicationName,
+    required this.dose,
+    required this.disease,
+    required this.instruction,
+    required this.tabletsPerDose,
+  });
+
+  final String id;
+  final DateTime date;
+  final String time;
+  final String medicationId;
+  final String medicationName;
+  final String dose;
+  final String disease;
+  final String instruction;
+  final int tabletsPerDose;
+}
+
 final class MedicationDummyData {
   const MedicationDummyData._();
 
@@ -179,6 +221,78 @@ final class MedicationDummyData {
       instructions: 'Minum 1 tablet pada malam hari.',
     ),
   ];
+
+  static const List<MedicationPrescriptionPreset> diseasePrescriptionDataset = [
+    MedicationPrescriptionPreset(
+      medicationId: 'amlodipin',
+      disease: 'Hipertensi',
+      times: ['07:00'],
+      durationDays: 30,
+      tabletsPerDose: 1,
+      instruction: 'Sesudah sarapan sesuai resep dokter.',
+    ),
+    MedicationPrescriptionPreset(
+      medicationId: 'metformin',
+      disease: 'Diabetes',
+      times: ['07:00', '13:00', '19:00'],
+      durationDays: 30,
+      tabletsPerDose: 1,
+      instruction: 'Sesudah makan pagi, siang, dan malam.',
+    ),
+    MedicationPrescriptionPreset(
+      medicationId: 'simvastatin',
+      disease: 'Kolesterol',
+      times: ['19:00'],
+      durationDays: 30,
+      tabletsPerDose: 1,
+      instruction: 'Malam hari sesudah makan.',
+    ),
+  ];
+
+  static List<GeneratedMedicationEntry> generateMonthlySchedule({
+    required DateTime startDate,
+    int days = 30,
+  }) {
+    final normalizedStart = DateTime(startDate.year, startDate.month, startDate.day);
+    final entries = <GeneratedMedicationEntry>[];
+
+    for (var dayIndex = 0; dayIndex < days; dayIndex++) {
+      final date = normalizedStart.add(Duration(days: dayIndex));
+
+      for (final preset in diseasePrescriptionDataset) {
+        final medication = medications.firstWhere(
+          (item) => item.id == preset.medicationId,
+        );
+
+        for (final time in preset.times) {
+          final dateKey =
+              '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}';
+
+          entries.add(
+            GeneratedMedicationEntry(
+              id: "generated-$dateKey-${time.replaceAll(':', '')}-${medication.id}",
+              date: date,
+              time: time,
+              medicationId: medication.id,
+              medicationName: medication.name,
+              dose: medication.dose,
+              disease: preset.disease,
+              instruction: preset.instruction,
+              tabletsPerDose: preset.tabletsPerDose,
+            ),
+          );
+        }
+      }
+    }
+
+    entries.sort((a, b) {
+      final dateCompare = a.date.compareTo(b.date);
+      if (dateCompare != 0) return dateCompare;
+      return a.time.compareTo(b.time);
+    });
+
+    return entries;
+  }
 
   static const List<MedicationScheduleModel> schedules = [
     MedicationScheduleModel(

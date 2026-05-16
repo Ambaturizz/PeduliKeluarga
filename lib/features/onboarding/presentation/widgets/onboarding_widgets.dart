@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_logo.dart';
 
 class OnboardingStepLayout extends StatelessWidget {
   const OnboardingStepLayout({
@@ -151,6 +152,22 @@ class OnboardingHeroIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final child = icon == Icons.volunteer_activism_rounded
+        ? const AppLogo(size: 112, withBackground: true)
+        : Container(
+            width: 112,
+            height: 112,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: color.withValues(alpha: 0.25),
+                width: 1.4,
+              ),
+            ),
+            child: Icon(icon, size: 58, color: color),
+          );
+
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 700),
       curve: Curves.easeOutBack,
@@ -161,19 +178,7 @@ class OnboardingHeroIcon extends StatelessWidget {
           child: child,
         );
       },
-      child: Container(
-        width: 112,
-        height: 112,
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: color.withValues(alpha: 0.25),
-            width: 1.4,
-          ),
-        ),
-        child: Icon(icon, size: 58, color: color),
-      ),
+      child: child,
     );
   }
 }
@@ -199,50 +204,7 @@ class OnboardingGlassLogo extends StatelessWidget {
           ),
         );
       },
-      child: Container(
-        width: 128,
-        height: 128,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.teal,
-              AppColors.tealMid,
-            ],
-          ),
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.teal.withValues(alpha: 0.28),
-              blurRadius: 36,
-              offset: const Offset(0, 18),
-            ),
-          ],
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Positioned(
-              top: 18,
-              right: 18,
-              child: Container(
-                width: 26,
-                height: 26,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.18),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            const Icon(
-              Icons.volunteer_activism_rounded,
-              color: Colors.white,
-              size: 70,
-            ),
-          ],
-        ),
-      ),
+      child: const AppLogo(size: 128, withBackground: true),
     );
   }
 }

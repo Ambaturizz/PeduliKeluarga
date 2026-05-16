@@ -347,8 +347,8 @@ class PremiumFamilyContactCard extends StatelessWidget {
     final compact = MediaQuery.sizeOf(context).width < 560;
     final title = data.isElder ? 'Hubungi keluarga' : 'Kontak PeduliDiri';
     final subtitle = data.isElder
-        ? 'Gunakan Chat atau Telepon untuk meminta bantuan keluarga.'
-        : 'Chat atau hubungi lansia dengan aksi mock yang aman.';
+        ? 'PeduliChat keluarga untuk kontak anak/pendamping, berbeda dari PeduliKonsul.'
+        : 'PeduliChat untuk kontak lansia, bukan kanal konsultasi tenaga kesehatan.';
     final icon = data.isElder ? Icons.family_restroom_rounded : Icons.elderly_rounded;
 
     return PkCard(
@@ -466,7 +466,7 @@ class _FamilyContactActions extends StatelessWidget {
     final chatButton = FilledButton.icon(
       onPressed: onChat,
       icon: const Icon(Icons.chat_bubble_outline_rounded),
-      label: const Text('Chat'),
+      label: const Text('PeduliChat'),
     );
 
     final phoneButton = OutlinedButton.icon(
@@ -489,7 +489,7 @@ class _FamilyContactActions extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(width: 126, child: chatButton),
+        SizedBox(width: 146, child: chatButton),
         const SizedBox(width: PkSpacing.sm),
         SizedBox(width: 138, child: phoneButton),
       ],

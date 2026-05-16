@@ -14,6 +14,8 @@ final class AppRoutes {
   static String get peduliRiwayat => AppRoute.peduliRiwayat.name;
   static String get peduliAntar => AppRoute.peduliAntar.name;
   static String get peduliKonsul => AppRoute.peduliKonsul.name;
+  static String get familyChat => AppRoute.familyChat.name;
+  static String get peduliPantau => AppRoute.peduliPantau.name;
   static String get notifications => AppRoute.notifications.name;
   static String get profile => AppRoute.profile.name;
   static String get settings => AppRoute.settings.name;
@@ -29,6 +31,8 @@ final class AppRoutes {
   static String get peduliRiwayatPath => AppRoute.peduliRiwayat.path;
   static String get peduliAntarPath => AppRoute.peduliAntar.path;
   static String get peduliKonsulPath => AppRoute.peduliKonsul.path;
+  static String get familyChatPath => AppRoute.familyChat.path;
+  static String get peduliPantauPath => AppRoute.peduliPantau.path;
   static String get notificationsPath => AppRoute.notifications.path;
   static String get profilePath => AppRoute.profile.path;
   static String get settingsPath => AppRoute.settings.path;

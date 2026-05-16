@@ -10,6 +10,8 @@ class PeduliObatState {
     required this.logs,
     required this.reminders,
     required this.takenScheduleIds,
+    this.generatedMonthlyEntries = const <GeneratedMedicationEntry>[],
+    this.generatedAt,
     this.reminderEnabled = true,
   });
 
@@ -18,11 +20,43 @@ class PeduliObatState {
   final List<MedicationLogModel> logs;
   final List<MedicationReminderModel> reminders;
   final Set<String> takenScheduleIds;
+  final List<GeneratedMedicationEntry> generatedMonthlyEntries;
+  final DateTime? generatedAt;
   final bool reminderEnabled;
 
-  int get totalSchedules => schedules.length;
+  bool get hasGeneratedSchedule => generatedMonthlyEntries.isNotEmpty;
 
-  int get completedSchedules => takenScheduleIds.length;
+  int get generatedDayCount {
+    return generatedMonthlyEntries
+        .map((item) => _dateKey(item.date))
+        .toSet()
+        .length;
+  }
+
+  List<GeneratedMedicationEntry> get generatedTodayEntries {
+    final now = DateTime.now();
+
+    return generatedMonthlyEntries
+        .where((item) => _isSameDate(item.date, now))
+        .toList();
+  }
+
+  List<MedicationScheduleModel> get effectiveSchedules {
+    if (!hasGeneratedSchedule) return schedules;
+
+    final todayEntries = generatedTodayEntries;
+    if (todayEntries.isEmpty) return schedules;
+
+    return _groupGeneratedEntries(todayEntries, takenScheduleIds);
+  }
+
+  int get totalSchedules => effectiveSchedules.length;
+
+  int get completedSchedules {
+    final todayIds = effectiveSchedules.map((item) => item.id).toSet();
+
+    return takenScheduleIds.where(todayIds.contains).length;
+  }
 
   int get pendingSchedules => totalSchedules - completedSchedules;
 
@@ -40,7 +74,7 @@ class PeduliObatState {
   int get lowStockCount => lowStockMedications.length;
 
   MedicationScheduleModel? get nextSchedule {
-    for (final item in schedules) {
+    for (final item in effectiveSchedules) {
       if (!takenScheduleIds.contains(item.id)) return item;
     }
 
@@ -67,12 +101,63 @@ class PeduliObatState {
     return PkTone.red;
   }
 
+  String get calendarExportText {
+    final entries = generatedMonthlyEntries.isNotEmpty
+        ? generatedMonthlyEntries
+        : MedicationDummyData.generateMonthlySchedule(
+            startDate: DateTime.now(),
+          );
+
+    final grouped = <String, List<GeneratedMedicationEntry>>{};
+
+    for (final entry in entries) {
+      final key = '${_dateKey(entry.date)}-${entry.time}';
+      grouped.putIfAbsent(key, () => <GeneratedMedicationEntry>[]).add(entry);
+    }
+
+    final keys = grouped.keys.toList()..sort();
+    final buffer = StringBuffer()
+      ..writeln('BEGIN:VCALENDAR')
+      ..writeln('VERSION:2.0')
+      ..writeln('PRODID:-//PeduliKeluarga//PeduliObat//ID')
+      ..writeln('CALSCALE:GREGORIAN')
+      ..writeln('METHOD:PUBLISH');
+
+    for (final key in keys) {
+      final items = grouped[key]!;
+      items.sort((a, b) => a.medicationName.compareTo(b.medicationName));
+
+      final first = items.first;
+      final start = _entryDateTime(first);
+      final end = start.add(const Duration(minutes: 15));
+      final title = items.map((item) => '${item.medicationName} ${item.dose}').join(' + ');
+      final description = items
+          .map((item) => '${item.medicationName} ${item.dose}: ${item.instruction}')
+          .join('\\n');
+
+      buffer
+        ..writeln('BEGIN:VEVENT')
+        ..writeln("UID:${key.replaceAll(':', '')}@pedulikeluarga.local")
+        ..writeln('DTSTAMP:${_icsDateTime(DateTime.now())}')
+        ..writeln('DTSTART:${_icsDateTime(start)}')
+        ..writeln('DTEND:${_icsDateTime(end)}')
+        ..writeln('SUMMARY:${_icsEscape('PeduliObat - $title')}')
+        ..writeln('DESCRIPTION:${_icsEscape(description)}')
+        ..writeln('END:VEVENT');
+    }
+
+    buffer.writeln('END:VCALENDAR');
+    return buffer.toString();
+  }
+
   PeduliObatState copyWith({
     List<MedicationModel>? medications,
     List<MedicationScheduleModel>? schedules,
     List<MedicationLogModel>? logs,
     List<MedicationReminderModel>? reminders,
     Set<String>? takenScheduleIds,
+    List<GeneratedMedicationEntry>? generatedMonthlyEntries,
+    DateTime? generatedAt,
     bool? reminderEnabled,
   }) {
     return PeduliObatState(
@@ -81,6 +166,9 @@ class PeduliObatState {
       logs: logs ?? this.logs,
       reminders: reminders ?? this.reminders,
       takenScheduleIds: takenScheduleIds ?? this.takenScheduleIds,
+      generatedMonthlyEntries:
+          generatedMonthlyEntries ?? this.generatedMonthlyEntries,
+      generatedAt: generatedAt ?? this.generatedAt,
       reminderEnabled: reminderEnabled ?? this.reminderEnabled,
     );
   }
@@ -108,6 +196,33 @@ class PeduliObatController extends Notifier<PeduliObatState> {
     );
   }
 
+  void generateMonthlySchedule() {
+    final now = DateTime.now();
+    final generated = MedicationDummyData.generateMonthlySchedule(
+      startDate: now,
+      days: 30,
+    );
+
+    final nextLogs = [
+      MedicationLogModel(
+        id: 'log-${now.millisecondsSinceEpoch}',
+        title: 'Jadwal obat 1 bulan berhasil dibuat',
+        copy:
+            'PeduliObat membuat jadwal dari dataset penyakit dan resep dokter. Tampilan utama tetap menampilkan jadwal hari ini.',
+        time: _clock(now),
+        tone: PkTone.brand,
+      ),
+      ...state.logs,
+    ];
+
+    state = state.copyWith(
+      generatedMonthlyEntries: generated,
+      generatedAt: now,
+      takenScheduleIds: <String>{},
+      logs: nextLogs,
+    );
+  }
+
   void toggleReminder() {
     state = state.copyWith(
       reminderEnabled: !state.reminderEnabled,
@@ -117,7 +232,7 @@ class PeduliObatController extends Notifier<PeduliObatState> {
   void markScheduleTaken(String scheduleId) {
     if (state.takenScheduleIds.contains(scheduleId)) return;
 
-    final schedule = state.schedules.firstWhere(
+    final schedule = state.effectiveSchedules.firstWhere(
       (item) => item.id == scheduleId,
     );
 
@@ -146,7 +261,7 @@ class PeduliObatController extends Notifier<PeduliObatState> {
   void undoSchedule(String scheduleId) {
     if (!state.takenScheduleIds.contains(scheduleId)) return;
 
-    final schedule = state.schedules.firstWhere(
+    final schedule = state.effectiveSchedules.firstWhere(
       (item) => item.id == scheduleId,
     );
 
@@ -214,4 +329,113 @@ class PeduliObatController extends Notifier<PeduliObatState> {
 
     return '$hour:$minute';
   }
+}
+
+List<MedicationScheduleModel> _groupGeneratedEntries(
+  List<GeneratedMedicationEntry> entries,
+  Set<String> takenScheduleIds,
+) {
+  final grouped = <String, List<GeneratedMedicationEntry>>{};
+
+  for (final entry in entries) {
+    grouped.putIfAbsent(entry.time, () => <GeneratedMedicationEntry>[]).add(entry);
+  }
+
+  final times = grouped.keys.toList()..sort();
+
+  String? firstPendingId;
+
+  for (final time in times) {
+    final scheduleId = _generatedScheduleId(grouped[time]!);
+    if (!takenScheduleIds.contains(scheduleId)) {
+      firstPendingId = scheduleId;
+      break;
+    }
+  }
+
+  return [
+    for (final time in times)
+      _buildGeneratedSchedule(
+        time: time,
+        entries: grouped[time]!,
+        firstPendingId: firstPendingId,
+      ),
+  ];
+}
+
+MedicationScheduleModel _buildGeneratedSchedule({
+  required String time,
+  required List<GeneratedMedicationEntry> entries,
+  required String? firstPendingId,
+}) {
+  entries.sort((a, b) => a.medicationName.compareTo(b.medicationName));
+
+  final id = _generatedScheduleId(entries);
+  final title = entries.map((item) => '${item.medicationName} ${item.dose}').join(' + ');
+  final diseases = entries.map((item) => item.disease).toSet().join(', ');
+  final totalTablets = entries.fold<int>(
+    0,
+    (previous, item) => previous + item.tabletsPerDose,
+  );
+  final instruction = entries.map((item) => item.instruction).toSet().join(' ');
+  final medicationIds = entries.map((item) => item.medicationId).toSet().toList();
+
+  return MedicationScheduleModel(
+    id: id,
+    time: time,
+    title: title,
+    copy: '$instruction · $totalTablets tablet · Dataset: $diseases',
+    medicationIds: medicationIds,
+    initialTaken: false,
+    isNext: id == firstPendingId,
+  );
+}
+
+String _generatedScheduleId(List<GeneratedMedicationEntry> entries) {
+  final first = entries.first;
+  return "generated-${_dateKey(first.date)}-${first.time.replaceAll(':', '')}";
+}
+
+bool _isSameDate(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
+String _dateKey(DateTime value) {
+  final month = value.month.toString().padLeft(2, '0');
+  final day = value.day.toString().padLeft(2, '0');
+
+  return '${value.year}$month$day';
+}
+
+DateTime _entryDateTime(GeneratedMedicationEntry entry) {
+  final parts = entry.time.split(':');
+  final hour = int.tryParse(parts.first) ?? 0;
+  final minute = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+
+  return DateTime(
+    entry.date.year,
+    entry.date.month,
+    entry.date.day,
+    hour,
+    minute,
+  );
+}
+
+String _icsDateTime(DateTime value) {
+  final year = value.year.toString().padLeft(4, '0');
+  final month = value.month.toString().padLeft(2, '0');
+  final day = value.day.toString().padLeft(2, '0');
+  final hour = value.hour.toString().padLeft(2, '0');
+  final minute = value.minute.toString().padLeft(2, '0');
+  final second = value.second.toString().padLeft(2, '0');
+
+  return '$year$month${day}T$hour$minute$second';
+}
+
+String _icsEscape(String value) {
+  return value
+      .replaceAll('\\', '\\\\')
+      .replaceAll('\n', r'\n')
+      .replaceAll(',', r'\,')
+      .replaceAll(';', r'\;');
 }

@@ -15,6 +15,8 @@ enum HomeActionTarget {
   notifications,
   profile,
   peduliKonsul,
+  familyChat,
+  peduliPantau,
 }
 
 class HomeHeroStat {
@@ -317,9 +319,16 @@ final class HomeDummyData {
           target: HomeActionTarget.familyAlert,
         ),
         HomeQuickAction(
+          title: 'PeduliChat',
+          subtitle: 'Chat keluarga',
+          icon: Icons.forum_outlined,
+          tone: PkTone.blue,
+          target: HomeActionTarget.familyChat,
+        ),
+        HomeQuickAction(
           title: 'PeduliKonsul',
           subtitle: 'Konsultasi',
-          icon: Icons.chat_bubble_outline_rounded,
+          icon: Icons.health_and_safety_outlined,
           tone: PkTone.purple,
           target: HomeActionTarget.peduliKonsul,
         ),
@@ -445,10 +454,12 @@ final class HomeDummyData {
       quickActions: const [
         HomeQuickAction(title: 'PeduliRiwayat', subtitle: 'Riwayat sehat', icon: Icons.assignment_outlined, tone: PkTone.blue, target: HomeActionTarget.peduliRiwayat),
         HomeQuickAction(title: 'PeduliObat', subtitle: 'Atur jadwal', icon: Icons.medication_outlined, tone: PkTone.brand, target: HomeActionTarget.peduliObat),
+        HomeQuickAction(title: 'PeduliPantau', subtitle: 'CCTV rumah', icon: Icons.videocam_outlined, tone: PkTone.green, target: HomeActionTarget.peduliPantau, badge: 'Mockup'),
+        HomeQuickAction(title: 'PeduliChat', subtitle: 'Chat keluarga', icon: Icons.forum_outlined, tone: PkTone.blue, target: HomeActionTarget.familyChat),
         HomeQuickAction(title: 'PeduliAntar', subtitle: 'Antar obat', icon: Icons.local_shipping_outlined, tone: PkTone.amber, target: HomeActionTarget.peduliAntar),
         HomeQuickAction(title: 'AhliPeduli', subtitle: 'Tenaga medis', icon: Icons.health_and_safety_outlined, tone: PkTone.purple, target: HomeActionTarget.ahliPeduli),
         HomeQuickAction(title: 'PeduliDarurat', subtitle: 'Darurat', icon: Icons.emergency_outlined, tone: PkTone.red, target: HomeActionTarget.familyAlert),
-        HomeQuickAction(title: 'PeduliKonsul', subtitle: 'Konsultasi', icon: Icons.chat_bubble_outline_rounded, tone: PkTone.purple, target: HomeActionTarget.peduliKonsul),
+        HomeQuickAction(title: 'PeduliKonsul', subtitle: 'Konsultasi dokter', icon: Icons.health_and_safety_outlined, tone: PkTone.purple, target: HomeActionTarget.peduliKonsul),
       ],
       history: const [
         HomeHistoryItem(title: 'Obat pagi sudah diminum', copy: 'Amlodipin dan Metformin selesai.', time: '07:32', tone: PkTone.green),

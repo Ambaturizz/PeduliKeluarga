@@ -7,11 +7,13 @@ import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/authentication/presentation/pages/register_page.dart';
 import '../../features/authentication/providers/auth_provider.dart';
 import '../../features/family_alert/presentation/pages/family_alert_page.dart';
+import '../../features/family_chat/presentation/pages/family_chat_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/peduli_antar/presentation/pages/peduli_antar_page.dart';
 import '../../features/peduli_konsul/presentation/pages/peduli_konsul_page.dart';
+import '../../features/peduli_pantau/presentation/pages/peduli_pantau_page.dart';
 import '../../features/pedulicek/presentation/pages/peduli_cek_page.dart';
 import '../../features/peduliobat/presentation/pages/peduli_obat_page.dart';
 import '../../features/peduliriwayat/presentation/pages/peduli_riwayat_page.dart';
@@ -57,6 +59,14 @@ final _peduliRiwayatNavigatorKey = GlobalKey<NavigatorState>(
 
 final _peduliKonsulNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'peduliKonsulNavigator',
+);
+
+final _familyChatNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'familyChatNavigator',
+);
+
+final _peduliPantauNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'peduliPantauNavigator',
 );
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -249,6 +259,36 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   return RouteTransitions.fade(
                     key: state.pageKey,
                     child: const PeduliKonsulPage(),
+                  );
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _familyChatNavigatorKey,
+            routes: [
+              GoRoute(
+                path: AppRoute.familyChat.path,
+                name: AppRoute.familyChat.name,
+                pageBuilder: (context, state) {
+                  return RouteTransitions.fade(
+                    key: state.pageKey,
+                    child: const FamilyChatPage(),
+                  );
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _peduliPantauNavigatorKey,
+            routes: [
+              GoRoute(
+                path: AppRoute.peduliPantau.path,
+                name: AppRoute.peduliPantau.name,
+                pageBuilder: (context, state) {
+                  return RouteTransitions.fade(
+                    key: state.pageKey,
+                    child: const PeduliPantauPage(),
                   );
                 },
               ),

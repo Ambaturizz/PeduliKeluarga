@@ -345,6 +345,119 @@ class _MedicationHeroPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+class MedicationGeneratorCard extends StatelessWidget {
+  const MedicationGeneratorCard({
+    required this.state,
+    required this.onGenerate,
+    required this.onCopyCalendar,
+    super.key,
+  });
+
+  final PeduliObatState state;
+  final VoidCallback onGenerate;
+  final VoidCallback onCopyCalendar;
+
+  @override
+  Widget build(BuildContext context) {
+    final generatedAt = state.generatedAt;
+    final generatedLabel = generatedAt == null
+        ? 'Belum dibuat'
+        : '${generatedAt.day.toString().padLeft(2, '0')}/${generatedAt.month.toString().padLeft(2, '0')}/${generatedAt.year} ${generatedAt.hour.toString().padLeft(2, '0')}:${generatedAt.minute.toString().padLeft(2, '0')}';
+
+    return PkCard(
+      tint: state.hasGeneratedSchedule ? PkColors.greenSoft : PkColors.brandSoft,
+      borderColor: (state.hasGeneratedSchedule ? PkColors.green : PkColors.brand)
+          .withValues(alpha: 0.16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _CardTitleRow(
+            eyebrow: 'Generate jadwal',
+            title: 'Jadwal obat otomatis 1 bulan',
+            subtitle:
+                'Obat diambil dari dataset penyakit dan resep dokter. Kalender utama tetap menampilkan jadwal hari ini.',
+            icon: Icons.auto_awesome_outlined,
+            tone: state.hasGeneratedSchedule ? PkTone.green : PkTone.brand,
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              PkBadge(
+                label: state.hasGeneratedSchedule
+                    ? '${state.generatedDayCount} hari dibuat'
+                    : 'Siap generate',
+                tone: state.hasGeneratedSchedule ? PkTone.green : PkTone.brand,
+                icon: state.hasGeneratedSchedule
+                    ? Icons.check_circle_outline_rounded
+                    : Icons.calendar_month_outlined,
+              ),
+              PkBadge(
+                label: 'Tampil hari ini: ${state.effectiveSchedules.length} jadwal',
+                tone: PkTone.blue,
+                icon: Icons.today_outlined,
+              ),
+              PkBadge(
+                label: 'Dibuat: $generatedLabel',
+                tone: PkTone.gray,
+                icon: Icons.history_outlined,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Integrasi Google Calendar API tidak dipakai agar tidak membutuhkan API key. Alternatifnya, PeduliObat membuat teks kalender standar .ics yang bisa disalin dan diimpor ke kalender.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: PkColors.text2,
+                  height: 1.55,
+                ),
+          ),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final compact = constraints.maxWidth < 560;
+
+              final generateButton = FilledButton.icon(
+                onPressed: onGenerate,
+                icon: const Icon(Icons.auto_awesome_outlined),
+                label: Text(state.hasGeneratedSchedule
+                    ? 'Generate ulang 1 bulan'
+                    : 'Generate Jadwal 1 Bulan'),
+              );
+
+              final calendarButton = OutlinedButton.icon(
+                onPressed: onCopyCalendar,
+                icon: const Icon(Icons.content_copy_outlined),
+                label: const Text('Salin kalender .ics'),
+              );
+
+              if (compact) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    generateButton,
+                    const SizedBox(height: 10),
+                    calendarButton,
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(child: generateButton),
+                  const SizedBox(width: 10),
+                  Expanded(child: calendarButton),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class MedicationLowStockWarning extends StatelessWidget {
   const MedicationLowStockWarning({
     required this.items,
@@ -622,16 +735,24 @@ class MedicationScheduleCard extends StatelessWidget {
             tone: PkTone.brand,
           ),
           const SizedBox(height: 16),
-          for (final item in schedules)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _ScheduleItem(
-                item: item,
-                taken: takenIds.contains(item.id),
-                onMarkTaken: () => onMarkTaken(item.id),
-                onUndo: () => onUndo(item.id),
+          if (schedules.isEmpty)
+            Text(
+              'Belum ada jadwal obat hari ini.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: PkColors.text2,
+                  ),
+            )
+          else
+            for (final item in schedules)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _ScheduleItem(
+                  item: item,
+                  taken: takenIds.contains(item.id),
+                  onMarkTaken: () => onMarkTaken(item.id),
+                  onUndo: () => onUndo(item.id),
+                ),
               ),
-            ),
         ],
       ),
     );

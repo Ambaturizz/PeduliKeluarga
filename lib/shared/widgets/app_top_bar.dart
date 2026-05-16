@@ -5,6 +5,7 @@ import '../../core/routing/navigation_helper.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../state/providers/app_mode_provider.dart';
+import 'app_logo.dart';
 
 class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
   const AppTopBar({
@@ -26,10 +27,7 @@ class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
       titleSpacing: AppSpacing.lg,
       title: Row(
         children: [
-          const Icon(
-            Icons.volunteer_activism,
-            color: AppColors.teal,
-          ),
+          const AppLogo(size: 32),
           const SizedBox(width: AppSpacing.sm),
           Flexible(
             child: Text(

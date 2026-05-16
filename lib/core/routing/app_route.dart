@@ -43,6 +43,14 @@ enum AppRoute {
     name: 'peduliKonsul',
     path: '/peduli-konsul',
   ),
+  familyChat(
+    name: 'familyChat',
+    path: '/family-chat',
+  ),
+  peduliPantau(
+    name: 'peduliPantau',
+    path: '/peduli-pantau',
+  ),
   notifications(
     name: 'notifications',
     path: '/notifications',

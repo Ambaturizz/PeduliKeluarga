@@ -218,6 +218,117 @@ class CekProgressTracker extends StatelessWidget {
   }
 }
 
+class CekPointSummaryCard extends StatelessWidget {
+  const CekPointSummaryCard({
+    required this.totalPoints,
+    required this.streak,
+    required this.reward,
+    required this.canSubmit,
+    required this.submitted,
+    super.key,
+  });
+
+  final int totalPoints;
+  final int streak;
+  final int reward;
+  final bool canSubmit;
+  final bool submitted;
+
+  @override
+  Widget build(BuildContext context) {
+    final tone = submitted ? PkTone.green : PkTone.amber;
+    final rewardText = submitted
+        ? '+$reward poin didapat dari cek hari ini'
+        : canSubmit
+            ? 'Siap klaim hingga $reward poin setelah submit'
+            : 'Lengkapi form untuk mendapatkan poin';
+
+    return PkCard(
+      tint: pkToneSoft(tone),
+      borderColor: pkToneColor(tone).withValues(alpha: 0.16),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 620;
+
+          final header = Row(
+            children: [
+              PkIconBox(
+                icon: Icons.emoji_events_outlined,
+                tone: tone,
+                size: 46,
+              ),
+              const SizedBox(width: PkSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Poin PeduliCek',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: PkColors.text,
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      rewardText,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: PkColors.text2,
+                            height: 1.45,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+
+          final stats = Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              PkBadge(
+                label: '$totalPoints poin',
+                tone: PkTone.green,
+                icon: Icons.stars_outlined,
+              ),
+              PkBadge(
+                label: '$streak hari streak',
+                tone: PkTone.blue,
+                icon: Icons.local_fire_department_outlined,
+              ),
+              const PkBadge(
+                label: 'Bisa ditukar',
+                tone: PkTone.purple,
+                icon: Icons.redeem_outlined,
+              ),
+            ],
+          );
+
+          if (compact) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                header,
+                const SizedBox(height: 14),
+                stats,
+              ],
+            );
+          }
+
+          return Row(
+            children: [
+              Expanded(child: header),
+              const SizedBox(width: 16),
+              stats,
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
 class CekFieldCard extends StatelessWidget {
   const CekFieldCard({
     required this.eyebrow,

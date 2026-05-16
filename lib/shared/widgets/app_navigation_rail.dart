@@ -5,6 +5,7 @@ import '../../core/routing/app_navigation_destination.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/utils/responsive.dart';
+import 'app_logo.dart';
 
 class AppNavigationRail extends StatelessWidget {
   const AppNavigationRail({
@@ -70,10 +71,7 @@ class _NavigationBrand extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Icon(
-          Icons.volunteer_activism,
-          color: AppColors.teal,
-        ),
+        const AppLogo(size: 34),
         if (context.breakpoint == AppBreakpoint.large) ...[
           const SizedBox(width: AppSpacing.sm),
           Text(

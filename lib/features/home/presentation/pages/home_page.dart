@@ -66,7 +66,7 @@ class HomePage extends ConsumerWidget {
                         PremiumFamilyContactCard(
                           data: data,
                           onChat: () {
-                            context.go(AppRoutes.peduliKonsulPath);
+                            context.go(AppRoutes.familyChatPath);
                           },
                           onPhone: () {
                             _showPhoneMock(context, data);
@@ -180,6 +180,8 @@ class HomePage extends ConsumerWidget {
       HomeActionTarget.notifications => AppRoutes.notificationsPath,
       HomeActionTarget.profile => AppRoutes.profilePath,
       HomeActionTarget.peduliKonsul => AppRoutes.peduliKonsulPath,
+      HomeActionTarget.familyChat => AppRoutes.familyChatPath,
+      HomeActionTarget.peduliPantau => AppRoutes.peduliPantauPath,
     };
   }
 }

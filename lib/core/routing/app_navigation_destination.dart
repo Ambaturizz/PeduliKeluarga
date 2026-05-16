@@ -125,6 +125,16 @@ final class AppNavigationDestinations {
         AppUserMode.caregiver,
       },
     ),
+    AppNavigationDestination(
+      route: AppRoute.peduliPantau,
+      branchIndex: 9,
+      label: 'PeduliPantau',
+      icon: Icons.videocam_outlined,
+      selectedIcon: Icons.videocam_rounded,
+      allowedModes: {
+        AppUserMode.caregiver,
+      },
+    ),
   ];
 
   static List<AppNavigationDestination> forMode(AppUserMode mode) {
@@ -155,6 +165,7 @@ final class AppNavigationDestinations {
         AppRoute.home,
         AppRoute.peduliRiwayat,
         AppRoute.peduliObat,
+        AppRoute.peduliPantau,
         AppRoute.peduliAntar,
         AppRoute.ahliPeduli,
         AppRoute.familyAlert,

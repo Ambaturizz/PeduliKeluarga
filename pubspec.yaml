@@ -1,5 +1,5 @@
-name: flutter_application
-description: "PeduliKeluarga Flutter frontend foundation."
+name: peduli_keluarga
+description: "PeduliKeluarga frontend foundation."
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -34,5 +34,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  
+  assets:
+    - lib/assets/images/LOGO PeduliKeluarga.png

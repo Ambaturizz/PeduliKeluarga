@@ -94,6 +94,10 @@ class PeduliCekState {
     this.note = '',
     this.submitted = false,
     this.submittedAt,
+    this.totalPoints = 120,
+    this.currentStreak = 3,
+    this.lastRewardPoints = 0,
+    this.rewardHistory = const <String>[],
   });
 
   final int? systolic;
@@ -105,6 +109,10 @@ class PeduliCekState {
   final String note;
   final bool submitted;
   final DateTime? submittedAt;
+  final int totalPoints;
+  final int currentStreak;
+  final int lastRewardPoints;
+  final List<String> rewardHistory;
 
   bool get hasBloodPressure => systolic != null && diastolic != null;
 
@@ -143,6 +151,15 @@ class PeduliCekState {
   }
 
   int get progressPercent => (progress * 100).round();
+
+  int get nextRewardEstimate {
+    if (!canSubmit) return 0;
+    return hasRisk ? 15 : 25;
+  }
+
+  String get pointsLabel => '$totalPoints poin';
+
+  String get streakLabel => '$currentStreak hari berturut-turut';
 
   CekEvaluation get bloodPressureEvaluation {
     final s = systolic;
@@ -450,6 +467,10 @@ class PeduliCekState {
     String? note,
     bool? submitted,
     Object? submittedAt = _noChange,
+    int? totalPoints,
+    int? currentStreak,
+    int? lastRewardPoints,
+    List<String>? rewardHistory,
   }) {
     return PeduliCekState(
       systolic:
@@ -468,6 +489,10 @@ class PeduliCekState {
       submittedAt: identical(submittedAt, _noChange)
           ? this.submittedAt
           : submittedAt as DateTime?,
+      totalPoints: totalPoints ?? this.totalPoints,
+      currentStreak: currentStreak ?? this.currentStreak,
+      lastRewardPoints: lastRewardPoints ?? this.lastRewardPoints,
+      rewardHistory: rewardHistory ?? this.rewardHistory,
     );
   }
 }
@@ -569,15 +594,31 @@ class PeduliCekController extends Notifier<PeduliCekState> {
   bool submit() {
     if (!state.canSubmit) return false;
 
+    final now = DateTime.now();
+    final reward = state.hasRisk ? 15 : 25;
+    final rewardNote =
+        '+$reward poin PeduliCek · ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
     state = state.copyWith(
       submitted: true,
-      submittedAt: DateTime.now(),
+      submittedAt: now,
+      totalPoints: state.totalPoints + reward,
+      currentStreak: state.currentStreak + 1,
+      lastRewardPoints: reward,
+      rewardHistory: [
+        rewardNote,
+        ...state.rewardHistory,
+      ],
     );
 
     return true;
   }
 
   void reset() {
-    state = const PeduliCekState();
+    state = PeduliCekState(
+      totalPoints: state.totalPoints,
+      currentStreak: state.currentStreak,
+      rewardHistory: state.rewardHistory,
+    );
   }
 }

@@ -12,6 +12,8 @@ import '../../../caregiver_profile/providers/caregiver_profile_provider.dart';
 import '../../../elder_profile/domain/elder_profile.dart';
 import '../../../elder_profile/presentation/widgets/connection_code_card.dart';
 import '../../../elder_profile/providers/elder_profile_provider.dart';
+import '../../../pedulicek/providers/peduli_cek_provider.dart';
+import '../../../peduliobat/providers/peduli_obat_provider.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -21,6 +23,8 @@ class ProfilePage extends ConsumerWidget {
     final mode = ref.watch(appModeControllerProvider);
     final profile = ref.watch(elderProfileProvider);
     final caregiver = ref.watch(caregiverProfileProvider);
+    final medicationState = ref.watch(peduliObatProvider);
+    final cekState = ref.watch(peduliCekProvider);
 
     if (mode == AppUserMode.caregiver) {
       return PageShell(
@@ -69,6 +73,14 @@ class ProfilePage extends ConsumerWidget {
           ),
           const SizedBox(height: PkSpacing.lg),
           _LinkedElderCard(profile: profile, caregiver: caregiver),
+          const SizedBox(height: PkSpacing.lg),
+          _ProfileCompleteRecordCard(
+            profile: profile,
+            caregiver: caregiver,
+            medicationState: medicationState,
+            cekState: cekState,
+            mode: mode,
+          ),
         ],
       );
     }
@@ -88,6 +100,14 @@ class ProfilePage extends ConsumerWidget {
         ConnectionCodeCard(profile: profile),
         const SizedBox(height: PkSpacing.lg),
         _CaregiverListCard(caregivers: profile.linkedCaregivers),
+        const SizedBox(height: PkSpacing.lg),
+        _ProfileCompleteRecordCard(
+          profile: profile,
+          caregiver: caregiver,
+          medicationState: medicationState,
+          cekState: cekState,
+          mode: mode,
+        ),
       ],
     );
   }
@@ -829,6 +849,195 @@ class _InfoRow extends StatelessWidget {
                   value,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: PkColors.text,
+                        height: 1.45,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileCompleteRecordCard extends StatelessWidget {
+  const _ProfileCompleteRecordCard({
+    required this.profile,
+    required this.caregiver,
+    required this.medicationState,
+    required this.cekState,
+    required this.mode,
+  });
+
+  final ElderProfile profile;
+  final CaregiverProfile caregiver;
+  final PeduliObatState medicationState;
+  final PeduliCekState cekState;
+  final AppUserMode mode;
+
+  @override
+  Widget build(BuildContext context) {
+    final isCaregiver = mode == AppUserMode.caregiver;
+
+    return PkCard(
+      tint: PkColors.surface.withValues(alpha: 0.96),
+      borderColor: PkColors.blue.withValues(alpha: 0.14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const PkIconBox(icon: Icons.folder_shared_outlined, tone: PkTone.blue),
+              const SizedBox(width: PkSpacing.md),
+              Expanded(
+                child: Text(
+                  'Data Lengkap & Riwayat',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: PkColors.text,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+              ),
+              PkBadge(
+                label: isCaregiver ? 'PeduliPenuh' : 'PeduliDiri',
+                tone: isCaregiver ? PkTone.blue : PkTone.brand,
+              ),
+            ],
+          ),
+          const SizedBox(height: PkSpacing.lg),
+          _InfoRow(
+            label: 'Nama lansia',
+            value: profile.name.trim().isEmpty ? caregiver.displayElderName : profile.displayName,
+            icon: Icons.elderly_rounded,
+          ),
+          _InfoRow(label: 'Nama anak/pendamping', value: caregiver.displayName, icon: Icons.groups_outlined),
+          _InfoRow(label: 'Nomor lansia', value: profile.displayPhone, icon: Icons.phone_outlined),
+          _InfoRow(label: 'Nomor anak/pendamping', value: caregiver.displayPhone, icon: Icons.phone_android_outlined),
+          _InfoRow(label: 'Alamat lansia', value: profile.displayAddress, icon: Icons.home_outlined),
+          _InfoRow(label: 'Riwayat penyakit', value: profile.medicalHistoryLabel, icon: Icons.medical_information_outlined),
+          const Divider(height: 28),
+          Text(
+            'Catatan jadwal obat hari ini',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: PkColors.text,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+          const SizedBox(height: PkSpacing.md),
+          if (medicationState.effectiveSchedules.isEmpty)
+            Text(
+              'Belum ada jadwal obat hari ini.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: PkColors.text2),
+            )
+          else
+            for (final schedule in medicationState.effectiveSchedules)
+              _CompactRecordTile(
+                icon: Icons.schedule_outlined,
+                tone: medicationState.takenScheduleIds.contains(schedule.id)
+                    ? PkTone.green
+                    : PkTone.amber,
+                title: '${schedule.time} · ${schedule.title}',
+                subtitle: medicationState.takenScheduleIds.contains(schedule.id)
+                    ? 'Sudah diminum · ${schedule.copy}'
+                    : 'Menunggu · ${schedule.copy}',
+              ),
+          const SizedBox(height: PkSpacing.md),
+          Text(
+            'Riwayat obat',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: PkColors.text,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+          const SizedBox(height: PkSpacing.md),
+          for (final log in medicationState.logs.take(3))
+            _CompactRecordTile(
+              icon: Icons.history_outlined,
+              tone: log.tone,
+              title: log.title,
+              subtitle: '${log.time} · ${log.copy}',
+            ),
+          const SizedBox(height: PkSpacing.md),
+          Text(
+            'Riwayat PeduliCek & poin',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: PkColors.text,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+          const SizedBox(height: PkSpacing.md),
+          _CompactRecordTile(
+            icon: Icons.fact_check_outlined,
+            tone: cekState.submitted ? cekState.overallLevel.tone : PkTone.amber,
+            title: cekState.submitted ? cekState.resultTitle : 'PeduliCek hari ini belum dikirim',
+            subtitle: cekState.submittedAt == null
+                ? 'Belum ada ringkasan cek harian terbaru.'
+                : 'Dikirim pukul ${_formatProfileTime(cekState.submittedAt!)} · ${cekState.bloodPressureValue} · ${cekState.glucoseValue}',
+          ),
+          _CompactRecordTile(
+            icon: Icons.emoji_events_outlined,
+            tone: PkTone.green,
+            title: '${cekState.totalPoints} poin terkumpul',
+            subtitle: '${cekState.currentStreak} hari streak · poin bisa ditukarkan pada fitur reward.',
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatProfileTime(DateTime value) {
+    final hour = value.hour.toString().padLeft(2, '0');
+    final minute = value.minute.toString().padLeft(2, '0');
+
+    return '$hour:$minute';
+  }
+}
+
+class _CompactRecordTile extends StatelessWidget {
+  const _CompactRecordTile({
+    required this.icon,
+    required this.tone,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final IconData icon;
+  final PkTone tone;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: PkSpacing.sm),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: pkToneSoft(tone),
+        borderRadius: PkRadius.smRadius,
+        border: Border.all(color: pkToneColor(tone).withValues(alpha: 0.12)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PkIconBox(icon: icon, tone: tone, size: 38, iconSize: 20),
+          const SizedBox(width: PkSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: PkColors.text,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: PkColors.text2,
                         height: 1.45,
                       ),
                 ),

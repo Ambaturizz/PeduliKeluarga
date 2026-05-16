@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -52,6 +53,27 @@ class PeduliObatPage extends ConsumerWidget {
                           );
                         },
                       ),
+                      const SizedBox(height: 16),
+                      MedicationGeneratorCard(
+                        state: state,
+                        onGenerate: () {
+                          notifier.generateMonthlySchedule();
+                          _showMessage(
+                            context,
+                            'Jadwal obat 1 bulan berhasil dibuat. Yang tampil tetap jadwal hari ini.',
+                          );
+                        },
+                        onCopyCalendar: () async {
+                          await Clipboard.setData(
+                            ClipboardData(text: state.calendarExportText),
+                          );
+                          if (!context.mounted) return;
+                          _showMessage(
+                            context,
+                            'Teks kalender .ics disalin. Impor manual ke Google Calendar atau kalender lain.',
+                          );
+                        },
+                      ),
                       const PkSectionTitle(
                         title: 'Jadwal Obat',
                         subtitle: 'Jadwal dan catatan harian',
@@ -59,7 +81,7 @@ class PeduliObatPage extends ConsumerWidget {
                       PeduliObatResponsiveGrid(
                         left: [
                           MedicationScheduleCard(
-                            schedules: state.schedules,
+                            schedules: state.effectiveSchedules,
                             takenIds: state.takenScheduleIds,
                             onMarkTaken: (id) {
                               notifier.markScheduleTaken(id);

@@ -48,8 +48,8 @@ class AppNavigationShell extends ConsumerWidget {
                 AppRoute.home,
                 AppRoute.peduliRiwayat,
                 AppRoute.peduliObat,
+                AppRoute.peduliPantau,
                 AppRoute.peduliAntar,
-                AppRoute.ahliPeduli,
               }.contains(item.route),
             )
             .toList()

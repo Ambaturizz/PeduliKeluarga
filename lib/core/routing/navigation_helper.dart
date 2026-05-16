@@ -41,6 +41,14 @@ extension NavigationHelper on BuildContext {
     goNamed(AppRoute.peduliKonsul.name);
   }
 
+  void goFamilyChat() {
+    goNamed(AppRoute.familyChat.name);
+  }
+
+  void goPeduliPantau() {
+    goNamed(AppRoute.peduliPantau.name);
+  }
+
   void goInitialForMode(AppUserMode mode) {
     switch (mode) {
       case AppUserMode.elder:
