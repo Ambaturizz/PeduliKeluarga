@@ -17,10 +17,8 @@ class AppLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(size * 0.24);
-
     final image = ClipRRect(
-      borderRadius: radius,
+      borderRadius: BorderRadius.circular(size * 0.24),
       child: Image.asset(
         AppAssets.logoPeduliKeluarga,
         width: size,
@@ -73,7 +71,9 @@ class AppLogo extends StatelessWidget {
 }
 
 class _LogoAssetError extends StatelessWidget {
-  const _LogoAssetError({required this.size});
+  const _LogoAssetError({
+    required this.size,
+  });
 
   final double size;
 

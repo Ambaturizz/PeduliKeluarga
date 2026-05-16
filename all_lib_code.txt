@@ -458,9 +458,9 @@ final class AppAssets {
   static const String imagesPath = 'lib/assets/images';
 
   // Logo resmi PeduliKeluarga.
-  // File harus ada di: lib/assets/images/LogoPeduliKeluarga.png
-  static const String logoPeduliKeluarga =
-      '$imagesPath/LogoPeduliKeluarga.png';
+  // File harus ada di: lib/assets/images/logo_peduli_keluarga.png.png
+  static const String logo_peduli_keluarga.png =
+      '$imagesPath/logo_peduli_keluarga.png.png';
 
   static const String illustrationsPath = 'lib/assets/illustrations';
   static const String animationsPath = 'lib/assets/animations';
@@ -25462,7 +25462,7 @@ class AppLogo extends StatelessWidget {
   const AppLogo({
     this.size = 40,
     this.withBackground = false,
-    this.semanticLabel = 'Logo PeduliKeluarga',
+    this.semanticLabel = 'logo_peduli_keluarga.png',
     super.key,
   });
 
@@ -25477,7 +25477,7 @@ class AppLogo extends StatelessWidget {
     final image = ClipRRect(
       borderRadius: radius,
       child: Image.asset(
-        AppAssets.logoPeduliKeluarga,
+        AppAssets.logo_peduli_keluarga.png,
         width: size,
         height: size,
         fit: BoxFit.contain,
@@ -25485,7 +25485,7 @@ class AppLogo extends StatelessWidget {
         isAntiAlias: true,
         gaplessPlayback: true,
         errorBuilder: (context, error, stackTrace) {
-          debugPrint('GAGAL LOAD LOGO: ${AppAssets.logoPeduliKeluarga}');
+          debugPrint('GAGAL LOAD LOGO: ${AppAssets.logo_peduli_keluarga.png}');
           debugPrint('DETAIL ERROR: $error');
           return _LogoAssetError(size: size);
         },
