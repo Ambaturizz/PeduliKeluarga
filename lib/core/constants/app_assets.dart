@@ -5,9 +5,9 @@ final class AppAssets {
   static const String imagesPath = 'lib/assets/images';
 
   // Logo resmi PeduliKeluarga.
-  // File harus ada di: lib/assets/images/LOGO PeduliKeluarga.png
+  // File harus ada di: lib/assets/images/LogoPeduliKeluarga.png
   static const String logoPeduliKeluarga =
-      '$imagesPath/LOGO PeduliKeluarga.png';
+      '$imagesPath/LogoPeduliKeluarga.png';
 
   static const String illustrationsPath = 'lib/assets/illustrations';
   static const String animationsPath = 'lib/assets/animations';
