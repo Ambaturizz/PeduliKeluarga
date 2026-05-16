@@ -62,11 +62,21 @@ class HomePage extends ConsumerWidget {
                             context.go(AppRoutes.peduliObatPath);
                           },
                         ),
+                        const SizedBox(height: 14),
+                        PremiumFamilyContactCard(
+                          data: data,
+                          onChat: () {
+                            context.go(AppRoutes.peduliKonsulPath);
+                          },
+                          onPhone: () {
+                            _showPhoneMock(context, data);
+                          },
+                        ),
                         const SizedBox(height: 22),
                         AlertStack(items: data.alerts),
                         const PkSectionTitle(
-                          title: 'Dashboard overview',
-                          subtitle: 'Premium healthcare',
+                          title: 'Ringkasan Hari Ini',
+                          subtitle: 'Data dicatat manual',
                         ),
                         ResponsiveDashboardGrid(
                           left: [
@@ -92,7 +102,7 @@ class HomePage extends ConsumerWidget {
                           ],
                         ),
                         const PkSectionTitle(
-                          title: 'Quick action menu',
+                          title: 'Menu Cepat',
                           subtitle: 'Akses utama tanpa bingung',
                         ),
                         PremiumQuickGrid(
@@ -109,6 +119,44 @@ class HomePage extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _showPhoneMock(
+    BuildContext context,
+    HomeDashboardData data,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(data.isElder ? 'Hubungi keluarga?' : 'Telepon PeduliDiri?'),
+          content: Text(
+            data.isElder
+                ? 'Ini masih fitur mock. Nantinya tombol ini bisa terhubung ke nomor keluarga.'
+                : 'Ini masih fitur mock. Nantinya tombol ini bisa digunakan untuk menghubungi lansia.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Batal'),
+            ),
+            FilledButton.icon(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              icon: const Icon(Icons.phone_in_talk_outlined),
+              label: const Text('Hubungi'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Fitur telepon akan segera tersedia.'),
       ),
     );
   }
@@ -131,6 +179,7 @@ class HomePage extends ConsumerWidget {
       HomeActionTarget.peduliAntar => AppRoutes.peduliAntarPath,
       HomeActionTarget.notifications => AppRoutes.notificationsPath,
       HomeActionTarget.profile => AppRoutes.profilePath,
+      HomeActionTarget.peduliKonsul => AppRoutes.peduliKonsulPath,
     };
   }
 }

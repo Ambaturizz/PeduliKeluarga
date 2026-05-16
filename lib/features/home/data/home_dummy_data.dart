@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/pk_design.dart';
 import '../../../state/providers/app_mode_provider.dart';
+import '../../caregiver_profile/domain/caregiver_profile.dart';
+import '../../elder_profile/domain/elder_profile.dart';
 
 enum HomeActionTarget {
   peduliCek,
@@ -12,6 +14,7 @@ enum HomeActionTarget {
   peduliAntar,
   notifications,
   profile,
+  peduliKonsul,
 }
 
 class HomeHeroStat {
@@ -170,95 +173,93 @@ final class HomeDummyData {
   static HomeDashboardData byMode({
     required AppUserMode mode,
     required DateTime now,
+    ElderProfile? elderProfile,
+    CaregiverProfile? caregiverProfile,
   }) {
     return switch (mode) {
-      AppUserMode.elder => _elder(now),
-      AppUserMode.caregiver => _caregiver(now),
+      AppUserMode.elder => _elder(now, elderProfile, caregiverProfile),
+      AppUserMode.caregiver => _caregiver(now, elderProfile, caregiverProfile),
     };
   }
 
-  static HomeDashboardData _elder(DateTime now) {
-    final pulse = 78 + (now.second % 4);
-    final sugar = 122 + (now.second % 5);
-    final oxygen = 97 + (now.second % 2);
+  static HomeDashboardData _elder(
+    DateTime now,
+    ElderProfile? profile,
+    CaregiverProfile? caregiver,
+  ) {
+    final elder = profile;
+    final name = elder?.displayName ?? 'Belum diisi';
+    final age = elder?.displayAge ?? 'Belum diisi';
+    final weight = elder?.displayWeight ?? 'Belum diisi';
+    final gender = elder?.displayGender ?? 'Belum diisi';
+    final history = elder?.medicalHistoryLabel ?? 'Belum diisi';
+    final caregiverName = caregiver?.displayName ?? 'Belum diisi';
 
     return HomeDashboardData(
       mode: AppUserMode.elder,
       kicker: 'Mode Lansia — PeduliDiri',
-      heroTitle: 'Bapak Purwanto',
+      heroTitle: name,
       heroSubtitle:
-          '68 tahun · Hipertensi · Diabetes Tipe 2 · Kolesterol. Dashboard harian untuk menjaga rutinitas kesehatan tetap tenang, jelas, dan mudah diikuti.',
-      liveLabel: 'Live sync · ${_clock(now)}',
-      primaryButton: 'Mulai cek harian',
-      secondaryButton: 'Lihat obat hari ini',
+          '$age · $gender · BB: $weight · Anak/Pendamping: $caregiverName. Riwayat: $history. Data ini dapat diperbarui dari profil.',
+      liveLabel: 'Diperbarui ${_clock(now)}',
+      primaryButton: 'Cek Hari Ini',
+      secondaryButton: 'Minum Obat',
       heroStats: [
         const HomeHeroStat(
-          value: '94%',
-          label: 'Kepatuhan obat',
+          value: '13:00',
+          label: 'Obat berikutnya',
           icon: Icons.medication_outlined,
         ),
-        HomeHeroStat(
-          value: '$pulse',
-          label: 'BPM sekarang',
-          icon: Icons.favorite_border_rounded,
-        ),
         const HomeHeroStat(
-          value: 'Low',
-          label: 'Risk score',
-          icon: Icons.shield_outlined,
+          value: 'Belum',
+          label: 'Cek harian',
+          icon: Icons.fact_check_outlined,
+        ),
+        HomeHeroStat(
+          value: weight,
+          label: 'Berat badan',
+          icon: Icons.monitor_weight_outlined,
         ),
       ],
-      summaryTitle: 'Hari ini terlihat cukup stabil',
-      summarySubtitle:
-          'Namun PeduliCek belum diisi dan stok Simvastatin perlu diperhatikan.',
-      metrics: [
-        const HomeMetric(
+      summaryTitle: 'Kondisi umum hari ini cukup baik',
+      summarySubtitle: 'Semua data kesehatan dicatat manual oleh pengguna atau keluarga.',
+      metrics: const [
+        HomeMetric(
+          label: 'Kondisi umum',
+          value: 'Baik',
+          note: 'Belum ada keluhan berat hari ini.',
+          icon: Icons.sentiment_satisfied_alt_rounded,
+          tone: PkTone.green,
+          progress: 0.78,
+        ),
+        HomeMetric(
           label: 'Tekanan darah',
-          value: '138/88',
-          unit: 'mmHg',
-          note: 'Sedikit lebih tinggi dari rata-rata minggu lalu.',
+          value: 'Belum dicatat',
+          note: 'Cek cukup 1 kali seminggu, kecuali dokter meminta lebih sering.',
           icon: Icons.monitor_heart_outlined,
           tone: PkTone.amber,
-          progress: 0.72,
+          progress: 0.45,
         ),
         HomeMetric(
           label: 'Gula darah',
-          value: '$sugar',
-          unit: 'mg/dL',
-          note: 'Cenderung stabil di rentang target.',
+          value: 'Stabil',
+          note: 'Terakhir dicatat: Hari ini. Dicatat manual oleh pengguna.',
           icon: Icons.bloodtype_outlined,
-          tone: PkTone.brand,
-          progress: 0.61,
-        ),
-        HomeMetric(
-          label: 'Oksigen',
-          value: '$oxygen',
-          unit: '%',
-          note: 'Terukur baik pada simulasi realtime.',
-          icon: Icons.air_rounded,
-          tone: PkTone.blue,
-          progress: 0.88,
+          tone: PkTone.green,
+          progress: 0.72,
         ),
       ],
       alerts: const [
         HomeAlert(
-          title: 'PeduliCek belum diisi',
-          copy:
-              'Isi cek harian supaya Reza tahu kondisi Bapak hari ini.',
+          title: 'Cek harian belum diisi',
+          copy: 'Isi PeduliCek agar keluarga tahu kondisi hari ini.',
           time: '08:15',
           icon: Icons.fact_check_outlined,
           tone: PkTone.amber,
         ),
         HomeAlert(
-          title: 'Obat pagi sudah diminum',
-          copy: 'Amlodipin dan Metformin tercatat pukul 07:32.',
-          time: '07:32',
-          icon: Icons.check_circle_outline_rounded,
-          tone: PkTone.green,
-        ),
-        HomeAlert(
           title: 'Simvastatin hampir habis',
-          copy: 'Sisa 5 tablet. Disarankan pesan ulang hari ini.',
+          copy: 'Tekan Pesan Sekarang untuk meminta konfirmasi keluarga.',
           time: 'Kemarin',
           icon: Icons.inventory_2_outlined,
           tone: PkTone.amber,
@@ -275,17 +276,17 @@ final class HomeDummyData {
         ),
         HomeMedicine(
           name: 'Metformin',
-          dose: '500mg · setelah makan',
-          time: '07:30',
-          status: 'Selesai',
-          progress: 100,
-          tone: PkTone.green,
+          dose: '500mg · sesudah makan',
+          time: '13:00',
+          status: 'Berikutnya',
+          progress: 55,
+          tone: PkTone.brand,
         ),
         HomeMedicine(
           name: 'Simvastatin',
           dose: '20mg · malam hari · sisa 5 tablet',
           time: '19:00',
-          status: 'Pesan ulang',
+          status: 'Perlu dibeli',
           progress: 26,
           tone: PkTone.red,
           lowStock: true,
@@ -294,7 +295,7 @@ final class HomeDummyData {
       quickActions: const [
         HomeQuickAction(
           title: 'PeduliCek',
-          subtitle: 'Cek harian adaptif',
+          subtitle: 'Cek hari ini',
           icon: Icons.medical_services_outlined,
           tone: PkTone.brand,
           target: HomeActionTarget.peduliCek,
@@ -302,22 +303,29 @@ final class HomeDummyData {
         ),
         HomeQuickAction(
           title: 'PeduliObat',
-          subtitle: 'Jadwal dan stok',
+          subtitle: 'Jadwal obat',
           icon: Icons.medication_outlined,
           tone: PkTone.green,
           target: HomeActionTarget.peduliObat,
-          badge: 'Pagi ✓',
+          badge: '13:00',
         ),
         HomeQuickAction(
-          title: 'Family Alert',
-          subtitle: 'Bantuan darurat',
+          title: 'PeduliDarurat',
+          subtitle: 'Bantuan cepat',
           icon: Icons.emergency_outlined,
           tone: PkTone.red,
           target: HomeActionTarget.familyAlert,
         ),
         HomeQuickAction(
+          title: 'PeduliKonsul',
+          subtitle: 'Konsultasi',
+          icon: Icons.chat_bubble_outline_rounded,
+          tone: PkTone.purple,
+          target: HomeActionTarget.peduliKonsul,
+        ),
+        HomeQuickAction(
           title: 'PeduliRiwayat',
-          subtitle: 'Tren kesehatan',
+          subtitle: 'Riwayat sehat',
           icon: Icons.assignment_outlined,
           tone: PkTone.blue,
           target: HomeActionTarget.peduliRiwayat,
@@ -325,78 +333,78 @@ final class HomeDummyData {
       ],
       history: const [
         HomeHistoryItem(
-          title: 'PeduliCek selesai',
-          copy: 'TD 138/88 · GD 124 · mood baik',
-          time: 'Hari ini 07:42',
-          tone: PkTone.green,
+          title: 'PeduliCek belum diisi',
+          copy: 'Belum ada catatan hari ini.',
+          time: 'Hari ini',
+          tone: PkTone.amber,
         ),
         HomeHistoryItem(
-          title: 'Simvastatin hampir habis',
-          copy: 'Sisa 5 tablet, disarankan pesan ulang',
+          title: 'Permintaan obat siap dibuat',
+          copy: 'Simvastatin tinggal 5 tablet.',
           time: 'Kemarin',
           tone: PkTone.amber,
         ),
         HomeHistoryItem(
-          title: 'Metformin siang terlewat',
-          copy: 'Reminder terkirim ke Bapak dan Reza',
+          title: 'Catatan keluhan terakhir',
+          copy: 'Tidak ada keluhan berat.',
           time: '2 hari lalu',
-          tone: PkTone.red,
+          tone: PkTone.green,
         ),
       ],
-      aiEyebrow: 'AI insight card',
-      aiTitle: 'Pola tekanan darah perlu dipantau ringan',
+      aiEyebrow: 'AIPeduli',
+      aiTitle: 'Ringkasan awal hari ini',
       aiCopy:
-          'Tekanan darah 7 hari terakhir sedikit naik. Isi PeduliCek hari ini dan tandai untuk konsultasi dokter bila tren naik berulang. Saat ini status belum darurat.',
-      aiBadge: 'Monitor',
+          'Kondisi umum terlihat cukup baik. Cek harian belum diisi. Tekanan darah cukup dicek 1 kali seminggu, kecuali dokter meminta lebih sering.',
+      aiBadge: 'Aman',
       emergencyTitle: 'Butuh bantuan sekarang?',
-      emergencyCopy:
-          'Satu tombol untuk menghubungi keluarga dan tim AhliPeduli.',
+      emergencyCopy: 'Tekan PeduliDarurat untuk meminta bantuan keluarga.',
     );
   }
 
-  static HomeDashboardData _caregiver(DateTime now) {
-    final alertCount = 5 + (now.second % 2);
+  static HomeDashboardData _caregiver(
+    DateTime now,
+    ElderProfile? profile,
+    CaregiverProfile? caregiver,
+  ) {
+    final caregiverName = caregiver?.displayName ?? 'Belum diisi';
+    final elderNameFromProfile = profile?.name.trim() ?? '';
+    final elderNameFromCaregiver = caregiver?.elderName.trim() ?? '';
+    final elderName = elderNameFromProfile.isNotEmpty
+        ? elderNameFromProfile
+        : elderNameFromCaregiver.isNotEmpty
+            ? elderNameFromCaregiver
+            : 'Belum diisi';
+    final elderAge = profile?.displayAge ?? 'Belum diisi';
+    final elderWeight = profile?.displayWeight ?? 'Belum diisi';
+    final elderHistory = profile?.medicalHistoryLabel ?? 'Belum diisi';
+    final relation = caregiver?.displayRelationship ?? 'Anak atau pendamping';
 
     return HomeDashboardData(
       mode: AppUserMode.caregiver,
       kicker: 'Mode Anak — PeduliPenuh',
-      heroTitle: 'Reza Dwi Putra',
-      heroSubtitle:
-          'Memantau Bapak Purwanto dari jauh dengan ringkasan kesehatan, stok obat, Family Alert, dan rekomendasi AI yang bisa langsung ditindaklanjuti.',
-      liveLabel: 'Live family sync · ${_clock(now)}',
-      primaryButton: 'Lihat riwayat Bapak',
-      secondaryButton: 'Atur obat',
-      heroStats: [
-        const HomeHeroStat(
-          value: 'Low',
-          label: 'Risk score',
-          icon: Icons.shield_outlined,
-        ),
-        const HomeHeroStat(
-          value: '94%',
-          label: 'Adherence',
-          icon: Icons.medication_outlined,
-        ),
-        HomeHeroStat(
-          value: '$alertCount',
-          label: 'Alert aktif',
-          icon: Icons.notifications_active_outlined,
-        ),
+      heroTitle: 'Halo, $caregiverName',
+      heroSubtitle: 'Anda memantau $elderName sebagai $relation. Umur: $elderAge. BB: $elderWeight. Riwayat: $elderHistory. Data ini berasal dari profil keluarga.',
+      liveLabel: 'Diperbarui ${_clock(now)}',
+      primaryButton: 'Lihat Riwayat',
+      secondaryButton: 'Atur Obat',
+      heroStats: const [
+        HomeHeroStat(value: '3', label: 'Perlu perhatian', icon: Icons.notifications_active_outlined),
+        HomeHeroStat(value: '94%', label: 'Kepatuhan obat', icon: Icons.medication_outlined),
+        HomeHeroStat(value: '1', label: 'Permintaan obat', icon: Icons.local_shipping_outlined),
       ],
-      summaryTitle: 'Bapak aman, ada 2 hal yang perlu dibantu hari ini',
-      summarySubtitle:
-          'Fokus pada notifikasi, stok obat, dan tren kesehatan yang berubah.',
+      summaryTitle: 'Ringkasan $elderName',
+      summarySubtitle: 'Kondisi umum, cek harian, obat, dan catatan keluhan orang tua.',
       metrics: const [
         HomeMetric(
-          label: 'Risk score',
-          value: 'Low',
-          note: 'Tidak ada tanda darurat.',
-          icon: Icons.shield_outlined,
-          tone: PkTone.green,
-          progress: 0.28,
+          label: 'Cek harian',
+          value: 'Belum',
+          note: 'Kirim pengingat lembut.',
+          icon: Icons.fact_check_outlined,
+          tone: PkTone.amber,
+          progress: 0.4,
         ),
         HomeMetric(
-          label: 'Adherence',
+          label: 'Kepatuhan obat',
           value: '94',
           unit: '%',
           note: 'Kepatuhan obat 30 hari.',
@@ -405,131 +413,59 @@ final class HomeDummyData {
           progress: 0.94,
         ),
         HomeMetric(
-          label: 'Alert',
-          value: '5',
-          note: '2 butuh tindakan.',
-          icon: Icons.notifications_active_outlined,
+          label: 'Permintaan obat',
+          value: '1',
+          note: 'Menunggu konfirmasi pendamping.',
+          icon: Icons.local_shipping_outlined,
           tone: PkTone.amber,
           progress: 0.55,
         ),
       ],
       alerts: const [
         HomeAlert(
-          title: 'PeduliCek belum diisi',
-          copy: 'Kirim pengingat lembut agar data kesehatan hari ini lengkap.',
+          title: 'Cek harian belum diisi',
+          copy: 'Kirim pengingat agar data kesehatan hari ini lengkap.',
           time: '08:15',
           icon: Icons.pending_actions_outlined,
           tone: PkTone.amber,
         ),
         HomeAlert(
           title: 'Simvastatin hampir habis',
-          copy: 'Sisa 5 tablet. Pesankan melalui PeduliAntar hari ini.',
+          copy: 'Sisa 5 tablet. Konfirmasi pembelian melalui PeduliAntar.',
           time: 'Kemarin',
           icon: Icons.inventory_2_outlined,
           tone: PkTone.red,
         ),
-        HomeAlert(
-          title: 'Obat pagi selesai',
-          copy: 'Amlodipin dan Metformin tercatat diminum.',
-          time: '07:32',
-          icon: Icons.check_circle_outline_rounded,
-          tone: PkTone.green,
-        ),
       ],
       medicines: const [
-        HomeMedicine(
-          name: 'Amlodipin',
-          dose: 'Bapak · 5mg',
-          time: '07:00',
-          status: 'Selesai',
-          progress: 100,
-          tone: PkTone.green,
-        ),
-        HomeMedicine(
-          name: 'Metformin',
-          dose: 'Bapak · 500mg · 2x sehari',
-          time: '07:30',
-          status: 'Pagi selesai',
-          progress: 55,
-          tone: PkTone.brand,
-        ),
-        HomeMedicine(
-          name: 'Simvastatin',
-          dose: 'Bapak · 20mg · stok rendah',
-          time: '19:00',
-          status: 'Pesan sekarang',
-          progress: 22,
-          tone: PkTone.red,
-          lowStock: true,
-        ),
+        HomeMedicine(name: 'Amlodipin', dose: '5mg', time: '07:00', status: 'Selesai', progress: 100, tone: PkTone.green),
+        HomeMedicine(name: 'Metformin', dose: '500mg', time: '13:00', status: 'Berikutnya', progress: 55, tone: PkTone.brand),
+        HomeMedicine(name: 'Simvastatin', dose: '20mg · stok rendah', time: '19:00', status: 'Konfirmasi', progress: 22, tone: PkTone.red, lowStock: true),
       ],
       quickActions: const [
-        HomeQuickAction(
-          title: 'PeduliRiwayat',
-          subtitle: 'Tren kesehatan',
-          icon: Icons.assignment_outlined,
-          tone: PkTone.blue,
-          target: HomeActionTarget.peduliRiwayat,
-          badge: '12 catatan',
-        ),
-        HomeQuickAction(
-          title: 'PeduliObat',
-          subtitle: 'Atur jadwal',
-          icon: Icons.medication_outlined,
-          tone: PkTone.brand,
-          target: HomeActionTarget.peduliObat,
-          badge: 'Stok rendah',
-        ),
-        HomeQuickAction(
-          title: 'PeduliAntar',
-          subtitle: 'Pesan obat',
-          icon: Icons.local_shipping_outlined,
-          tone: PkTone.amber,
-          target: HomeActionTarget.peduliAntar,
-        ),
-        HomeQuickAction(
-          title: 'AhliPeduli',
-          subtitle: 'Dokter & homecare',
-          icon: Icons.health_and_safety_outlined,
-          tone: PkTone.purple,
-          target: HomeActionTarget.ahliPeduli,
-        ),
+        HomeQuickAction(title: 'PeduliRiwayat', subtitle: 'Riwayat sehat', icon: Icons.assignment_outlined, tone: PkTone.blue, target: HomeActionTarget.peduliRiwayat),
+        HomeQuickAction(title: 'PeduliObat', subtitle: 'Atur jadwal', icon: Icons.medication_outlined, tone: PkTone.brand, target: HomeActionTarget.peduliObat),
+        HomeQuickAction(title: 'PeduliAntar', subtitle: 'Antar obat', icon: Icons.local_shipping_outlined, tone: PkTone.amber, target: HomeActionTarget.peduliAntar),
+        HomeQuickAction(title: 'AhliPeduli', subtitle: 'Tenaga medis', icon: Icons.health_and_safety_outlined, tone: PkTone.purple, target: HomeActionTarget.ahliPeduli),
+        HomeQuickAction(title: 'PeduliDarurat', subtitle: 'Darurat', icon: Icons.emergency_outlined, tone: PkTone.red, target: HomeActionTarget.familyAlert),
+        HomeQuickAction(title: 'PeduliKonsul', subtitle: 'Konsultasi', icon: Icons.chat_bubble_outline_rounded, tone: PkTone.purple, target: HomeActionTarget.peduliKonsul),
       ],
       history: const [
-        HomeHistoryItem(
-          title: 'Obat pagi sudah diminum',
-          copy: 'Amlodipin dan Metformin selesai pukul 07:32.',
-          time: '07:32',
-          tone: PkTone.green,
-        ),
-        HomeHistoryItem(
-          title: 'PeduliCek belum diisi',
-          copy: 'Belum ada input cek kesehatan hari ini.',
-          time: '08:15',
-          tone: PkTone.amber,
-        ),
-        HomeHistoryItem(
-          title: 'Stok Simvastatin rendah',
-          copy: 'Sisa 5 tablet, disarankan pesan ulang.',
-          time: 'Kemarin',
-          tone: PkTone.red,
-        ),
+        HomeHistoryItem(title: 'Obat pagi sudah diminum', copy: 'Amlodipin dan Metformin selesai.', time: '07:32', tone: PkTone.green),
+        HomeHistoryItem(title: 'PeduliCek belum diisi', copy: 'Belum ada input cek kesehatan hari ini.', time: '08:15', tone: PkTone.amber),
       ],
-      aiEyebrow: 'AI insight card',
-      aiTitle: 'Saran tindak lanjut untuk Reza',
-      aiCopy:
-          'Pesankan Simvastatin hari ini karena stok tinggal 5 tablet. Minta Bapak isi PeduliCek untuk melengkapi tren tekanan darah minggu ini.',
-      aiBadge: 'Medium',
-      emergencyTitle: 'Pantau Family Alert',
-      emergencyCopy:
-          'Jika tombol darurat ditekan, notifikasi keluarga dan AhliPeduli akan aktif otomatis.',
+      aiEyebrow: 'AIPeduli',
+      aiTitle: 'Ringkasan cepat untuk $elderName',
+      aiCopy: 'Halo $caregiverName, kondisi umum $elderName hari ini cukup stabil. Cek harian belum diisi, Simvastatin hampir habis, gula darah terakhir stabil, dan tekanan darah terakhir dicatat manual. Konfirmasi pesanan obat lewat PeduliAntar bila data sudah sesuai.',
+      aiBadge: 'Pantau',
+      emergencyTitle: 'Pantau PeduliDarurat',
+      emergencyCopy: 'Jika tombol darurat ditekan, keluarga akan mendapat notifikasi.',
     );
   }
 
   static String _clock(DateTime value) {
     final h = value.hour.toString().padLeft(2, '0');
     final m = value.minute.toString().padLeft(2, '0');
-    final s = value.second.toString().padLeft(2, '0');
-    return '$h:$m:$s';
+    return '$h:$m';
   }
 }

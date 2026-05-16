@@ -1,11 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../state/providers/app_mode_provider.dart';
+import '../../../elder_profile/providers/elder_profile_provider.dart';
 import '../../providers/onboarding_provider.dart';
 import 'onboarding_widgets.dart';
 
@@ -82,7 +83,7 @@ class WelcomeOnboardingScreen extends StatelessWidget {
         OnboardingInfoCard(
           title: 'Tenang untuk Anak',
           subtitle:
-              'Dapatkan ringkasan kondisi, reminder obat, dan Family Alert.',
+              'Dapatkan ringkasan kondisi, reminder obat, dan PeduliDarurat.',
           icon: Icons.family_restroom_rounded,
           color: AppColors.blue,
         ),
@@ -125,9 +126,9 @@ class ChooseRoleOnboardingScreen extends ConsumerWidget {
         const SizedBox(height: AppSpacing.md),
         OnboardingChoiceCard(
           badge: 'PeduliPenuh',
-          title: 'Saya Anak / Caregiver',
+          title: 'Saya Anak / Pendamping',
           subtitle:
-              'Untuk memantau orang tua dari jauh, melihat riwayat, mengatur obat, dan menerima Family Alert.',
+              'Untuk memantau orang tua dari jauh, melihat riwayat, mengatur obat, dan menerima PeduliDarurat.',
           icon: Icons.supervisor_account_rounded,
           color: AppColors.blue,
           selected: state.role == AppUserMode.caregiver,
@@ -169,6 +170,34 @@ class SetupProfileOnboardingScreen extends ConsumerWidget {
           textInputAction: TextInputAction.next,
           onChanged: notifier.setFullName,
         ),
+        if (isElder) ...[
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            'Jenis kelamin',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              OnboardingChipOption(
+                label: 'Laki-laki',
+                selected: state.gender == 'Laki-laki',
+                selectedColor: AppColors.teal,
+                onTap: () => notifier.setGender('Laki-laki'),
+              ),
+              OnboardingChipOption(
+                label: 'Perempuan',
+                selected: state.gender == 'Perempuan',
+                selectedColor: AppColors.teal,
+                onTap: () => notifier.setGender('Perempuan'),
+              ),
+            ],
+          ),
+        ],
         const SizedBox(height: AppSpacing.md),
         Row(
           children: [
@@ -219,7 +248,7 @@ class SetupProfileOnboardingScreen extends ConsumerWidget {
             label: 'Alamat rumah',
             initialValue: state.address,
             hintText: 'Contoh: Jl. Melati No. 10',
-            helperText: 'Opsional, berguna untuk Family Alert dan PeduliAntar.',
+            helperText: 'Opsional, berguna untuk PeduliDarurat dan PeduliAntar.',
             prefixIcon: Icons.home_outlined,
             maxLines: 2,
             textInputAction: TextInputAction.done,
@@ -275,7 +304,7 @@ class HealthConditionOnboardingScreen extends ConsumerWidget {
       eyebrow: 'LANGKAH 3 DARI 5',
       title: 'Kondisi kesehatan $target',
       subtitle:
-          'Pilih kondisi yang relevan agar PeduliCek, PeduliObat, dan Family Alert bisa terasa lebih personal.',
+          'Pilih kondisi yang relevan agar PeduliCek, PeduliObat, dan PeduliDarurat bisa terasa lebih personal.',
       footer: const OnboardingInfoCard(
         title: 'Bisa dilewati',
         subtitle:
@@ -345,6 +374,40 @@ class HealthConditionOnboardingScreen extends ConsumerWidget {
   }
 }
 
+class _RegistrationQrPreview extends StatelessWidget {
+  const _RegistrationQrPreview({required this.payload});
+
+  final String payload;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: 'QR keluarga untuk menghubungkan anak atau pendamping.',
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.teal100),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.teal.withValues(alpha: 0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: QrImageView(
+          data: payload,
+          version: QrVersions.auto,
+          size: 168,
+          backgroundColor: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
 class ConnectFamilyOnboardingScreen extends ConsumerWidget {
   const ConnectFamilyOnboardingScreen({super.key});
 
@@ -352,13 +415,14 @@ class ConnectFamilyOnboardingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(onboardingProvider);
     final notifier = ref.read(onboardingProvider.notifier);
+    final elderProfile = ref.watch(elderProfileProvider);
 
     if (state.isElder) {
       return OnboardingStepLayout(
         eyebrow: 'LANGKAH 4 DARI 5',
         title: 'Hubungkan keluarga',
         subtitle:
-            'Bagikan kode ini ke anak atau caregiver agar mereka bisa memantau ringkasan kesehatan dan menerima Family Alert.',
+            'Bagikan kode ini ke anak atau pendamping agar mereka bisa memantau ringkasan kesehatan dan menerima PeduliDarurat.',
         children: [
           Container(
             width: double.infinity,
@@ -377,10 +441,7 @@ class ConnectFamilyOnboardingScreen extends ConsumerWidget {
             ),
             child: Column(
               children: [
-                const OnboardingHeroIcon(
-                  icon: Icons.qr_code_2_rounded,
-                  color: AppColors.teal,
-                ),
+                _RegistrationQrPreview(payload: elderProfile.qrPayload),
                 const SizedBox(height: AppSpacing.xl),
                 Text(
                   'Kode Keluarga Anda',
@@ -390,7 +451,7 @@ class ConnectFamilyOnboardingScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 SelectableText(
-                  state.inviteCode,
+                  elderProfile.connectionCode,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                         color: AppColors.teal,
@@ -404,7 +465,7 @@ class ConnectFamilyOnboardingScreen extends ConsumerWidget {
                   child: OutlinedButton.icon(
                     onPressed: () {
                       Clipboard.setData(
-                        ClipboardData(text: state.inviteCode),
+                        ClipboardData(text: elderProfile.connectionCode),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -522,6 +583,12 @@ class FinalConfirmationOnboardingScreen extends ConsumerWidget {
                 value: state.displayName,
                 icon: Icons.person_outline_rounded,
               ),
+              if (state.isElder)
+                OnboardingSummaryRow(
+                  label: 'Jenis kelamin',
+                  value: state.genderLabel,
+                  icon: Icons.wc_rounded,
+                ),
               OnboardingSummaryRow(
                 label: 'Kondisi kesehatan',
                 value: conditionText,
@@ -535,7 +602,7 @@ class FinalConfirmationOnboardingScreen extends ConsumerWidget {
               OnboardingSummaryRow(
                 label: 'Keluarga',
                 value:
-                    state.isElder ? state.inviteCode : state.connectedFamilyLabel,
+                    state.isElder ? ref.watch(elderProfileProvider).connectionCode : state.connectedFamilyLabel,
                 icon: Icons.family_restroom_rounded,
               ),
             ],
@@ -550,7 +617,7 @@ class FinalConfirmationOnboardingScreen extends ConsumerWidget {
           onChanged: notifier.setMedicationReminder,
         ),
         OnboardingSwitchTile(
-          title: 'Family Alert',
+          title: 'PeduliDarurat',
           subtitle: 'Aktifkan tombol darurat dan notifikasi keluarga.',
           icon: Icons.emergency_outlined,
           value: state.enableFamilyAlert,

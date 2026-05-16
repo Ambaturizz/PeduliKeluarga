@@ -749,7 +749,7 @@ class OnboardingHealthcareHero extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           OnboardingMiniBadge(
-            label: 'Healthcare onboarding',
+            label: 'PANDUAN AWAL',
             color: Colors.white,
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -766,7 +766,7 @@ class OnboardingHealthcareHero extends StatelessWidget {
               Expanded(
                 child: _HeroStat(
                   value: '24/7',
-                  label: 'Alert',
+                  label: 'Darurat',
                 ),
               ),
               SizedBox(width: AppSpacing.sm),

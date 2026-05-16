@@ -12,7 +12,7 @@ enum TimelineEventType {
       TimelineEventType.medication => 'Obat',
       TimelineEventType.consultation => 'Konsultasi',
       TimelineEventType.lab => 'Lab',
-      TimelineEventType.alert => 'Alert',
+      TimelineEventType.alert => 'PeduliDarurat',
       TimelineEventType.note => 'Catatan',
     };
   }

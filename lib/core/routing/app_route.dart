@@ -7,6 +7,10 @@ enum AppRoute {
     name: 'login',
     path: '/login',
   ),
+  register(
+    name: 'register',
+    path: '/register',
+  ),
   home(
     name: 'home',
     path: '/',
@@ -34,6 +38,10 @@ enum AppRoute {
   peduliAntar(
     name: 'peduliAntar',
     path: '/peduli-antar',
+  ),
+  peduliKonsul(
+    name: 'peduliKonsul',
+    path: '/peduli-konsul',
   ),
   notifications(
     name: 'notifications',

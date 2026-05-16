@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/animations/app_motion.dart';
 import '../../core/routing/app_navigation_destination.dart';
+import '../../core/routing/app_route.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/utils/responsive.dart';
 import '../../state/providers/app_mode_provider.dart';
@@ -39,6 +40,20 @@ class AppNavigationShell extends ConsumerWidget {
         child: RepaintBoundary(child: navigationShell),
       ),
     );
+
+    final bottomDestinations = mode == AppUserMode.caregiver
+        ? destinations
+            .where(
+              (item) => const {
+                AppRoute.home,
+                AppRoute.peduliRiwayat,
+                AppRoute.peduliObat,
+                AppRoute.peduliAntar,
+                AppRoute.ahliPeduli,
+              }.contains(item.route),
+            )
+            .toList()
+        : destinations;
 
     if (context.isExpanded) {
       return Scaffold(
@@ -78,7 +93,7 @@ class AppNavigationShell extends ConsumerWidget {
             padding: const EdgeInsets.only(top: AppSpacing.xs),
             child: AppBottomNavigation(
               navigationShell: navigationShell,
-              destinations: destinations,
+              destinations: bottomDestinations,
             ),
           ),
         ),

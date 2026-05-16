@@ -1,8 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/pk_design.dart';
+import '../../../../state/providers/app_mode_provider.dart';
+import '../../../peduli_antar/providers/peduli_antar_provider.dart';
 import '../../data/medication_dummy_data.dart';
 import '../../providers/peduli_obat_provider.dart';
 import '../widgets/peduli_obat_widgets.dart';
@@ -43,14 +46,15 @@ class PeduliObatPage extends ConsumerWidget {
                         onReorder: (item) {
                           _reorderSingle(
                             context: context,
+                            ref: ref,
                             notifier: notifier,
                             medication: item,
                           );
                         },
                       ),
                       const PkSectionTitle(
-                        title: 'Medication schedule',
-                        subtitle: 'Jadwal & tracking harian',
+                        title: 'Jadwal Obat',
+                        subtitle: 'Jadwal dan catatan harian',
                       ),
                       PeduliObatResponsiveGrid(
                         left: [
@@ -93,12 +97,17 @@ class PeduliObatPage extends ConsumerWidget {
                               );
 
                               for (final item in items) {
-                                notifier.reorderMedication(item.id);
+                                ref.read(peduliAntarProvider.notifier).createRequest(item);
+                                notifier.requestMedicationPurchase(item.id);
                               }
 
+                              context.go(AppRoutes.peduliAntarPath);
+                              final mode = ref.read(appModeControllerProvider);
                               _showMessage(
                                 context,
-                                'Permintaan reorder semua obat stok rendah berhasil dibuat.',
+                                mode == AppUserMode.caregiver
+                                    ? 'Draft pesanan dibuat. Periksa detail lalu tekan Konfirmasi Pesanan.'
+                                    : 'Permintaan pembelian obat sudah dikirim ke keluarga. Tunggu konfirmasi dari anak atau pendamping.',
                               );
                             },
                           ),
@@ -106,14 +115,15 @@ class PeduliObatPage extends ConsumerWidget {
                         ],
                       ),
                       const PkSectionTitle(
-                        title: 'Stock progress tracker',
-                        subtitle: 'Medication cards',
+                        title: 'Stok Obat',
+                        subtitle: 'Pantau sisa obat',
                       ),
                       MedicationStockGrid(
                         medications: state.medications,
                         onReorder: (item) {
                           _reorderSingle(
                             context: context,
+                            ref: ref,
                             notifier: notifier,
                             medication: item,
                           );
@@ -140,14 +150,20 @@ class PeduliObatPage extends ConsumerWidget {
 
   void _reorderSingle({
     required BuildContext context,
+    required WidgetRef ref,
     required PeduliObatController notifier,
     required MedicationModel medication,
   }) {
-    notifier.reorderMedication(medication.id);
+    ref.read(peduliAntarProvider.notifier).createRequest(medication);
+    notifier.requestMedicationPurchase(medication.id);
 
+    context.go(AppRoutes.peduliAntarPath);
+    final mode = ref.read(appModeControllerProvider);
     _showMessage(
       context,
-      '${medication.name} berhasil dipesan ulang.',
+      mode == AppUserMode.caregiver
+          ? 'Draft pesanan dibuat. Periksa detail lalu tekan Konfirmasi Pesanan.'
+          : 'Permintaan pembelian obat sudah dikirim ke keluarga. Tunggu konfirmasi dari anak atau pendamping.',
     );
   }
 

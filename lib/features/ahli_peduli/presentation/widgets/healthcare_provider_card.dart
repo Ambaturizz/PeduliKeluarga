@@ -7,13 +7,13 @@ class HealthcareProviderCard extends StatelessWidget {
   const HealthcareProviderCard({
     required this.provider,
     this.onBook,
-    this.onEmergency,
+    this.onDarurat,
     super.key,
   });
 
   final HealthcareProvider provider;
   final VoidCallback? onBook;
-  final VoidCallback? onEmergency;
+  final VoidCallback? onDarurat;
 
   @override
   Widget build(BuildContext context) {
@@ -157,10 +157,10 @@ class HealthcareProviderCard extends StatelessWidget {
                 child: FilledButton.icon(
                   onPressed: onBook,
                   icon: const Icon(Icons.calendar_month_rounded, size: 18),
-                  label: const Text('Booking'),
+                  label: const Text('Booking AhliPeduli'),
                 ),
               ),
-              if (provider.isEmergencyReady) ...[
+              if (provider.isDaruratReady) ...[
                 const SizedBox(width: PkSpacing.sm),
                 Expanded(
                   child: FilledButton.icon(
@@ -168,9 +168,9 @@ class HealthcareProviderCard extends StatelessWidget {
                       backgroundColor: PkColors.red,
                       foregroundColor: Colors.white,
                     ),
-                    onPressed: onEmergency,
+                    onPressed: onDarurat,
                     icon: const Icon(Icons.emergency_share_outlined, size: 18),
-                    label: const Text('Darurat'),
+                    label: const Text('PeduliDarurat'),
                   ),
                 ),
               ],
@@ -387,6 +387,7 @@ PkTone _toneFor(ProviderCategory category) {
     ProviderCategory.doctor => PkTone.brand,
     ProviderCategory.nurse => PkTone.purple,
     ProviderCategory.clinic => PkTone.blue,
+    ProviderCategory.hospital => PkTone.red,
   };
 }
 
@@ -395,5 +396,6 @@ IconData _iconFor(ProviderCategory category) {
     ProviderCategory.doctor => Icons.medical_information_outlined,
     ProviderCategory.nurse => Icons.volunteer_activism_outlined,
     ProviderCategory.clinic => Icons.local_hospital_outlined,
+    ProviderCategory.hospital => Icons.apartment_rounded,
   };
 }

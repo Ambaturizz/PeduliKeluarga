@@ -8,6 +8,8 @@ import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../state/providers/app_mode_provider.dart';
+import '../../../caregiver_profile/providers/caregiver_profile_provider.dart';
+import '../../../elder_profile/providers/elder_profile_provider.dart';
 import '../../providers/onboarding_provider.dart';
 import '../widgets/onboarding_steps.dart';
 
@@ -117,6 +119,12 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   void _finishOnboarding() {
     final state = ref.read(onboardingProvider);
 
+    if (state.isElder) {
+      ref.read(elderProfileProvider.notifier).saveFromOnboarding(state);
+    } else if (state.isCaregiver) {
+      ref.read(caregiverProfileProvider.notifier).saveFromOnboarding(state);
+    }
+
     ref.read(onboardingProvider.notifier).finish();
 
     if (state.role != null) {
@@ -129,7 +137,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   void _showValidationMessage() {
     final message = switch (_currentPage) {
       _roleIndex => 'Pilih peran terlebih dahulu.',
-      _profileIndex => 'Nama wajib diisi agar profil bisa dibuat.',
+      _profileIndex => 'Nama Anda dan nama orang tua/lansia wajib diisi. Untuk lansia, jenis kelamin juga wajib dipilih.',
       _ => 'Lengkapi data yang diperlukan terlebih dahulu.',
     };
 

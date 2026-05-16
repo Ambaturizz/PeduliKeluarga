@@ -21,12 +21,24 @@ extension NavigationHelper on BuildContext {
     goNamed(AppRoute.home.name);
   }
 
+  void goLogin() {
+    goNamed(AppRoute.login.name);
+  }
+
+  void goRegister() {
+    goNamed(AppRoute.register.name);
+  }
+
   void goProfile() {
     goNamed(AppRoute.profile.name);
   }
 
   void goNotifications() {
     goNamed(AppRoute.notifications.name);
+  }
+
+  void goPeduliKonsul() {
+    goNamed(AppRoute.peduliKonsul.name);
   }
 
   void goInitialForMode(AppUserMode mode) {

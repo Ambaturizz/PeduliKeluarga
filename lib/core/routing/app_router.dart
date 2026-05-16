@@ -4,11 +4,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/ahli_peduli/presentation/pages/ahli_peduli_page.dart';
 import '../../features/authentication/presentation/pages/login_page.dart';
+import '../../features/authentication/presentation/pages/register_page.dart';
+import '../../features/authentication/providers/auth_provider.dart';
 import '../../features/family_alert/presentation/pages/family_alert_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/peduli_antar/presentation/pages/peduli_antar_page.dart';
+import '../../features/peduli_konsul/presentation/pages/peduli_konsul_page.dart';
 import '../../features/pedulicek/presentation/pages/peduli_cek_page.dart';
 import '../../features/peduliobat/presentation/pages/peduli_obat_page.dart';
 import '../../features/peduliriwayat/presentation/pages/peduli_riwayat_page.dart';
@@ -36,6 +39,10 @@ final _peduliObatNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'peduliObatNavigator',
 );
 
+final _peduliAntarNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'peduliAntarNavigator',
+);
+
 final _familyAlertNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'familyAlertNavigator',
 );
@@ -48,13 +55,36 @@ final _peduliRiwayatNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'peduliRiwayatNavigator',
 );
 
+final _peduliKonsulNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'peduliKonsulNavigator',
+);
+
 final appRouterProvider = Provider<GoRouter>((ref) {
   final config = ref.watch(appConfigProvider);
+  final auth = ref.watch(authControllerProvider);
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: AppRoute.onboarding.path,
+    initialLocation: AppRoute.login.path,
     debugLogDiagnostics: config.enableRouterLogs,
+    redirect: (context, state) {
+      final location = state.uri.path;
+      final isAuthRoute = {
+        AppRoute.login.path,
+        AppRoute.register.path,
+      }.contains(location);
+      final isOnboardingRoute = location == AppRoute.onboarding.path;
+
+      if (!auth.isAuthenticated) {
+        return isAuthRoute ? null : AppRoute.login.path;
+      }
+
+      if (isAuthRoute || isOnboardingRoute) {
+        return AppRoute.home.path;
+      }
+
+      return null;
+    },
     errorBuilder: (context, state) {
       return AppErrorPage(
         title: 'Halaman tidak ditemukan',
@@ -84,6 +114,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoute.register.path,
+        name: AppRoute.register.name,
+        pageBuilder: (context, state) {
+          return RouteTransitions.fade(
+            key: state.pageKey,
+            child: const RegisterPage(),
+          );
+        },
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return AppNavigationShell(
@@ -104,19 +145,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     child: const HomePage(),
                   );
                 },
-                routes: [
-                  GoRoute(
-                    parentNavigatorKey: _rootNavigatorKey,
-                    path: AppRoute.peduliAntar.path.substring(1),
-                    name: AppRoute.peduliAntar.name,
-                    pageBuilder: (context, state) {
-                      return RouteTransitions.slideFade(
-                        key: state.pageKey,
-                        child: const PeduliAntarPage(),
-                      );
-                    },
-                  ),
-                ],
               ),
             ],
           ),
@@ -145,6 +173,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   return RouteTransitions.fade(
                     key: state.pageKey,
                     child: const PeduliObatPage(),
+                  );
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _peduliAntarNavigatorKey,
+            routes: [
+              GoRoute(
+                path: AppRoute.peduliAntar.path,
+                name: AppRoute.peduliAntar.name,
+                pageBuilder: (context, state) {
+                  return RouteTransitions.fade(
+                    key: state.pageKey,
+                    child: const PeduliAntarPage(),
                   );
                 },
               ),
@@ -190,6 +233,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   return RouteTransitions.fade(
                     key: state.pageKey,
                     child: const PeduliRiwayatPage(),
+                  );
+                },
+              ),
+            ],
+          ),
+
+          StatefulShellBranch(
+            navigatorKey: _peduliKonsulNavigatorKey,
+            routes: [
+              GoRoute(
+                path: AppRoute.peduliKonsul.path,
+                name: AppRoute.peduliKonsul.name,
+                pageBuilder: (context, state) {
+                  return RouteTransitions.fade(
+                    key: state.pageKey,
+                    child: const PeduliKonsulPage(),
                   );
                 },
               ),

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/pk_design.dart';
@@ -43,7 +42,7 @@ class MedicationPageHero extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _HeroBadge(
-                    label: 'PeduliObat · Medication Center',
+                    label: 'PeduliObat',
                     icon: Icons.medication_outlined,
                   ),
                   const SizedBox(height: 18),
@@ -202,7 +201,7 @@ class _HeroPanel extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Daily tracker',
+                  'Catatan hari ini',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: Colors.white.withValues(alpha: 0.76),
                         fontWeight: FontWeight.w900,
@@ -233,7 +232,7 @@ class _HeroPanel extends StatelessWidget {
                 children: [
                   _HeroStatTile(
                     value: '${state.adherencePercent}%',
-                    label: 'Adherence',
+                    label: 'Patuh',
                     icon: Icons.done_all_rounded,
                   ),
                   _HeroStatTile(
@@ -449,7 +448,7 @@ class MedicationLowStockWarning extends StatelessWidget {
                     ),
                     onPressed: () => onReorder(item),
                     icon: const Icon(Icons.local_shipping_outlined),
-                    label: const Text('Pesan sekarang'),
+                    label: const Text('Pesan Sekarang'),
                   );
 
                   if (compact) {
@@ -495,7 +494,7 @@ class MedicationAdherenceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _CardTitleRow(
-            eyebrow: 'Adherence tracker',
+            eyebrow: 'Kepatuhan minum obat',
             title: 'Kepatuhan obat hari ini',
             subtitle: 'Pantau jadwal yang sudah diminum dan yang masih menunggu.',
             icon: Icons.done_all_rounded,
@@ -616,7 +615,7 @@ class MedicationScheduleCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _CardTitleRow(
-            eyebrow: 'Medication schedule',
+            eyebrow: 'Jadwal obat',
             title: 'Jadwal obat hari ini',
             subtitle: 'Tombol besar agar mudah digunakan lansia.',
             icon: Icons.schedule_outlined,
@@ -959,7 +958,11 @@ class MedicationStockCard extends StatelessWidget {
                   foregroundColor: PkColors.text2,
                   shape: const StadiumBorder(),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Riwayat ${medication.name} belum memiliki catatan tambahan.')),
+                  );
+                },
                 child: const Text('Riwayat'),
               ),
               OutlinedButton(
@@ -967,7 +970,11 @@ class MedicationStockCard extends StatelessWidget {
                   foregroundColor: PkColors.text2,
                   shape: const StadiumBorder(),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Jadwal ${medication.name} bisa diubah setelah fitur pengaturan obat aktif.')),
+                  );
+                },
                 child: const Text('Ubah jadwal'),
               ),
               FilledButton.icon(
@@ -981,7 +988,7 @@ class MedicationStockCard extends StatelessWidget {
                 icon: const Icon(Icons.local_shipping_outlined),
                 label: Text(
                   medication.isLowStock
-                      ? 'Pesan sekarang'
+                      ? 'Pesan Sekarang'
                       : 'Pesan via PeduliAntar',
                 ),
               ),
@@ -1025,7 +1032,7 @@ class MedicationReminderCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Medication reminder UI',
+                      'Pengingat obat',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             color: PkColors.muted,
                             fontWeight: FontWeight.w900,
@@ -1144,9 +1151,9 @@ class MedicationHistoryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _CardTitleRow(
-            eyebrow: 'Medication history',
+            eyebrow: 'Riwayat obat',
             title: 'Riwayat obat',
-            subtitle: 'Log minum obat, keterlambatan, dan aktivitas reorder.',
+            subtitle: 'Log minum obat, keterlambatan, dan permintaan pembelian obat.',
             icon: Icons.history_rounded,
             tone: PkTone.blue,
           ),
@@ -1286,7 +1293,7 @@ class MedicationReorderCta extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            hasLowStock ? 'Reorder obat hampir habis' : 'Stok obat aman',
+            hasLowStock ? 'Obat hampir habis' : 'Stok obat aman',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w900,

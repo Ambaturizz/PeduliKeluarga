@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/pk_design.dart';
 
-enum EmergencyStatus {
+enum DaruratStatus {
   standby,
   active,
   dispatching,
@@ -12,51 +12,56 @@ enum EmergencyStatus {
 
   String get label {
     return switch (this) {
-      EmergencyStatus.standby => 'Standby',
-      EmergencyStatus.active => 'Aktif',
-      EmergencyStatus.dispatching => 'Mengirim bantuan',
-      EmergencyStatus.notified => 'Keluarga diberi tahu',
-      EmergencyStatus.resolved => 'Selesai',
-      EmergencyStatus.cancelled => 'Dibatalkan',
+      DaruratStatus.standby => 'Siaga',
+      DaruratStatus.active => 'Aktif',
+      DaruratStatus.dispatching => 'Mengirim bantuan',
+      DaruratStatus.notified => 'Keluarga diberi tahu',
+      DaruratStatus.resolved => 'Selesai',
+      DaruratStatus.cancelled => 'Dibatalkan',
     };
   }
 
   String get description {
     return switch (this) {
-      EmergencyStatus.standby => 'Sistem siap digunakan kapan saja.',
-      EmergencyStatus.active => 'Alert sedang aktif. Countdown berjalan.',
-      EmergencyStatus.dispatching => 'Notifikasi dan dispatch sedang diproses.',
-      EmergencyStatus.notified => 'Kontak darurat sudah menerima simulasi alert.',
-      EmergencyStatus.resolved => 'Kejadian darurat sudah ditandai selesai.',
-      EmergencyStatus.cancelled => 'Alert dibatalkan sebelum dispatch penuh.',
+      DaruratStatus.standby => 'Sistem siap digunakan kapan saja.',
+      DaruratStatus.active =>
+        'PeduliDarurat sedang aktif. Hitungan mundur berjalan.',
+      DaruratStatus.dispatching =>
+        'Notifikasi dan bantuan sedang diproses.',
+      DaruratStatus.notified =>
+        'Kontak darurat sudah menerima notifikasi.',
+      DaruratStatus.resolved =>
+        'Kejadian darurat sudah ditandai selesai.',
+      DaruratStatus.cancelled =>
+        'PeduliDarurat dibatalkan sebelum bantuan dikirim.',
     };
   }
 
   PkTone get tone {
     return switch (this) {
-      EmergencyStatus.standby => PkTone.brand,
-      EmergencyStatus.active => PkTone.red,
-      EmergencyStatus.dispatching => PkTone.amber,
-      EmergencyStatus.notified => PkTone.blue,
-      EmergencyStatus.resolved => PkTone.green,
-      EmergencyStatus.cancelled => PkTone.gray,
+      DaruratStatus.standby => PkTone.brand,
+      DaruratStatus.active => PkTone.red,
+      DaruratStatus.dispatching => PkTone.amber,
+      DaruratStatus.notified => PkTone.blue,
+      DaruratStatus.resolved => PkTone.green,
+      DaruratStatus.cancelled => PkTone.gray,
     };
   }
 
   IconData get icon {
     return switch (this) {
-      EmergencyStatus.standby => Icons.health_and_safety_outlined,
-      EmergencyStatus.active => Icons.emergency_outlined,
-      EmergencyStatus.dispatching => Icons.local_shipping_outlined,
-      EmergencyStatus.notified => Icons.notifications_active_outlined,
-      EmergencyStatus.resolved => Icons.check_circle_outline_rounded,
-      EmergencyStatus.cancelled => Icons.cancel_outlined,
+      DaruratStatus.standby => Icons.health_and_safety_outlined,
+      DaruratStatus.active => Icons.emergency_outlined,
+      DaruratStatus.dispatching => Icons.local_shipping_outlined,
+      DaruratStatus.notified => Icons.notifications_active_outlined,
+      DaruratStatus.resolved => Icons.check_circle_outline_rounded,
+      DaruratStatus.cancelled => Icons.cancel_outlined,
     };
   }
 }
 
-class EmergencyContact {
-  const EmergencyContact({
+class DaruratContact {
+  const DaruratContact({
     required this.id,
     required this.name,
     required this.role,
@@ -76,10 +81,8 @@ class EmergencyContact {
   final PkTone tone;
   final bool notified;
 
-  EmergencyContact copyWith({
-    bool? notified,
-  }) {
-    return EmergencyContact(
+  DaruratContact copyWith({bool? notified}) {
+    return DaruratContact(
       id: id,
       name: name,
       role: role,
@@ -92,8 +95,8 @@ class EmergencyContact {
   }
 }
 
-class EmergencyTimelineEvent {
-  const EmergencyTimelineEvent({
+class DaruratTimelineEvent {
+  const DaruratTimelineEvent({
     required this.id,
     required this.title,
     required this.description,
@@ -110,8 +113,8 @@ class EmergencyTimelineEvent {
   final IconData icon;
 }
 
-class EmergencyMedicalSummary {
-  const EmergencyMedicalSummary({
+class DaruratMedicalSummary {
+  const DaruratMedicalSummary({
     required this.name,
     required this.age,
     required this.conditions,
@@ -132,8 +135,8 @@ class EmergencyMedicalSummary {
   final List<String> currentMedications;
 }
 
-class EmergencyDispatchStep {
-  const EmergencyDispatchStep({
+class DaruratDispatchStep {
+  const DaruratDispatchStep({
     required this.title,
     required this.subtitle,
     required this.icon,
@@ -146,11 +149,11 @@ class EmergencyDispatchStep {
   final PkTone tone;
 }
 
-final class EmergencyMockData {
-  const EmergencyMockData._();
+final class DaruratMockData {
+  const DaruratMockData._();
 
   static const contacts = [
-    EmergencyContact(
+    DaruratContact(
       id: 'reza',
       name: 'Reza Dwi Putra',
       role: 'Anak utama',
@@ -159,7 +162,7 @@ final class EmergencyMockData {
       icon: Icons.family_restroom_rounded,
       tone: PkTone.brand,
     ),
-    EmergencyContact(
+    DaruratContact(
       id: 'nina',
       name: 'Nina Putri',
       role: 'Anak kedua',
@@ -168,10 +171,10 @@ final class EmergencyMockData {
       icon: Icons.person_outline_rounded,
       tone: PkTone.blue,
     ),
-    EmergencyContact(
+    DaruratContact(
       id: 'ahli',
       name: 'AhliPeduli Siaga',
-      role: 'Homecare partner',
+      role: 'Mitra perawatan rumah',
       phone: '1500-921',
       responseTime: '± 10 menit',
       icon: Icons.health_and_safety_outlined,
@@ -179,14 +182,10 @@ final class EmergencyMockData {
     ),
   ];
 
-  static const medicalSummary = EmergencyMedicalSummary(
+  static const medicalSummary = DaruratMedicalSummary(
     name: 'Bapak Purwanto',
     age: 68,
-    conditions: [
-      'Hipertensi',
-      'Diabetes Tipe 2',
-      'Kolesterol',
-    ],
+    conditions: ['Hipertensi', 'Diabetes Tipe 2', 'Kolesterol'],
     allergies: 'Tidak ada alergi obat yang tercatat',
     lastCheck: 'Hari ini 07:42',
     bloodPressure: '138/88 mmHg',
@@ -199,50 +198,50 @@ final class EmergencyMockData {
   );
 
   static const dispatchSteps = [
-    EmergencyDispatchStep(
-      title: 'Alert dibuat',
+    DaruratDispatchStep(
+      title: 'PeduliDarurat dibuat',
       subtitle: 'Sinyal darurat diterima sistem PeduliKeluarga.',
       icon: Icons.emergency_outlined,
       tone: PkTone.red,
     ),
-    EmergencyDispatchStep(
+    DaruratDispatchStep(
       title: 'Keluarga dihubungi',
-      subtitle: 'Reza dan Nina menerima simulasi notifikasi.',
+      subtitle: 'Keluarga menerima simulasi notifikasi.',
       icon: Icons.notifications_active_outlined,
       tone: PkTone.amber,
     ),
-    EmergencyDispatchStep(
-      title: 'AhliPeduli standby',
-      subtitle: 'Partner homecare melihat ringkasan medis.',
+    DaruratDispatchStep(
+      title: 'AhliPeduli siaga',
+      subtitle: 'Partner perawat melihat ringkasan medis.',
       icon: Icons.health_and_safety_outlined,
       tone: PkTone.blue,
     ),
-    EmergencyDispatchStep(
+    DaruratDispatchStep(
       title: 'Pemantauan aktif',
-      subtitle: 'Status emergency dapat diselesaikan atau dibatalkan.',
+      subtitle: 'Status PeduliDarurat dapat diselesaikan atau dibatalkan.',
       icon: Icons.timeline_outlined,
       tone: PkTone.green,
     ),
   ];
 
-  static EmergencyTimelineEvent initialTimelineEvent() {
-    return EmergencyTimelineEvent(
+  static DaruratTimelineEvent initialTimelineEvent() {
+    return DaruratTimelineEvent(
       id: 'ready',
-      title: 'Emergency system standby',
-      description: 'Kontak darurat, ringkasan medis, dan dispatch siap.',
+      title: 'PeduliDarurat siaga',
+      description: 'Kontak darurat, ringkasan medis, dan bantuan siap.',
       time: _clock(DateTime.now()),
       tone: PkTone.brand,
       icon: Icons.health_and_safety_outlined,
     );
   }
 
-  static EmergencyTimelineEvent event({
+  static DaruratTimelineEvent event({
     required String title,
     required String description,
     required PkTone tone,
     required IconData icon,
   }) {
-    return EmergencyTimelineEvent(
+    return DaruratTimelineEvent(
       id: 'event-${DateTime.now().microsecondsSinceEpoch}',
       title: title,
       description: description,

@@ -8,6 +8,7 @@ class OnboardingState {
     this.fullName = '',
     this.age = '',
     this.phoneNumber = '',
+    this.gender = '',
     this.address = '',
     this.relationship = '',
     this.elderName = '',
@@ -27,6 +28,7 @@ class OnboardingState {
   final String fullName;
   final String age;
   final String phoneNumber;
+  final String gender;
   final String address;
   final String relationship;
   final String elderName;
@@ -69,6 +71,8 @@ class OnboardingState {
     return 'Kak';
   }
 
+  String get genderLabel => gender.trim().isEmpty ? 'Belum dipilih' : gender.trim();
+
   String get connectedFamilyLabel {
     if (isElder) {
       return familyCode.trim().isEmpty ? 'Kode siap dibagikan' : familyCode;
@@ -77,13 +81,14 @@ class OnboardingState {
     return familyCode.trim().isEmpty ? 'Belum dihubungkan' : familyCode.trim();
   }
 
-  String get inviteCode => 'PK-882-991';
+  String get inviteCode => familyCode.trim().isEmpty ? 'Kode dibuat otomatis' : familyCode.trim();
 
   OnboardingState copyWith({
     AppUserMode? role,
     String? fullName,
     String? age,
     String? phoneNumber,
+    String? gender,
     String? address,
     String? relationship,
     String? elderName,
@@ -103,6 +108,7 @@ class OnboardingState {
       fullName: fullName ?? this.fullName,
       age: age ?? this.age,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      gender: gender ?? this.gender,
       address: address ?? this.address,
       relationship: relationship ?? this.relationship,
       elderName: elderName ?? this.elderName,
@@ -147,6 +153,10 @@ class OnboardingController extends Notifier<OnboardingState> {
 
   void setPhoneNumber(String value) {
     state = state.copyWith(phoneNumber: value);
+  }
+
+  void setGender(String value) {
+    state = state.copyWith(gender: value);
   }
 
   void setAddress(String value) {
@@ -230,7 +240,10 @@ class OnboardingController extends Notifier<OnboardingState> {
       case 2:
         return state.role != null;
       case 3:
-        return state.fullName.trim().isNotEmpty;
+        if (state.isElder) {
+          return state.fullName.trim().isNotEmpty && state.gender.trim().isNotEmpty;
+        }
+        return state.fullName.trim().isNotEmpty && state.elderName.trim().isNotEmpty;
       case 4:
         return true;
       case 5:

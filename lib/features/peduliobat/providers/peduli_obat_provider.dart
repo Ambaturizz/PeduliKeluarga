@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/pk_design.dart';
@@ -171,36 +170,27 @@ class PeduliObatController extends Notifier<PeduliObatState> {
     );
   }
 
-  void reorderMedication(String medicationId) {
+  void requestMedicationPurchase(String medicationId) {
     final medication = state.medications.firstWhere(
       (item) => item.id == medicationId,
     );
 
-    final updated = medication.copyWith(
-      stockTablets: medication.stockTablets + 30,
-      stockDays: medication.stockDays + 30,
-    );
-
-    final nextMedications = state.medications.map((item) {
-      if (item.id == medicationId) return updated;
-      return item;
-    }).toList();
-
     final nextLogs = [
       MedicationLogModel(
         id: 'log-${DateTime.now().millisecondsSinceEpoch}',
-        title: '${medication.name} dipesan ulang',
-        copy: 'Permintaan reorder via PeduliAntar berhasil dibuat.',
+        title: 'Permintaan pembelian ${medication.name} dibuat',
+        copy: 'Status: Menunggu konfirmasi pendamping melalui PeduliAntar.',
         time: _clock(DateTime.now()),
-        tone: PkTone.brand,
+        tone: PkTone.amber,
       ),
       ...state.logs,
     ];
 
-    state = state.copyWith(
-      medications: nextMedications,
-      logs: nextLogs,
-    );
+    state = state.copyWith(logs: nextLogs);
+  }
+
+  void reorderMedication(String medicationId) {
+    requestMedicationPurchase(medicationId);
   }
 
   void resetDemo() {

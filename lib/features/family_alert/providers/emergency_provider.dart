@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/pk_design.dart';
 import '../data/emergency_mock_data.dart';
 
-class EmergencyState {
-  const EmergencyState({
+class DaruratState {
+  const DaruratState({
     required this.status,
     required this.contacts,
     required this.timeline,
@@ -18,64 +18,62 @@ class EmergencyState {
     required this.resolvedAt,
   });
 
-  final EmergencyStatus status;
-  final List<EmergencyContact> contacts;
-  final List<EmergencyTimelineEvent> timeline;
+  final DaruratStatus status;
+  final List<DaruratContact> contacts;
+  final List<DaruratTimelineEvent> timeline;
   final int countdownSeconds;
   final double dispatchProgress;
   final int notificationCount;
   final DateTime? startedAt;
   final DateTime? resolvedAt;
 
-  bool get isStandby => status == EmergencyStatus.standby;
-  bool get isActive => status == EmergencyStatus.active;
-  bool get isDispatching => status == EmergencyStatus.dispatching;
-  bool get isNotified => status == EmergencyStatus.notified;
-  bool get isResolved => status == EmergencyStatus.resolved;
-  bool get isCancelled => status == EmergencyStatus.cancelled;
+  bool get isStandby => status == DaruratStatus.standby;
+  bool get isActive => status == DaruratStatus.active;
+  bool get isDispatching => status == DaruratStatus.dispatching;
+  bool get isNotified => status == DaruratStatus.notified;
+  bool get isResolved => status == DaruratStatus.resolved;
+  bool get isCancelled => status == DaruratStatus.cancelled;
 
   bool get canStart => isStandby || isResolved || isCancelled;
   bool get canCancel => isActive || isDispatching;
   bool get canResolve => isActive || isDispatching || isNotified;
 
-  int get notifiedContacts {
-    return contacts.where((item) => item.notified).length;
-  }
+  int get notifiedContacts => contacts.where((item) => item.notified).length;
 
   String get heroTitle {
     return switch (status) {
-      EmergencyStatus.standby => 'Family Alert siap digunakan',
-      EmergencyStatus.active => 'Alert aktif — tetap tenang',
-      EmergencyStatus.dispatching => 'Mengirim notifikasi bantuan',
-      EmergencyStatus.notified => 'Keluarga sudah diberi tahu',
-      EmergencyStatus.resolved => 'Emergency selesai',
-      EmergencyStatus.cancelled => 'Emergency dibatalkan',
+      DaruratStatus.standby => 'PeduliDarurat siap digunakan',
+      DaruratStatus.active => 'PeduliDarurat aktif — tetap tenang',
+      DaruratStatus.dispatching => 'Mengirim notifikasi bantuan',
+      DaruratStatus.notified => 'Keluarga sudah diberi tahu',
+      DaruratStatus.resolved => 'Darurat selesai',
+      DaruratStatus.cancelled => 'Darurat dibatalkan',
     };
   }
 
   String get heroSubtitle {
     return switch (status) {
-      EmergencyStatus.standby =>
+      DaruratStatus.standby =>
         'Tekan tombol besar di bawah jika membutuhkan bantuan keluarga atau AhliPeduli.',
-      EmergencyStatus.active =>
-        'Countdown berjalan. Sistem akan mengirim notifikasi otomatis bila tidak dibatalkan.',
-      EmergencyStatus.dispatching =>
+      DaruratStatus.active =>
+        'Hitungan mundur berjalan. Sistem akan mengirim notifikasi otomatis bila tidak dibatalkan.',
+      DaruratStatus.dispatching =>
         'Kontak keluarga, AhliPeduli, dan ringkasan medis sedang disiapkan.',
-      EmergencyStatus.notified =>
+      DaruratStatus.notified =>
         'Simulasi notifikasi berhasil dikirim ke kontak darurat.',
-      EmergencyStatus.resolved =>
-        'Kejadian ditandai aman. Timeline tetap tersimpan sebagai log lokal.',
-      EmergencyStatus.cancelled =>
-        'Alert dihentikan. Sistem kembali bisa dipakai kapan saja.',
+      DaruratStatus.resolved =>
+        'Kejadian ditandai aman. Riwayat tetap tersimpan sebagai catatan lokal.',
+      DaruratStatus.cancelled =>
+        'PeduliDarurat dihentikan. Sistem kembali bisa dipakai kapan saja.',
     };
   }
 
   PkTone get tone => status.tone;
 
-  EmergencyState copyWith({
-    EmergencyStatus? status,
-    List<EmergencyContact>? contacts,
-    List<EmergencyTimelineEvent>? timeline,
+  DaruratState copyWith({
+    DaruratStatus? status,
+    List<DaruratContact>? contacts,
+    List<DaruratTimelineEvent>? timeline,
     int? countdownSeconds,
     double? dispatchProgress,
     int? notificationCount,
@@ -83,7 +81,7 @@ class EmergencyState {
     DateTime? resolvedAt,
     bool clearResolvedAt = false,
   }) {
-    return EmergencyState(
+    return DaruratState(
       status: status ?? this.status,
       contacts: contacts ?? this.contacts,
       timeline: timeline ?? this.timeline,
@@ -95,13 +93,11 @@ class EmergencyState {
     );
   }
 
-  factory EmergencyState.initial() {
-    return EmergencyState(
-      status: EmergencyStatus.standby,
-      contacts: EmergencyMockData.contacts,
-      timeline: [
-        EmergencyMockData.initialTimelineEvent(),
-      ],
+  factory DaruratState.initial() {
+    return DaruratState(
+      status: DaruratStatus.standby,
+      contacts: DaruratMockData.contacts,
+      timeline: [DaruratMockData.initialTimelineEvent()],
       countdownSeconds: 5,
       dispatchProgress: 0,
       notificationCount: 0,
@@ -111,32 +107,31 @@ class EmergencyState {
   }
 }
 
-final emergencyProvider =
-    NotifierProvider<EmergencyController, EmergencyState>(
-  EmergencyController.new,
+final emergencyProvider = NotifierProvider<DaruratController, DaruratState>(
+  DaruratController.new,
 );
 
-class EmergencyController extends Notifier<EmergencyState> {
+class DaruratController extends Notifier<DaruratState> {
   Timer? _timer;
 
   @override
-  EmergencyState build() {
+  DaruratState build() {
     ref.onDispose(_stopTimer);
-    return EmergencyState.initial();
+    return DaruratState.initial();
   }
 
-  void startEmergency() {
+  void startDarurat() {
     _stopTimer();
 
-    state = EmergencyState.initial().copyWith(
-      status: EmergencyStatus.active,
+    state = DaruratState.initial().copyWith(
+      status: DaruratStatus.active,
       countdownSeconds: 5,
       startedAt: DateTime.now(),
       clearResolvedAt: true,
       timeline: [
-        EmergencyMockData.event(
-          title: 'Emergency button ditekan',
-          description: 'Alert aktif. Countdown 5 detik dimulai.',
+        DaruratMockData.event(
+          title: 'Tombol darurat ditekan',
+          description: 'PeduliDarurat aktif. Hitungan mundur 5 detik dimulai.',
           tone: PkTone.red,
           icon: Icons.touch_app_outlined,
         ),
@@ -149,19 +144,18 @@ class EmergencyController extends Notifier<EmergencyState> {
     );
   }
 
-  void cancelEmergency() {
+  void cancelDarurat() {
     if (!state.canCancel) return;
-
     _stopTimer();
 
     state = state.copyWith(
-      status: EmergencyStatus.cancelled,
+      status: DaruratStatus.cancelled,
       countdownSeconds: 5,
       dispatchProgress: 0,
       timeline: [
-        EmergencyMockData.event(
-          title: 'Alert dibatalkan',
-          description: 'Emergency dihentikan sebelum proses selesai.',
+        DaruratMockData.event(
+          title: 'PeduliDarurat dibatalkan',
+          description: 'Darurat dihentikan sebelum proses selesai.',
           tone: PkTone.gray,
           icon: Icons.cancel_outlined,
         ),
@@ -170,18 +164,17 @@ class EmergencyController extends Notifier<EmergencyState> {
     );
   }
 
-  void resolveEmergency() {
+  void resolveDarurat() {
     if (!state.canResolve) return;
-
     _stopTimer();
 
     state = state.copyWith(
-      status: EmergencyStatus.resolved,
+      status: DaruratStatus.resolved,
       dispatchProgress: 1,
       resolvedAt: DateTime.now(),
       timeline: [
-        EmergencyMockData.event(
-          title: 'Emergency selesai',
+        DaruratMockData.event(
+          title: 'Darurat selesai',
           description: 'Status ditandai aman oleh pengguna.',
           tone: PkTone.green,
           icon: Icons.check_circle_outline_rounded,
@@ -191,9 +184,9 @@ class EmergencyController extends Notifier<EmergencyState> {
     );
   }
 
-  void resetEmergency() {
+  void resetDarurat() {
     _stopTimer();
-    state = EmergencyState.initial();
+    state = DaruratState.initial();
   }
 
   void triggerNotificationSimulation() {
@@ -202,15 +195,15 @@ class EmergencyController extends Notifier<EmergencyState> {
         .toList();
 
     state = state.copyWith(
-      status: EmergencyStatus.notified,
+      status: DaruratStatus.notified,
       contacts: updatedContacts,
       notificationCount: updatedContacts.length,
       dispatchProgress: 1,
       timeline: [
-        EmergencyMockData.event(
+        DaruratMockData.event(
           title: 'Simulasi notifikasi terkirim',
           description:
-              '${updatedContacts.length} kontak darurat menerima Family Alert.',
+              '${updatedContacts.length} kontak darurat menerima PeduliDarurat.',
           tone: PkTone.blue,
           icon: Icons.notifications_active_outlined,
         ),
@@ -225,13 +218,13 @@ class EmergencyController extends Notifier<EmergencyState> {
 
       if (nextCountdown <= 0) {
         state = state.copyWith(
-          status: EmergencyStatus.dispatching,
+          status: DaruratStatus.dispatching,
           countdownSeconds: 0,
           dispatchProgress: 0.25,
           timeline: [
-            EmergencyMockData.event(
-              title: 'Countdown selesai',
-              description: 'Sistem mulai dispatch notifikasi darurat.',
+            DaruratMockData.event(
+              title: 'Hitungan mundur selesai',
+              description: 'Sistem mulai mengirim notifikasi darurat.',
               tone: PkTone.amber,
               icon: Icons.timer_outlined,
             ),
@@ -254,19 +247,17 @@ class EmergencyController extends Notifier<EmergencyState> {
         return;
       }
 
-      final nextTimeline = [
-        EmergencyMockData.event(
-          title: _dispatchTitle(nextProgress),
-          description: _dispatchDescription(nextProgress),
-          tone: PkTone.amber,
-          icon: Icons.local_shipping_outlined,
-        ),
-        ...state.timeline,
-      ];
-
       state = state.copyWith(
         dispatchProgress: nextProgress,
-        timeline: nextTimeline,
+        timeline: [
+          DaruratMockData.event(
+            title: _dispatchTitle(nextProgress),
+            description: _dispatchDescription(nextProgress),
+            tone: PkTone.amber,
+            icon: Icons.local_shipping_outlined,
+          ),
+          ...state.timeline,
+        ],
       );
     }
   }
@@ -274,19 +265,17 @@ class EmergencyController extends Notifier<EmergencyState> {
   String _dispatchTitle(double progress) {
     if (progress <= 0.50) return 'Menghubungi keluarga';
     if (progress <= 0.75) return 'Mengirim ringkasan medis';
-    return 'Mengaktifkan AhliPeduli standby';
+    return 'Mengaktifkan AhliPeduli siaga';
   }
 
   String _dispatchDescription(double progress) {
     if (progress <= 0.50) {
       return 'Notifikasi prioritas dikirim ke kontak utama.';
     }
-
     if (progress <= 0.75) {
       return 'Data kondisi terakhir disiapkan untuk keluarga.';
     }
-
-    return 'Partner AhliPeduli menerima simulasi status emergency.';
+    return 'Partner AhliPeduli menerima simulasi status PeduliDarurat.';
   }
 
   void _stopTimer() {

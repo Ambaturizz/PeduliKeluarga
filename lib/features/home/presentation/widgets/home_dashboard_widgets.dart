@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/pk_design.dart';
 import '../../../../state/providers/app_mode_provider.dart';
 import '../../data/home_dummy_data.dart';
@@ -122,7 +124,7 @@ class PremiumPageHeader extends StatelessWidget {
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _TitleBlock(liveLabel: liveLabel),
+                _TitleBlock(liveLabel: liveLabel, mode: mode),
                 const SizedBox(height: 12),
                 PremiumModeSwitch(mode: mode, onChanged: onModeChanged),
               ],
@@ -130,7 +132,7 @@ class PremiumPageHeader extends StatelessWidget {
           : Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: _TitleBlock(liveLabel: liveLabel)),
+                Expanded(child: _TitleBlock(liveLabel: liveLabel, mode: mode)),
                 PremiumModeSwitch(mode: mode, onChanged: onModeChanged),
               ],
             ),
@@ -141,9 +143,11 @@ class PremiumPageHeader extends StatelessWidget {
 class _TitleBlock extends StatelessWidget {
   const _TitleBlock({
     required this.liveLabel,
+    required this.mode,
   });
 
   final String liveLabel;
+  final AppUserMode mode;
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +164,7 @@ class _TitleBlock extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          'Healthcare Dashboard',
+          mode == AppUserMode.caregiver ? 'PeduliPenuh' : 'PeduliDiri',
           style: Theme.of(context).textTheme.displaySmall?.copyWith(
                 color: PkColors.text,
                 fontWeight: FontWeight.w900,
@@ -170,7 +174,9 @@ class _TitleBlock extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Ringkasan kesehatan keluarga yang tenang, jelas, dan bisa ditindaklanjuti.',
+          mode == AppUserMode.caregiver
+              ? 'Pantauan orang tua, obat, pengantaran, dan konsultasi.'
+              : 'Ringkasan kesehatan yang jelas dan mudah dibaca.',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: PkColors.text2,
                 height: 1.6,
@@ -319,6 +325,174 @@ class PremiumHomeHero extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+
+class PremiumFamilyContactCard extends StatelessWidget {
+  const PremiumFamilyContactCard({
+    required this.data,
+    required this.onChat,
+    required this.onPhone,
+    super.key,
+  });
+
+  final HomeDashboardData data;
+  final VoidCallback onChat;
+  final VoidCallback onPhone;
+
+  @override
+  Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).width < 560;
+    final title = data.isElder ? 'Hubungi keluarga' : 'Kontak PeduliDiri';
+    final subtitle = data.isElder
+        ? 'Gunakan Chat atau Telepon untuk meminta bantuan keluarga.'
+        : 'Chat atau hubungi lansia dengan aksi mock yang aman.';
+    final icon = data.isElder ? Icons.family_restroom_rounded : Icons.elderly_rounded;
+
+    return PkCard(
+      clean: true,
+      tint: PkColors.surface.withValues(alpha: 0.92),
+      padding: EdgeInsets.all(compact ? 16 : 18),
+      child: compact
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _FamilyContactCopy(
+                  title: title,
+                  subtitle: subtitle,
+                  icon: icon,
+                  isElder: data.isElder,
+                ),
+                const SizedBox(height: PkSpacing.md),
+                _FamilyContactActions(
+                  compact: true,
+                  onChat: onChat,
+                  onPhone: onPhone,
+                ),
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(
+                  child: _FamilyContactCopy(
+                    title: title,
+                    subtitle: subtitle,
+                    icon: icon,
+                    isElder: data.isElder,
+                  ),
+                ),
+                const SizedBox(width: PkSpacing.lg),
+                _FamilyContactActions(
+                  compact: false,
+                  onChat: onChat,
+                  onPhone: onPhone,
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+class _FamilyContactCopy extends StatelessWidget {
+  const _FamilyContactCopy({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.isElder,
+  });
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final bool isElder;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        PkIconBox(
+          icon: icon,
+          tone: isElder ? PkTone.blue : PkTone.brand,
+          size: 44,
+          iconSize: 22,
+        ),
+        const SizedBox(width: PkSpacing.md),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: PkColors.text,
+                      fontWeight: FontWeight.w900,
+                    ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: PkColors.text2,
+                      height: 1.45,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FamilyContactActions extends StatelessWidget {
+  const _FamilyContactActions({
+    required this.compact,
+    required this.onChat,
+    required this.onPhone,
+  });
+
+  final bool compact;
+  final VoidCallback onChat;
+  final VoidCallback onPhone;
+
+  @override
+  Widget build(BuildContext context) {
+    final chatButton = FilledButton.icon(
+      onPressed: onChat,
+      icon: const Icon(Icons.chat_bubble_outline_rounded),
+      label: const Text('Chat'),
+    );
+
+    final phoneButton = OutlinedButton.icon(
+      onPressed: onPhone,
+      icon: const Icon(Icons.phone_in_talk_outlined),
+      label: const Text('Telepon'),
+    );
+
+    if (compact) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          chatButton,
+          const SizedBox(height: PkSpacing.sm),
+          phoneButton,
+        ],
+      );
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(width: 126, child: chatButton),
+        const SizedBox(width: PkSpacing.sm),
+        SizedBox(width: 138, child: phoneButton),
+      ],
     );
   }
 }
@@ -478,7 +652,7 @@ class _HeroPanel extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  data.isElder ? 'Health status' : 'Family monitoring',
+                  data.isElder ? 'Status hari ini' : 'Pantauan keluarga',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: Colors.white.withValues(alpha: 0.76),
                         fontWeight: FontWeight.w900,
@@ -486,7 +660,7 @@ class _HeroPanel extends StatelessWidget {
                 ),
               ),
               Text(
-                'Realtime',
+                'Langsung',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: Colors.white.withValues(alpha: 0.76),
                       fontWeight: FontWeight.w900,
@@ -700,7 +874,7 @@ class PremiumSummaryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CardTitleRow(
-            eyebrow: data.isElder ? 'Daily condition' : 'Parent monitoring',
+            eyebrow: data.isElder ? 'Kondisi hari ini' : 'Pantauan orang tua',
             title: data.summaryTitle,
             subtitle: data.summarySubtitle,
             icon: data.isElder
@@ -850,7 +1024,7 @@ class PremiumAiCard extends StatelessWidget {
               ),
               PkBadge(
                 label: data.aiBadge,
-                tone: data.aiBadge == 'Medium' ? PkTone.amber : PkTone.purple,
+                tone: data.aiBadge == 'Pantau' ? PkTone.amber : PkTone.purple,
               ),
             ],
           ),
@@ -866,21 +1040,92 @@ class PremiumAiCard extends StatelessWidget {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: const [
-              PkBadge(
-                label: 'AI insight',
-                tone: PkTone.purple,
-                icon: Icons.auto_awesome_outlined,
+            children: [
+              ActionChip(
+                avatar: const Icon(Icons.help_outline_rounded, size: 18),
+                label: Text(data.isElder ? 'Kondisi saya baik?' : 'Apa yang perlu diperhatikan?'),
+                onPressed: () => _showAiAnswer(context, data.isElder
+                    ? 'Kondisi hari ini tampak cukup baik dari catatan yang ada. Jika ada keluhan berat, gunakan PeduliKonsul atau PeduliDarurat.'
+                    : 'Perhatikan cek harian yang belum diisi dan stok Simvastatin yang hampir habis.'),
               ),
-              PkBadge(
-                label: 'Preventif',
-                tone: PkTone.brand,
-                icon: Icons.health_and_safety_outlined,
+              ActionChip(
+                avatar: const Icon(Icons.medication_outlined, size: 18),
+                label: Text(data.isElder ? 'Obat hari ini' : 'Obat hampir habis?'),
+                onPressed: () => _showAiAnswer(context, data.isElder
+                    ? 'Obat berikutnya pukul 13:00. Ikuti jadwal PeduliObat.'
+                    : 'Simvastatin hampir habis dan perlu dikonfirmasi lewat PeduliAntar.'),
+              ),
+              ActionChip(
+                avatar: const Icon(Icons.monitor_heart_outlined, size: 18),
+                label: const Text('Kapan cek tekanan darah?'),
+                onPressed: () => _showAiAnswer(context, 'Cek tekanan darah cukup 1 kali seminggu, kecuali dokter meminta lebih sering.'),
               ),
             ],
           ),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final narrow = constraints.maxWidth < 390;
+              final aiButton = OutlinedButton.icon(
+                onPressed: () => _showAiAnswer(context, data.aiCopy),
+                icon: const Icon(Icons.auto_awesome_outlined),
+                label: const Text(
+                  'Tanya AIPeduli',
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+              final consultButton = FilledButton.icon(
+                onPressed: () => context.go(AppRoutes.peduliKonsulPath),
+                icon: const Icon(Icons.chat_bubble_outline_rounded),
+                label: Text(
+                  data.isElder ? 'Konsultasi Dokter' : 'PeduliKonsul',
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+
+              if (narrow) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    aiButton,
+                    const SizedBox(height: 8),
+                    consultButton,
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(child: aiButton),
+                  const SizedBox(width: 8),
+                  Expanded(child: consultButton),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          Text(
+            data.isElder
+                ? 'AIPeduli hanya membantu memberi ringkasan awal. Untuk keluhan serius, hubungi dokter melalui PeduliKonsul atau gunakan PeduliDarurat.'
+                : 'AIPeduli membantu membaca ringkasan awal. Untuk keputusan medis, gunakan PeduliKonsul atau AhliPeduli.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: PkColors.text2,
+                  height: 1.5,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
         ],
       ),
+    );
+  }
+
+  void _showAiAnswer(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
     );
   }
 }
@@ -900,7 +1145,7 @@ class PremiumMedicineCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const CardTitleRow(
-            eyebrow: 'Medication progress',
+            eyebrow: 'Jadwal minum obat',
             title: 'Obat hari ini',
             subtitle: 'Jadwal, status, dan stok obat.',
             icon: Icons.medication_outlined,
@@ -1004,6 +1249,7 @@ class _MedicineItem extends StatelessWidget {
   }
 }
 
+
 class PremiumQuickGrid extends StatelessWidget {
   const PremiumQuickGrid({
     required this.actions,
@@ -1019,52 +1265,151 @@ class PremiumQuickGrid extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
-        final count = width >= 960 ? 4 : width >= 520 ? 2 : 1;
+        final compact = width < 560;
 
-        return GridView.count(
-          crossAxisCount: count,
+        if (compact) {
+          return Column(
+            children: [
+              for (var i = 0; i < actions.length; i++) ...[
+                _QuickActionCard(
+                  action: actions[i],
+                  compact: true,
+                  onTap: () => onTap(actions[i]),
+                ),
+                if (i != actions.length - 1) const SizedBox(height: 12),
+              ],
+            ],
+          );
+        }
+
+        final count = width >= 1060 ? 4 : 2;
+
+        return GridView.builder(
+          itemCount: actions.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: count,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: count == 4 ? 1.18 : 1.55,
+          ),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: count == 1 ? 2.45 : 1.08,
-          children: [
-            for (final action in actions)
-              PkCard(
-                onTap: () => onTap(action),
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        PkIconBox(icon: action.icon, tone: action.tone),
-                        const Spacer(),
-                        if (action.badge != null)
-                          PkBadge(label: action.badge!, tone: action.tone),
-                      ],
-                    ),
-                    const Spacer(),
-                    Text(
-                      action.title,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: PkColors.text,
-                            fontWeight: FontWeight.w900,
-                          ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      action.subtitle,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: PkColors.text2,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-          ],
+          itemBuilder: (context, index) {
+            final action = actions[index];
+
+            return _QuickActionCard(
+              action: action,
+              compact: false,
+              onTap: () => onTap(action),
+            );
+          },
         );
       },
+    );
+  }
+}
+
+class _QuickActionCard extends StatelessWidget {
+  const _QuickActionCard({
+    required this.action,
+    required this.compact,
+    required this.onTap,
+  });
+
+  final HomeQuickAction action;
+  final bool compact;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    if (compact) {
+      return PkCard(
+        onTap: onTap,
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            PkIconBox(icon: action.icon, tone: action.tone, size: 44),
+            const SizedBox(width: PkSpacing.md),
+            Expanded(
+              child: _QuickActionText(action: action),
+            ),
+            if (action.badge != null) ...[
+              const SizedBox(width: PkSpacing.sm),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 104),
+                child: PkBadge(label: action.badge!, tone: action.tone),
+              ),
+            ],
+            const SizedBox(width: PkSpacing.sm),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: PkColors.muted,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return PkCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              PkIconBox(icon: action.icon, tone: action.tone, size: 44),
+              const Spacer(),
+              if (action.badge != null)
+                Flexible(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: PkBadge(label: action.badge!, tone: action.tone),
+                  ),
+                ),
+            ],
+          ),
+          const Spacer(),
+          _QuickActionText(action: action),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickActionText extends StatelessWidget {
+  const _QuickActionText({
+    required this.action,
+  });
+
+  final HomeQuickAction action;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          action.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: PkColors.text,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -0.3,
+              ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          action.subtitle,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: PkColors.text2,
+                height: 1.4,
+              ),
+        ),
+      ],
     );
   }
 }
@@ -1084,9 +1429,9 @@ class PremiumNotificationCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const CardTitleRow(
-            eyebrow: 'Notification summary',
+            eyebrow: 'Ringkasan notifikasi',
             title: 'Notifikasi terkini',
-            subtitle: 'Aktivitas dan alert yang perlu diperhatikan.',
+            subtitle: 'Aktivitas penting yang perlu diperhatikan.',
             icon: Icons.notifications_active_outlined,
             tone: PkTone.amber,
           ),
@@ -1203,7 +1548,7 @@ class PremiumEmergencyCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CardTitleRow(
-            eyebrow: 'Emergency CTA',
+            eyebrow: 'PeduliDarurat',
             title: data.emergencyTitle,
             subtitle: data.emergencyCopy,
             icon: Icons.emergency_outlined,
@@ -1222,7 +1567,7 @@ class PremiumEmergencyCard extends StatelessWidget {
               ),
               onPressed: onPressed,
               icon: const Icon(Icons.phone_in_talk_outlined),
-              label: const Text('Buka Family Alert'),
+              label: const Text('Buka PeduliDarurat'),
             ),
           ),
         ],
@@ -1412,6 +1757,8 @@ class CardTitleRow extends StatelessWidget {
             children: [
               Text(
                 eyebrow.toUpperCase(),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: light
                           ? Colors.white.withValues(alpha: 0.72)
@@ -1423,6 +1770,8 @@ class CardTitleRow extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: textColor,
                       fontWeight: FontWeight.w900,
@@ -1434,6 +1783,8 @@ class CardTitleRow extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   subtitle!,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: subColor,
                         height: 1.55,

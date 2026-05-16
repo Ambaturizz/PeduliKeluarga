@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/routing/app_routes.dart';
 import '../../../../core/theme/pk_design.dart';
+import '../../../elder_profile/domain/elder_profile.dart';
+import '../../../elder_profile/providers/elder_profile_provider.dart';
 import '../../providers/peduli_cek_provider.dart';
 import '../widgets/peduli_cek_widgets.dart';
 
@@ -73,6 +75,7 @@ class _PeduliCekPageState extends ConsumerState<PeduliCekPage> {
   Widget build(BuildContext context) {
     final state = ref.watch(peduliCekProvider);
     final notifier = ref.read(peduliCekProvider.notifier);
+    final elderProfile = ref.watch(elderProfileProvider);
 
     return PkGradientBackground(
       child: CustomScrollView(
@@ -103,6 +106,7 @@ class _PeduliCekPageState extends ConsumerState<PeduliCekPage> {
                             key: const ValueKey('form'),
                             state: state,
                             notifier: notifier,
+                            profile: elderProfile,
                             systolicController: _systolicController,
                             diastolicController: _diastolicController,
                             glucoseController: _glucoseController,
@@ -134,6 +138,7 @@ class _FormView extends StatelessWidget {
   const _FormView({
     required this.state,
     required this.notifier,
+    required this.profile,
     required this.systolicController,
     required this.diastolicController,
     required this.glucoseController,
@@ -146,6 +151,7 @@ class _FormView extends StatelessWidget {
 
   final PeduliCekState state;
   final PeduliCekController notifier;
+  final ElderProfile profile;
   final TextEditingController systolicController;
   final TextEditingController diastolicController;
   final TextEditingController glucoseController;
@@ -169,12 +175,14 @@ class _FormView extends StatelessWidget {
           progress: state.progress,
           progressPercent: state.progressPercent,
         ),
+        const SizedBox(height: 16),
+        _PeduliCekGuidanceCard(profile: profile),
         const PkSectionTitle(
           title: 'Form kesehatan',
           subtitle: 'Input nyaman untuk lansia',
         ),
         CekFieldCard(
-          eyebrow: 'Blood pressure input',
+          eyebrow: 'Tekanan darah',
           title: 'Tekanan darah',
           subtitle:
               'Masukkan angka sistolik dan diastolik dari alat tensi. Contoh: 138 / 88.',
@@ -227,7 +235,7 @@ class _FormView extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         CekFieldCard(
-          eyebrow: 'Blood sugar input',
+          eyebrow: 'Gula darah',
           title: 'Gula darah',
           subtitle:
               'Masukkan nilai gula darah terakhir. Sistem akan memberi status otomatis.',
@@ -246,7 +254,7 @@ class _FormView extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         CekFieldCard(
-          eyebrow: 'Medication adherence input',
+          eyebrow: 'Minum obat',
           title: 'Kepatuhan obat',
           subtitle: 'Pilih kondisi minum obat hari ini.',
           icon: Icons.medication_outlined,
@@ -401,6 +409,69 @@ class _FormView extends StatelessWidget {
           onReset: onReset,
         ),
       ],
+    );
+  }
+}
+
+
+class _PeduliCekGuidanceCard extends StatelessWidget {
+  const _PeduliCekGuidanceCard({required this.profile});
+
+  final ElderProfile profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final diabetesText = profile.hasDiabetes
+        ? profile.usesInsulin
+            ? 'Karena ada riwayat diabetes dan memakai insulin, cek gula darah minimal 1–2 kali sehari sesuai arahan dokter, misalnya sebelum sarapan dan sebelum tidur.'
+            : 'Karena ada riwayat diabetes, cek gula darah perlu lebih rutin. Ikuti jadwal dari dokter.'
+        : 'Jika tidak ada riwayat diabetes, catat gula darah sesuai kebutuhan atau saran dokter.';
+
+    return PkCard(
+      tint: PkColors.brandSoft,
+      borderColor: PkColors.brand.withValues(alpha: 0.16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const PkIconBox(icon: Icons.info_outline_rounded, tone: PkTone.brand),
+              const SizedBox(width: PkSpacing.md),
+              Expanded(
+                child: Text(
+                  'Panduan Cek Hari Ini',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: PkColors.text,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: PkSpacing.md),
+          Text(
+            'Cek tekanan darah cukup 1 kali seminggu, kecuali dokter meminta lebih sering atau ada keluhan.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: PkColors.text2,
+                  height: 1.55,
+                ),
+          ),
+          const SizedBox(height: PkSpacing.sm),
+          Text(
+            diabetesText,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: PkColors.text2,
+                  height: 1.55,
+                ),
+          ),
+          const SizedBox(height: PkSpacing.md),
+          OutlinedButton.icon(
+            onPressed: () => context.go(AppRoutes.peduliKonsulPath),
+            icon: const Icon(Icons.chat_bubble_outline_rounded),
+            label: const Text('Tanya PeduliKonsul'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -74,7 +74,7 @@ final healthTimelineEvents = <HealthTimelineEvent>[
   HealthTimelineEvent(
     timestamp: DateTime(2026, 5, 11, 7, 10),
     title: 'Tekanan darah pagi',
-    description: '124/79 mmHg dengan nadi 74 bpm. Masuk rentang aman untuk target keluarga.',
+    description: '124/79 mmHg. Catatan nadi manual 74 kali/menit.',
     metaLabel: 'Input keluarga',
     type: TimelineEventType.vital,
   ),

@@ -41,23 +41,23 @@ class _PeduliRiwayatPageState extends State<PeduliRiwayatPage> {
               children: [
                 _RiwayatHero(selectedRange: _selectedRange, onRangeChanged: (range) => setState(() => _selectedRange = range)),
                 const PkSectionTitle(
-                  title: 'Health summary cards',
+                  title: 'Ringkasan Kesehatan',
                   subtitle: 'Ringkasan kondisi terbaru',
                 ),
                 _SummaryGrid(metrics: healthSummaryMetrics),
                 const PkSectionTitle(
-                  title: 'Data visualization modern',
+                  title: 'Grafik Kesehatan',
                   subtitle: 'Tekanan darah dan gula darah',
                 ),
                 _ChartsGrid(labels: labels),
                 const PkSectionTitle(
-                  title: 'Analisis dan ringkasan',
-                  subtitle: 'AI trend analysis + export',
+                  title: 'Analisis dan Ringkasan',
+                  subtitle: 'Analisis dan simpan PDF',
                 ),
                 _InsightExportGrid(),
                 const PkSectionTitle(
-                  title: 'Reusable timeline widgets',
-                  subtitle: 'Health timeline dan health logs',
+                  title: 'Catatan Kesehatan',
+                  subtitle: 'Linimasa dan catatan kesehatan',
                 ),
                 _HistoryTimelineAndLogs(),
               ],
@@ -112,7 +112,7 @@ class _RiwayatHero extends StatelessWidget {
                     Icon(Icons.assignment_outlined, color: Colors.white, size: 17),
                     SizedBox(width: 8),
                     Text(
-                      'PEDULIRIWAYAT INTELLIGENCE',
+                      'PEDULIRIWAYAT',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
@@ -125,7 +125,7 @@ class _RiwayatHero extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               Text(
-                'Riwayat kesehatan keluarga yang rapi, visual, dan mudah dibagikan.',
+                'Riwayat kesehatan yang rapi dan mudah dibagikan.',
                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
@@ -135,7 +135,7 @@ class _RiwayatHero extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                'Health timeline, blood pressure history, blood sugar history, health logs, AI trend analysis, dan export medical summary UI.',
+                'Catatan tekanan darah, gula darah, obat, keluhan, dan Ringkasan Kesehatan.',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.white.withValues(alpha: 0.78),
                       height: 1.7,
@@ -180,7 +180,7 @@ class _RiwayatHero extends StatelessWidget {
                     const Icon(Icons.favorite_rounded, color: Colors.white, size: 28),
                     const Spacer(),
                     Text(
-                      'Live summary',
+                      'Ringkasan terbaru',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             color: Colors.white.withValues(alpha: 0.72),
                             fontWeight: FontWeight.w900,
@@ -198,7 +198,7 @@ class _RiwayatHero extends StatelessWidget {
                       ),
                 ),
                 Text(
-                  'Health stability score',
+                  'Skor kestabilan kesehatan',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.white.withValues(alpha: 0.74),
                         fontWeight: FontWeight.w800,
@@ -217,7 +217,7 @@ class _RiwayatHero extends StatelessWidget {
                 const SizedBox(height: 16),
                 const Row(
                   children: [
-                    Expanded(child: _HeroMiniStat(label: 'BP', value: '124/79')),
+                    Expanded(child: _HeroMiniStat(label: 'TD', value: '124/79')),
                     SizedBox(width: 10),
                     Expanded(child: _HeroMiniStat(label: 'Gula', value: '126')),
                     SizedBox(width: 10),
@@ -442,7 +442,7 @@ class _HistoryTimelineAndLogs extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Health logs',
+                          'Catatan kesehatan',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 color: PkColors.text,
                                 fontWeight: FontWeight.w900,

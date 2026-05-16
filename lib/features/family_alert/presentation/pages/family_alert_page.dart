@@ -31,49 +31,49 @@ class FamilyAlertPage extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      FamilyAlertHero(
+                      FamilyPeduliDaruratHero(
                         state: state,
                         onOpenModal: () {
-                          _openEmergencyModal(
+                          _openDaruratModal(
                             context: context,
-                            onConfirm: controller.startEmergency,
+                            onConfirm: controller.startDarurat,
                           );
                         },
                       ),
                       const SizedBox(height: 22),
-                      EmergencyButtonCard(
+                      DaruratButtonCard(
                         state: state,
                         onStart: () {
-                          _openEmergencyModal(
+                          _openDaruratModal(
                             context: context,
-                            onConfirm: controller.startEmergency,
+                            onConfirm: controller.startDarurat,
                           );
                         },
-                        onCancel: controller.cancelEmergency,
-                        onResolve: controller.resolveEmergency,
+                        onCancel: controller.cancelDarurat,
+                        onResolve: controller.resolveDarurat,
                       ),
                       const PkSectionTitle(
-                        title: 'Emergency system',
-                        subtitle: 'Alert status & dispatch',
+                        title: 'PeduliDarurat',
+                        subtitle: 'Status dan bantuan',
                       ),
-                      EmergencyResponsiveGrid(
+                      DaruratResponsiveGrid(
                         left: [
-                          AlertStatusCard(state: state),
+                          PeduliDaruratStatusCard(state: state),
                           const SizedBox(height: 16),
                           DispatchTrackingCard(
                             progress: state.dispatchProgress,
                           ),
                           const SizedBox(height: 16),
-                          EmergencyTimelineCard(events: state.timeline),
+                          DaruratTimelineCard(events: state.timeline),
                           const SizedBox(height: 16),
                         ],
                         right: [
-                          EmergencyContactsCard(contacts: state.contacts),
+                          DaruratContactsCard(contacts: state.contacts),
                           const SizedBox(height: 16),
-                          const EmergencyMedicalSummaryCard(),
+                          const DaruratMedicalSummaryCard(),
                           const SizedBox(height: 16),
                           _ResetCard(
-                            onReset: controller.resetEmergency,
+                            onReset: controller.resetDarurat,
                             onNotify: controller.triggerNotificationSimulation,
                           ),
                           const SizedBox(height: 16),
@@ -98,7 +98,7 @@ class FamilyAlertPage extends ConsumerWidget {
     return 24;
   }
 
-  void _openEmergencyModal({
+  void _openDaruratModal({
     required BuildContext context,
     required VoidCallback onConfirm,
   }) {
@@ -113,7 +113,7 @@ class FamilyAlertPage extends ConsumerWidget {
         ),
       ),
       builder: (context) {
-        return EmergencyConfirmSheet(onConfirm: onConfirm);
+        return DaruratConfirmSheet(onConfirm: onConfirm);
       },
     );
   }
@@ -136,7 +136,7 @@ class _ResetCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           PkBadge(
-            label: 'Emergency CTA buttons',
+            label: 'Tombol PeduliDarurat',
             tone: PkTone.brand,
             icon: Icons.touch_app_outlined,
           ),
@@ -150,7 +150,7 @@ class _ResetCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Gunakan tombol ini untuk mencoba notification simulation atau mengembalikan status ke standby.',
+            'Gunakan tombol ini untuk mencoba simulasi notifikasi atau mengembalikan status ke siaga.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: PkColors.text2,
                   height: 1.5,
@@ -182,7 +182,7 @@ class _ResetCard extends StatelessWidget {
               ),
               onPressed: onReset,
               icon: const Icon(Icons.restart_alt_rounded),
-              label: const Text('Reset ke Standby'),
+              label: const Text('Kembali ke Siaga'),
             ),
           ),
         ],

@@ -1,21 +1,24 @@
 enum ProviderCategory {
   doctor,
   nurse,
-  clinic;
+  clinic,
+  hospital;
 
   String get label {
     return switch (this) {
       ProviderCategory.doctor => 'Dokter',
       ProviderCategory.nurse => 'Perawat',
       ProviderCategory.clinic => 'Klinik',
+      ProviderCategory.hospital => 'Rumah sakit',
     };
   }
 
   String get pluralLabel {
     return switch (this) {
-      ProviderCategory.doctor => 'Doctor cards',
-      ProviderCategory.nurse => 'Nurse cards',
-      ProviderCategory.clinic => 'Clinic cards',
+      ProviderCategory.doctor => 'Kartu dokter',
+      ProviderCategory.nurse => 'Kartu perawat',
+      ProviderCategory.clinic => 'Kartu klinik',
+      ProviderCategory.hospital => 'Kartu rumah sakit',
     };
   }
 
@@ -24,6 +27,7 @@ enum ProviderCategory {
       ProviderCategory.doctor => 'Dokter',
       ProviderCategory.nurse => 'Perawat',
       ProviderCategory.clinic => 'Klinik',
+      ProviderCategory.hospital => 'Rumah sakit',
     };
   }
 }
@@ -46,7 +50,7 @@ class HealthcareProvider {
     required this.tags,
     required this.nextSlots,
     required this.isVerified,
-    required this.isEmergencyReady,
+    required this.isDaruratReady,
     required this.isOnlineConsultationReady,
   });
 
@@ -66,7 +70,7 @@ class HealthcareProvider {
   final List<String> tags;
   final List<String> nextSlots;
   final bool isVerified;
-  final bool isEmergencyReady;
+  final bool isDaruratReady;
   final bool isOnlineConsultationReady;
 
   bool get isNearby => distanceKm <= 3.0;

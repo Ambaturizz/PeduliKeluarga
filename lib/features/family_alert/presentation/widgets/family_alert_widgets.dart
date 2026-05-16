@@ -4,14 +4,14 @@ import '../../../../core/theme/pk_design.dart';
 import '../../data/emergency_mock_data.dart';
 import '../../providers/emergency_provider.dart';
 
-class FamilyAlertHero extends StatelessWidget {
-  const FamilyAlertHero({
+class FamilyPeduliDaruratHero extends StatelessWidget {
+  const FamilyPeduliDaruratHero({
     required this.state,
     required this.onOpenModal,
     super.key,
   });
 
-  final EmergencyState state;
+  final DaruratState state;
   final VoidCallback onOpenModal;
 
   @override
@@ -26,8 +26,8 @@ class FamilyAlertHero extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: state.status == EmergencyStatus.standby ||
-                  state.status == EmergencyStatus.resolved
+          colors: state.status == DaruratStatus.standby ||
+                  state.status == DaruratStatus.resolved
               ? const [
                   Color(0xFF064D49),
                   PkColors.brand,
@@ -42,7 +42,7 @@ class FamilyAlertHero extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned.fill(child: CustomPaint(painter: _EmergencyHeroPainter())),
+          Positioned.fill(child: CustomPaint(painter: _DaruratHeroPainter())),
           LayoutBuilder(
             builder: (context, constraints) {
               final compact = constraints.maxWidth < 760;
@@ -50,7 +50,7 @@ class FamilyAlertHero extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _HeroBadge(
-                    label: 'Family Alert · Emergency System',
+                    label: 'PeduliDarurat',
                     icon: state.status.icon,
                   ),
                   const SizedBox(height: 18),
@@ -88,7 +88,7 @@ class FamilyAlertHero extends StatelessWidget {
                         ),
                         onPressed: onOpenModal,
                         icon: const Icon(Icons.emergency_outlined),
-                        label: const Text('Buka Emergency Modal'),
+                        label: const Text('Buka PeduliDarurat'),
                       ),
                     ],
                   ),
@@ -165,11 +165,11 @@ class _HeroPanel extends StatelessWidget {
     required this.state,
   });
 
-  final EmergencyState state;
+  final DaruratState state;
 
   @override
   Widget build(BuildContext context) {
-    final dispatchPercent = (state.dispatchProgress * 100).round();
+    final bantuanPercent = (state.dispatchProgress * 100).round();
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -191,7 +191,7 @@ class _HeroPanel extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Alert status tracking',
+                  'Status PeduliDarurat',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: Colors.white.withValues(alpha: 0.76),
                         fontWeight: FontWeight.w900,
@@ -222,17 +222,17 @@ class _HeroPanel extends StatelessWidget {
                 children: [
                   _HeroStatTile(
                     value: state.isActive ? '${state.countdownSeconds}s' : '24/7',
-                    label: state.isActive ? 'Countdown' : 'Standby',
+                    label: state.isActive ? 'Hitung mundur' : 'Siaga',
                     icon: Icons.timer_outlined,
                   ),
                   _HeroStatTile(
                     value: '${state.notifiedContacts}/${state.contacts.length}',
-                    label: 'Kontak notified',
+                    label: 'Kontak diberi tahu',
                     icon: Icons.groups_outlined,
                   ),
                   _HeroStatTile(
-                    value: '$dispatchPercent%',
-                    label: 'Dispatch',
+                    value: '$bantuanPercent%',
+                    label: 'Bantuan',
                     icon: Icons.local_shipping_outlined,
                   ),
                 ],
@@ -294,7 +294,7 @@ class _HeroStatTile extends StatelessWidget {
   }
 }
 
-class _EmergencyHeroPainter extends CustomPainter {
+class _DaruratHeroPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final gridPaint = Paint()
@@ -335,8 +335,8 @@ class _EmergencyHeroPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class EmergencyButtonCard extends StatelessWidget {
-  const EmergencyButtonCard({
+class DaruratButtonCard extends StatelessWidget {
+  const DaruratButtonCard({
     required this.state,
     required this.onStart,
     required this.onCancel,
@@ -344,7 +344,7 @@ class EmergencyButtonCard extends StatelessWidget {
     super.key,
   });
 
-  final EmergencyState state;
+  final DaruratState state;
   final VoidCallback onStart;
   final VoidCallback onCancel;
   final VoidCallback onResolve;
@@ -355,7 +355,7 @@ class EmergencyButtonCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          EmergencyPulseButton(
+          DaruratPulseButton(
             enabled: state.canStart,
             active: !state.canStart,
             countdownSeconds: state.countdownSeconds,
@@ -363,7 +363,7 @@ class EmergencyButtonCard extends StatelessWidget {
             onPressed: onStart,
           ),
           const SizedBox(height: 18),
-          _EmergencyActionRow(
+          _DaruratActionRow(
             state: state,
             onStart: onStart,
             onCancel: onCancel,
@@ -375,8 +375,8 @@ class EmergencyButtonCard extends StatelessWidget {
   }
 }
 
-class EmergencyPulseButton extends StatefulWidget {
-  const EmergencyPulseButton({
+class DaruratPulseButton extends StatefulWidget {
+  const DaruratPulseButton({
     required this.enabled,
     required this.active,
     required this.countdownSeconds,
@@ -388,14 +388,14 @@ class EmergencyPulseButton extends StatefulWidget {
   final bool enabled;
   final bool active;
   final int countdownSeconds;
-  final EmergencyStatus status;
+  final DaruratStatus status;
   final VoidCallback onPressed;
 
   @override
-  State<EmergencyPulseButton> createState() => _EmergencyPulseButtonState();
+  State<DaruratPulseButton> createState() => _DaruratPulseButtonState();
 }
 
-class _EmergencyPulseButtonState extends State<EmergencyPulseButton>
+class _DaruratPulseButtonState extends State<DaruratPulseButton>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _pulse;
@@ -420,27 +420,27 @@ class _EmergencyPulseButtonState extends State<EmergencyPulseButton>
 
   String get _label {
     return switch (widget.status) {
-      EmergencyStatus.active => 'Countdown ${widget.countdownSeconds}',
-      EmergencyStatus.dispatching => 'Dispatching',
-      EmergencyStatus.notified => 'Notified',
-      EmergencyStatus.resolved => 'Resolved',
-      EmergencyStatus.cancelled => 'Cancelled',
-      EmergencyStatus.standby => 'DARURAT',
+      DaruratStatus.active => 'Hitung mundur ${widget.countdownSeconds}',
+      DaruratStatus.dispatching => 'Mengirim bantuan',
+      DaruratStatus.notified => 'Keluarga diberi tahu',
+      DaruratStatus.resolved => 'Selesai',
+      DaruratStatus.cancelled => 'Dibatalkan',
+      DaruratStatus.standby => 'DARURAT',
     };
   }
 
   @override
   Widget build(BuildContext context) {
     final isDanger =
-        widget.status == EmergencyStatus.active ||
-        widget.status == EmergencyStatus.dispatching;
+        widget.status == DaruratStatus.active ||
+        widget.status == DaruratStatus.dispatching;
 
     return Semantics(
       button: true,
-      label: 'Tombol darurat Family Alert',
+      label: 'Tombol PeduliDarurat',
       hint: widget.enabled
-          ? 'Tekan untuk memulai emergency alert'
-          : 'Emergency alert sedang berjalan',
+          ? 'Tekan untuk meminta bantuan darurat'
+          : 'PeduliDarurat sedang berjalan',
       child: AnimatedBuilder(
         animation: _pulse,
         builder: (context, child) {
@@ -512,15 +512,15 @@ class _EmergencyPulseButtonState extends State<EmergencyPulseButton>
   }
 }
 
-class _EmergencyActionRow extends StatelessWidget {
-  const _EmergencyActionRow({
+class _DaruratActionRow extends StatelessWidget {
+  const _DaruratActionRow({
     required this.state,
     required this.onStart,
     required this.onCancel,
     required this.onResolve,
   });
 
-  final EmergencyState state;
+  final DaruratState state;
   final VoidCallback onStart;
   final VoidCallback onCancel;
   final VoidCallback onResolve;
@@ -540,7 +540,7 @@ class _EmergencyActionRow extends StatelessWidget {
           ),
           onPressed: state.canStart ? onStart : null,
           icon: const Icon(Icons.emergency_outlined),
-          label: const Text('Mulai Alert'),
+          label: const Text('Minta Bantuan'),
         );
 
         final cancel = OutlinedButton.icon(
@@ -592,13 +592,13 @@ class _EmergencyActionRow extends StatelessWidget {
   }
 }
 
-class AlertStatusCard extends StatelessWidget {
-  const AlertStatusCard({
+class PeduliDaruratStatusCard extends StatelessWidget {
+  const PeduliDaruratStatusCard({
     required this.state,
     super.key,
   });
 
-  final EmergencyState state;
+  final DaruratState state;
 
   @override
   Widget build(BuildContext context) {
@@ -608,7 +608,7 @@ class AlertStatusCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _SectionHeader(
-            eyebrow: 'Alert status tracking',
+            eyebrow: 'Status PeduliDarurat',
             title: state.status.label,
             subtitle: state.status.description,
             icon: state.status.icon,
@@ -618,11 +618,11 @@ class AlertStatusCard extends StatelessWidget {
           ClipRRect(
             borderRadius: PkRadius.pillRadius,
             child: LinearProgressIndicator(
-              value: state.status == EmergencyStatus.standby
+              value: state.status == DaruratStatus.standby
                   ? 0.16
-                  : state.status == EmergencyStatus.active
+                  : state.status == DaruratStatus.active
                       ? 0.35
-                      : state.status == EmergencyStatus.dispatching
+                      : state.status == DaruratStatus.dispatching
                           ? state.dispatchProgress
                           : 1,
               minHeight: 11,
@@ -636,18 +636,18 @@ class AlertStatusCard extends StatelessWidget {
             runSpacing: 8,
             children: [
               PkBadge(
-                label: '${state.notifiedContacts} kontak notified',
+                label: '${state.notifiedContacts} kontak diberi tahu',
                 tone: state.notifiedContacts == 0 ? PkTone.gray : PkTone.blue,
                 icon: Icons.notifications_active_outlined,
               ),
               PkBadge(
                 label:
-                    'Dispatch ${(state.dispatchProgress * 100).round()}%',
+                    'Bantuan ${(state.dispatchProgress * 100).round()}%',
                 tone: state.dispatchProgress >= 1 ? PkTone.green : PkTone.amber,
                 icon: Icons.local_shipping_outlined,
               ),
               PkBadge(
-                label: 'Timeline ${state.timeline.length} event',
+                label: 'Riwayat ${state.timeline.length} catatan',
                 tone: PkTone.brand,
                 icon: Icons.timeline_outlined,
               ),
@@ -674,18 +674,18 @@ class DispatchTrackingCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _SectionHeader(
-            eyebrow: 'Emergency dispatch tracking',
-            title: 'Alur dispatch bantuan',
+            eyebrow: 'Proses bantuan',
+            title: 'Alur bantuan',
             subtitle: 'Simulasi alur pengiriman notifikasi dan ringkasan medis.',
             icon: Icons.route_outlined,
             tone: PkTone.amber,
           ),
           const SizedBox(height: 16),
-          for (var i = 0; i < EmergencyMockData.dispatchSteps.length; i++)
+          for (var i = 0; i < DaruratMockData.dispatchSteps.length; i++)
             _DispatchStepRow(
-              step: EmergencyMockData.dispatchSteps[i],
-              completed: progress >= (i + 1) / EmergencyMockData.dispatchSteps.length,
-              isLast: i == EmergencyMockData.dispatchSteps.length - 1,
+              step: DaruratMockData.dispatchSteps[i],
+              completed: progress >= (i + 1) / DaruratMockData.dispatchSteps.length,
+              isLast: i == DaruratMockData.dispatchSteps.length - 1,
             ),
         ],
       ),
@@ -700,7 +700,7 @@ class _DispatchStepRow extends StatelessWidget {
     required this.isLast,
   });
 
-  final EmergencyDispatchStep step;
+  final DaruratDispatchStep step;
   final bool completed;
   final bool isLast;
 
@@ -752,13 +752,13 @@ class _DispatchStepRow extends StatelessWidget {
   }
 }
 
-class EmergencyContactsCard extends StatelessWidget {
-  const EmergencyContactsCard({
+class DaruratContactsCard extends StatelessWidget {
+  const DaruratContactsCard({
     required this.contacts,
     super.key,
   });
 
-  final List<EmergencyContact> contacts;
+  final List<DaruratContact> contacts;
 
   @override
   Widget build(BuildContext context) {
@@ -767,9 +767,9 @@ class EmergencyContactsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _SectionHeader(
-            eyebrow: 'Emergency contacts',
+            eyebrow: 'Kontak Darurat',
             title: 'Kontak darurat',
-            subtitle: 'Keluarga dan AhliPeduli yang menerima alert.',
+            subtitle: 'Keluarga dan AhliPeduli yang menerima notifikasi.',
             icon: Icons.contacts_outlined,
             tone: PkTone.blue,
           ),
@@ -787,7 +787,7 @@ class _ContactTile extends StatelessWidget {
     required this.contact,
   });
 
-  final EmergencyContact contact;
+  final DaruratContact contact;
 
   @override
   Widget build(BuildContext context) {
@@ -832,7 +832,7 @@ class _ContactTile extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           PkBadge(
-            label: contact.notified ? 'Notified' : contact.responseTime,
+            label: contact.notified ? 'Keluarga diberi tahu' : contact.responseTime,
             tone: contact.notified ? PkTone.green : contact.tone,
           ),
         ],
@@ -841,23 +841,23 @@ class _ContactTile extends StatelessWidget {
   }
 }
 
-class EmergencyMedicalSummaryCard extends StatelessWidget {
-  const EmergencyMedicalSummaryCard({
+class DaruratMedicalSummaryCard extends StatelessWidget {
+  const DaruratMedicalSummaryCard({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    const summary = EmergencyMockData.medicalSummary;
+    const summary = DaruratMockData.medicalSummary;
 
     return PkCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _SectionHeader(
-            eyebrow: 'Emergency medical summary card',
+            eyebrow: 'Ringkasan Medis Darurat',
             title: 'Ringkasan medis darurat',
-            subtitle: 'Data penting yang ditampilkan saat Family Alert aktif.',
+            subtitle: 'Data penting yang ditampilkan saat PeduliDarurat aktif.',
             icon: Icons.medical_information_outlined,
             tone: PkTone.red,
           ),
@@ -956,13 +956,13 @@ class _MedicalRow extends StatelessWidget {
   }
 }
 
-class EmergencyTimelineCard extends StatelessWidget {
-  const EmergencyTimelineCard({
+class DaruratTimelineCard extends StatelessWidget {
+  const DaruratTimelineCard({
     required this.events,
     super.key,
   });
 
-  final List<EmergencyTimelineEvent> events;
+  final List<DaruratTimelineEvent> events;
 
   @override
   Widget build(BuildContext context) {
@@ -971,9 +971,9 @@ class EmergencyTimelineCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _SectionHeader(
-            eyebrow: 'Emergency timeline animation',
-            title: 'Timeline alert',
-            subtitle: 'Urutan kejadian emergency secara lokal.',
+            eyebrow: 'Riwayat PeduliDarurat',
+            title: 'Timeline notifikasi',
+            subtitle: 'Urutan kejadian PeduliDarurat secara lokal.',
             icon: Icons.timeline_outlined,
             tone: PkTone.brand,
           ),
@@ -1003,7 +1003,7 @@ class _TimelineItem extends StatelessWidget {
     required this.isLast,
   });
 
-  final EmergencyTimelineEvent event;
+  final DaruratTimelineEvent event;
   final bool isLast;
 
   @override
@@ -1093,8 +1093,8 @@ class _TimelineItem extends StatelessWidget {
   }
 }
 
-class EmergencyResponsiveGrid extends StatelessWidget {
-  const EmergencyResponsiveGrid({
+class DaruratResponsiveGrid extends StatelessWidget {
+  const DaruratResponsiveGrid({
     required this.left,
     required this.right,
     super.key,
@@ -1206,8 +1206,8 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-class EmergencyConfirmSheet extends StatelessWidget {
-  const EmergencyConfirmSheet({
+class DaruratConfirmSheet extends StatelessWidget {
+  const DaruratConfirmSheet({
     required this.onConfirm,
     super.key,
   });
@@ -1244,7 +1244,7 @@ class EmergencyConfirmSheet extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Mulai Family Alert?',
+              'Mulai PeduliDarurat?',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: PkColors.text,
@@ -1275,7 +1275,7 @@ class EmergencyConfirmSheet extends StatelessWidget {
                   onConfirm();
                 },
                 icon: const Icon(Icons.emergency_outlined),
-                label: const Text('Ya, mulai emergency'),
+                label: const Text('Ya, mulai PeduliDarurat'),
               ),
             ),
             const SizedBox(height: 10),
