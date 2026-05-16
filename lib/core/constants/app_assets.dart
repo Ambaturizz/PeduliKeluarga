@@ -4,15 +4,8 @@ final class AppAssets {
   static const String iconsPath = 'lib/assets/icons';
   static const String imagesPath = 'lib/assets/images';
 
-  /// Logo resmi PeduliKeluarga.
-  ///
-  /// Pastikan file ini ada di:
-  /// lib/assets/images/LOGO PeduliKeluarga.png
-  ///
-  /// dan sudah didaftarkan di pubspec.yaml:
-  /// flutter:
-  ///   assets:
-  ///     - lib/assets/images/LOGO PeduliKeluarga.png
+  // Logo resmi PeduliKeluarga.
+  // File harus ada di: lib/assets/images/LOGO PeduliKeluarga.png
   static const String logoPeduliKeluarga =
       '$imagesPath/LOGO PeduliKeluarga.png';
 

@@ -23,11 +23,15 @@ class AppLogo extends StatelessWidget {
       borderRadius: radius,
       child: Image.asset(
         AppAssets.logoPeduliKeluarga,
-        key: const ValueKey(AppAssets.logoPeduliKeluarga),
+        width: size,
+        height: size,
         fit: BoxFit.contain,
         filterQuality: FilterQuality.high,
         isAntiAlias: true,
+        gaplessPlayback: true,
         errorBuilder: (context, error, stackTrace) {
+          debugPrint('GAGAL LOAD LOGO: ${AppAssets.logoPeduliKeluarga}');
+          debugPrint('DETAIL ERROR: $error');
           return _LogoAssetError(size: size);
         },
       ),
@@ -69,9 +73,7 @@ class AppLogo extends StatelessWidget {
 }
 
 class _LogoAssetError extends StatelessWidget {
-  const _LogoAssetError({
-    required this.size,
-  });
+  const _LogoAssetError({required this.size});
 
   final double size;
 
