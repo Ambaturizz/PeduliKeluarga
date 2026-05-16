@@ -54,7 +54,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Center(
-                  child: AppLogo(size: 96, withBackground: true),
+                  child: AppLogo(size: 200, withBackground: false),
                 ),
                 const SizedBox(height: PkSpacing.lg),
                 Text(
