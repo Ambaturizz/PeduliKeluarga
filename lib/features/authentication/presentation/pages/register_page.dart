@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/routing/app_route.dart';
 import '../../../../core/theme/pk_design.dart';
 import '../../../../shared/layouts/page_shell.dart';
+import '../../../../shared/widgets/app_logo.dart';
 import '../../../../state/providers/app_mode_provider.dart';
 import '../../providers/auth_provider.dart';
 
@@ -52,6 +53,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const Center(
+                  child: AppLogo(size: 96, withBackground: true),
+                ),
+                const SizedBox(height: PkSpacing.lg),
                 Text(
                   'Buat akun PeduliKeluarga',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(

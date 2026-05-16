@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_assets.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/pk_design.dart';
 
 class AppLogo extends StatelessWidget {
   const AppLogo({
@@ -18,58 +17,86 @@ class AppLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = ClipRRect(
-      borderRadius: BorderRadius.circular(size * 0.22),
+    final radius = BorderRadius.circular(size * 0.24);
+
+    final image = ClipRRect(
+      borderRadius: radius,
       child: Image.asset(
         AppAssets.logoPeduliKeluarga,
-        width: size,
-        height: size,
+        key: const ValueKey(AppAssets.logoPeduliKeluarga),
         fit: BoxFit.contain,
+        filterQuality: FilterQuality.high,
+        isAntiAlias: true,
         errorBuilder: (context, error, stackTrace) {
-          return Container(
-            width: size,
-            height: size,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: PkColors.brandSoft,
-              borderRadius: BorderRadius.circular(size * 0.22),
-              border: Border.all(color: AppColors.teal.withValues(alpha: 0.18)),
-            ),
-            child: Icon(
-              Icons.family_restroom_rounded,
-              color: AppColors.teal,
-              size: size * 0.58,
-            ),
-          );
+          return _LogoAssetError(size: size);
         },
       ),
     );
 
-    final child = withBackground
-        ? Container(
-            width: size,
-            height: size,
-            padding: EdgeInsets.all(size * 0.10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(size * 0.28),
-              border: Border.all(color: AppColors.teal.withValues(alpha: 0.14)),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.teal.withValues(alpha: 0.16),
-                  blurRadius: size * 0.22,
-                  offset: Offset(0, size * 0.08),
+    final content = SizedBox(
+      width: size,
+      height: size,
+      child: withBackground
+          ? DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(size * 0.30),
+                border: Border.all(
+                  color: AppColors.teal.withValues(alpha: 0.14),
                 ),
-              ],
-            ),
-            child: logo,
-          )
-        : logo;
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.teal.withValues(alpha: 0.14),
+                    blurRadius: size * 0.24,
+                    offset: Offset(0, size * 0.08),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(size * 0.10),
+                child: image,
+              ),
+            )
+          : image,
+    );
 
     return Semantics(
       image: true,
       label: semanticLabel,
-      child: child,
+      child: ExcludeSemantics(child: content),
+    );
+  }
+}
+
+class _LogoAssetError extends StatelessWidget {
+  const _LogoAssetError({
+    required this.size,
+  });
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      padding: EdgeInsets.all(size * 0.10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF3F3),
+        borderRadius: BorderRadius.circular(size * 0.24),
+        border: Border.all(color: AppColors.red.withValues(alpha: 0.35)),
+      ),
+      child: Text(
+        'LOGO\nMISSING',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: AppColors.red,
+          fontSize: (size * 0.13).clamp(8, 13).toDouble(),
+          fontWeight: FontWeight.w900,
+          height: 1.05,
+        ),
+      ),
     );
   }
 }

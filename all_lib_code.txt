@@ -456,6 +456,7 @@ final class AppAssets {
 
   static const String iconsPath = 'lib/assets/icons';
   static const String imagesPath = 'lib/assets/images';
+  static const String logoPeduliKeluarga = '$imagesPath/LOGO PeduliKeluarga.png';
   static const String illustrationsPath = 'lib/assets/illustrations';
   static const String animationsPath = 'lib/assets/animations';
   static const String soundsPath = 'lib/assets/sounds';
@@ -619,6 +620,16 @@ final class AppNavigationDestinations {
         AppUserMode.caregiver,
       },
     ),
+    AppNavigationDestination(
+      route: AppRoute.peduliPantau,
+      branchIndex: 9,
+      label: 'PeduliPantau',
+      icon: Icons.videocam_outlined,
+      selectedIcon: Icons.videocam_rounded,
+      allowedModes: {
+        AppUserMode.caregiver,
+      },
+    ),
   ];
 
   static List<AppNavigationDestination> forMode(AppUserMode mode) {
@@ -649,6 +660,7 @@ final class AppNavigationDestinations {
         AppRoute.home,
         AppRoute.peduliRiwayat,
         AppRoute.peduliObat,
+        AppRoute.peduliPantau,
         AppRoute.peduliAntar,
         AppRoute.ahliPeduli,
         AppRoute.familyAlert,
@@ -717,6 +729,14 @@ enum AppRoute {
     name: 'peduliKonsul',
     path: '/peduli-konsul',
   ),
+  familyChat(
+    name: 'familyChat',
+    path: '/family-chat',
+  ),
+  peduliPantau(
+    name: 'peduliPantau',
+    path: '/peduli-pantau',
+  ),
   notifications(
     name: 'notifications',
     path: '/notifications',
@@ -752,11 +772,13 @@ import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/authentication/presentation/pages/register_page.dart';
 import '../../features/authentication/providers/auth_provider.dart';
 import '../../features/family_alert/presentation/pages/family_alert_page.dart';
+import '../../features/family_chat/presentation/pages/family_chat_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/peduli_antar/presentation/pages/peduli_antar_page.dart';
 import '../../features/peduli_konsul/presentation/pages/peduli_konsul_page.dart';
+import '../../features/peduli_pantau/presentation/pages/peduli_pantau_page.dart';
 import '../../features/pedulicek/presentation/pages/peduli_cek_page.dart';
 import '../../features/peduliobat/presentation/pages/peduli_obat_page.dart';
 import '../../features/peduliriwayat/presentation/pages/peduli_riwayat_page.dart';
@@ -802,6 +824,14 @@ final _peduliRiwayatNavigatorKey = GlobalKey<NavigatorState>(
 
 final _peduliKonsulNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'peduliKonsulNavigator',
+);
+
+final _familyChatNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'familyChatNavigator',
+);
+
+final _peduliPantauNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'peduliPantauNavigator',
 );
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -999,6 +1029,36 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
+          StatefulShellBranch(
+            navigatorKey: _familyChatNavigatorKey,
+            routes: [
+              GoRoute(
+                path: AppRoute.familyChat.path,
+                name: AppRoute.familyChat.name,
+                pageBuilder: (context, state) {
+                  return RouteTransitions.fade(
+                    key: state.pageKey,
+                    child: const FamilyChatPage(),
+                  );
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _peduliPantauNavigatorKey,
+            routes: [
+              GoRoute(
+                path: AppRoute.peduliPantau.path,
+                name: AppRoute.peduliPantau.name,
+                pageBuilder: (context, state) {
+                  return RouteTransitions.fade(
+                    key: state.pageKey,
+                    child: const PeduliPantauPage(),
+                  );
+                },
+              ),
+            ],
+          ),
         ],
       ),
       GoRoute(
@@ -1058,6 +1118,8 @@ final class AppRoutes {
   static String get peduliRiwayat => AppRoute.peduliRiwayat.name;
   static String get peduliAntar => AppRoute.peduliAntar.name;
   static String get peduliKonsul => AppRoute.peduliKonsul.name;
+  static String get familyChat => AppRoute.familyChat.name;
+  static String get peduliPantau => AppRoute.peduliPantau.name;
   static String get notifications => AppRoute.notifications.name;
   static String get profile => AppRoute.profile.name;
   static String get settings => AppRoute.settings.name;
@@ -1073,6 +1135,8 @@ final class AppRoutes {
   static String get peduliRiwayatPath => AppRoute.peduliRiwayat.path;
   static String get peduliAntarPath => AppRoute.peduliAntar.path;
   static String get peduliKonsulPath => AppRoute.peduliKonsul.path;
+  static String get familyChatPath => AppRoute.familyChat.path;
+  static String get peduliPantauPath => AppRoute.peduliPantau.path;
   static String get notificationsPath => AppRoute.notifications.path;
   static String get profilePath => AppRoute.profile.path;
   static String get settingsPath => AppRoute.settings.path;
@@ -1123,6 +1187,14 @@ extension NavigationHelper on BuildContext {
 
   void goPeduliKonsul() {
     goNamed(AppRoute.peduliKonsul.name);
+  }
+
+  void goFamilyChat() {
+    goNamed(AppRoute.familyChat.name);
+  }
+
+  void goPeduliPantau() {
+    goNamed(AppRoute.peduliPantau.name);
   }
 
   void goInitialForMode(AppUserMode mode) {
@@ -7683,6 +7755,338 @@ class DaruratController extends Notifier<DaruratState> {
 }
 
 =========================================================
+?? PATH: lib/features/family_chat/presentation/pages/family_chat_page.dart
+=========================================================
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/theme/pk_design.dart';
+import '../../../../state/providers/app_mode_provider.dart';
+
+class FamilyChatPage extends ConsumerStatefulWidget {
+  const FamilyChatPage({super.key});
+
+  @override
+  ConsumerState<FamilyChatPage> createState() => _FamilyChatPageState();
+}
+
+class _FamilyChatPageState extends ConsumerState<FamilyChatPage> {
+  final TextEditingController _messageController = TextEditingController();
+  final List<_FamilyChatMessage> _messages = [
+    _FamilyChatMessage(
+      text: 'Pagi, sudah sarapan dan minum obat belum?',
+      time: '07:05',
+      sentByMeInElderMode: false,
+    ),
+    _FamilyChatMessage(
+      text: 'Sudah. Nanti saya isi PeduliCek juga ya.',
+      time: '07:07',
+      sentByMeInElderMode: true,
+    ),
+    _FamilyChatMessage(
+      text: 'Baik, kalau butuh apa-apa langsung chat di sini.',
+      time: '07:08',
+      sentByMeInElderMode: false,
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mode = ref.watch(appModeControllerProvider);
+    final isElder = mode == AppUserMode.elder;
+    final contactName = isElder ? 'Anak / Pendamping' : 'Orang Tua / Lansia';
+
+    return PkGradientBackground(
+      child: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 22, 16, 10),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 920),
+                  child: _ChatHeader(
+                    contactName: contactName,
+                    isElder: isElder,
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 920),
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    reverse: true,
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 18),
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) {
+                      final message = _messages[_messages.length - index - 1];
+                      final isMine = isElder
+                          ? message.sentByMeInElderMode
+                          : !message.sentByMeInElderMode;
+
+                      return _ChatBubble(
+                        message: message,
+                        isMine: isMine,
+                        senderLabel: isMine ? 'Saya' : contactName,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+            _ChatInputBar(
+              controller: _messageController,
+              onSend: () => _sendMessage(isElder),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _sendMessage(bool isElder) {
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
+
+    final now = DateTime.now();
+    final time =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
+    setState(() {
+      _messages.add(
+        _FamilyChatMessage(
+          text: text,
+          time: time,
+          sentByMeInElderMode: isElder,
+        ),
+      );
+      _messageController.clear();
+    });
+
+    Future<void>.delayed(const Duration(milliseconds: 450), () {
+      if (!mounted) return;
+
+      setState(() {
+        _messages.add(
+          _FamilyChatMessage(
+            text: isElder
+                ? 'Pesan diterima keluarga. Tetap kabari kalau ada keluhan ya.'
+                : 'Pesan diterima lansia. Ini mockup chat keluarga internal.',
+            time: time,
+            sentByMeInElderMode: !isElder,
+          ),
+        );
+      });
+    });
+  }
+}
+
+class _FamilyChatMessage {
+  const _FamilyChatMessage({
+    required this.text,
+    required this.time,
+    required this.sentByMeInElderMode,
+  });
+
+  final String text;
+  final String time;
+  final bool sentByMeInElderMode;
+}
+
+class _ChatHeader extends StatelessWidget {
+  const _ChatHeader({
+    required this.contactName,
+    required this.isElder,
+  });
+
+  final String contactName;
+  final bool isElder;
+
+  @override
+  Widget build(BuildContext context) {
+    return PkCard(
+      tint: PkColors.brandSoft,
+      borderColor: PkColors.brand.withValues(alpha: 0.16),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          PkIconBox(
+            icon: isElder ? Icons.groups_outlined : Icons.elderly_rounded,
+            tone: isElder ? PkTone.blue : PkTone.brand,
+            size: 48,
+          ),
+          const SizedBox(width: PkSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'PeduliChat Keluarga',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: PkColors.text,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Chat langsung dengan $contactName. Fitur ini berbeda dari PeduliKonsul yang digunakan untuk konsultasi tenaga kesehatan.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: PkColors.text2,
+                        height: 1.45,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const PkBadge(
+            label: 'Mock chat',
+            tone: PkTone.brand,
+            icon: Icons.chat_bubble_outline_rounded,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChatBubble extends StatelessWidget {
+  const _ChatBubble({
+    required this.message,
+    required this.isMine,
+    required this.senderLabel,
+  });
+
+  final _FamilyChatMessage message;
+  final bool isMine;
+  final String senderLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 620),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isMine ? PkColors.brand : PkColors.surface,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(20),
+            topRight: const Radius.circular(20),
+            bottomLeft: Radius.circular(isMine ? 20 : 6),
+            bottomRight: Radius.circular(isMine ? 6 : 20),
+          ),
+          border: Border.all(
+            color: isMine ? PkColors.brand : PkColors.line,
+          ),
+          boxShadow: PkShadow.xs,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              senderLabel,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: isMine ? Colors.white70 : PkColors.muted,
+                    fontWeight: FontWeight.w900,
+                  ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              message.text,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: isMine ? Colors.white : PkColors.text,
+                    height: 1.5,
+                  ),
+            ),
+            const SizedBox(height: 6),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                message.time,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: isMine ? Colors.white70 : PkColors.muted,
+                      fontWeight: FontWeight.w800,
+                    ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ChatInputBar extends StatelessWidget {
+  const _ChatInputBar({
+    required this.controller,
+    required this.onSend,
+  });
+
+  final TextEditingController controller;
+  final VoidCallback onSend;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: PkColors.surface.withValues(alpha: 0.96),
+        border: Border(top: BorderSide(color: PkColors.line)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 920),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      minLines: 1,
+                      maxLines: 4,
+                      decoration: const InputDecoration(
+                        labelText: 'Tulis pesan keluarga',
+                        hintText: 'Contoh: Saya sudah minum obat',
+                        prefixIcon: Icon(Icons.edit_outlined),
+                      ),
+                      onSubmitted: (_) => onSend(),
+                    ),
+                  ),
+                  const SizedBox(width: PkSpacing.sm),
+                  FilledButton(
+                    onPressed: onSend,
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(58, 58),
+                      shape: const CircleBorder(),
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: const Icon(Icons.send_rounded),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+=========================================================
 ?? PATH: lib/features/home/data/home_dummy_data.dart
 =========================================================
 
@@ -7703,6 +8107,8 @@ enum HomeActionTarget {
   notifications,
   profile,
   peduliKonsul,
+  familyChat,
+  peduliPantau,
 }
 
 class HomeHeroStat {
@@ -8005,9 +8411,16 @@ final class HomeDummyData {
           target: HomeActionTarget.familyAlert,
         ),
         HomeQuickAction(
+          title: 'PeduliChat',
+          subtitle: 'Chat keluarga',
+          icon: Icons.forum_outlined,
+          tone: PkTone.blue,
+          target: HomeActionTarget.familyChat,
+        ),
+        HomeQuickAction(
           title: 'PeduliKonsul',
           subtitle: 'Konsultasi',
-          icon: Icons.chat_bubble_outline_rounded,
+          icon: Icons.health_and_safety_outlined,
           tone: PkTone.purple,
           target: HomeActionTarget.peduliKonsul,
         ),
@@ -8133,10 +8546,12 @@ final class HomeDummyData {
       quickActions: const [
         HomeQuickAction(title: 'PeduliRiwayat', subtitle: 'Riwayat sehat', icon: Icons.assignment_outlined, tone: PkTone.blue, target: HomeActionTarget.peduliRiwayat),
         HomeQuickAction(title: 'PeduliObat', subtitle: 'Atur jadwal', icon: Icons.medication_outlined, tone: PkTone.brand, target: HomeActionTarget.peduliObat),
+        HomeQuickAction(title: 'PeduliPantau', subtitle: 'CCTV rumah', icon: Icons.videocam_outlined, tone: PkTone.green, target: HomeActionTarget.peduliPantau, badge: 'Mockup'),
+        HomeQuickAction(title: 'PeduliChat', subtitle: 'Chat keluarga', icon: Icons.forum_outlined, tone: PkTone.blue, target: HomeActionTarget.familyChat),
         HomeQuickAction(title: 'PeduliAntar', subtitle: 'Antar obat', icon: Icons.local_shipping_outlined, tone: PkTone.amber, target: HomeActionTarget.peduliAntar),
         HomeQuickAction(title: 'AhliPeduli', subtitle: 'Tenaga medis', icon: Icons.health_and_safety_outlined, tone: PkTone.purple, target: HomeActionTarget.ahliPeduli),
         HomeQuickAction(title: 'PeduliDarurat', subtitle: 'Darurat', icon: Icons.emergency_outlined, tone: PkTone.red, target: HomeActionTarget.familyAlert),
-        HomeQuickAction(title: 'PeduliKonsul', subtitle: 'Konsultasi', icon: Icons.chat_bubble_outline_rounded, tone: PkTone.purple, target: HomeActionTarget.peduliKonsul),
+        HomeQuickAction(title: 'PeduliKonsul', subtitle: 'Konsultasi dokter', icon: Icons.health_and_safety_outlined, tone: PkTone.purple, target: HomeActionTarget.peduliKonsul),
       ],
       history: const [
         HomeHistoryItem(title: 'Obat pagi sudah diminum', copy: 'Amlodipin dan Metformin selesai.', time: '07:32', tone: PkTone.green),
@@ -8230,7 +8645,7 @@ class HomePage extends ConsumerWidget {
                         PremiumFamilyContactCard(
                           data: data,
                           onChat: () {
-                            context.go(AppRoutes.peduliKonsulPath);
+                            context.go(AppRoutes.familyChatPath);
                           },
                           onPhone: () {
                             _showPhoneMock(context, data);
@@ -8344,6 +8759,8 @@ class HomePage extends ConsumerWidget {
       HomeActionTarget.notifications => AppRoutes.notificationsPath,
       HomeActionTarget.profile => AppRoutes.profilePath,
       HomeActionTarget.peduliKonsul => AppRoutes.peduliKonsulPath,
+      HomeActionTarget.familyChat => AppRoutes.familyChatPath,
+      HomeActionTarget.peduliPantau => AppRoutes.peduliPantauPath,
     };
   }
 }
@@ -8701,8 +9118,8 @@ class PremiumFamilyContactCard extends StatelessWidget {
     final compact = MediaQuery.sizeOf(context).width < 560;
     final title = data.isElder ? 'Hubungi keluarga' : 'Kontak PeduliDiri';
     final subtitle = data.isElder
-        ? 'Gunakan Chat atau Telepon untuk meminta bantuan keluarga.'
-        : 'Chat atau hubungi lansia dengan aksi mock yang aman.';
+        ? 'PeduliChat keluarga untuk kontak anak/pendamping, berbeda dari PeduliKonsul.'
+        : 'PeduliChat untuk kontak lansia, bukan kanal konsultasi tenaga kesehatan.';
     final icon = data.isElder ? Icons.family_restroom_rounded : Icons.elderly_rounded;
 
     return PkCard(
@@ -8820,7 +9237,7 @@ class _FamilyContactActions extends StatelessWidget {
     final chatButton = FilledButton.icon(
       onPressed: onChat,
       icon: const Icon(Icons.chat_bubble_outline_rounded),
-      label: const Text('Chat'),
+      label: const Text('PeduliChat'),
     );
 
     final phoneButton = OutlinedButton.icon(
@@ -8843,7 +9260,7 @@ class _FamilyContactActions extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(width: 126, child: chatButton),
+        SizedBox(width: 146, child: chatButton),
         const SizedBox(width: PkSpacing.sm),
         SizedBox(width: 138, child: phoneButton),
       ],
@@ -11532,6 +11949,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_logo.dart';
 
 class OnboardingStepLayout extends StatelessWidget {
   const OnboardingStepLayout({
@@ -11679,6 +12097,22 @@ class OnboardingHeroIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final child = icon == Icons.volunteer_activism_rounded
+        ? const AppLogo(size: 112, withBackground: true)
+        : Container(
+            width: 112,
+            height: 112,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: color.withValues(alpha: 0.25),
+                width: 1.4,
+              ),
+            ),
+            child: Icon(icon, size: 58, color: color),
+          );
+
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 700),
       curve: Curves.easeOutBack,
@@ -11689,19 +12123,7 @@ class OnboardingHeroIcon extends StatelessWidget {
           child: child,
         );
       },
-      child: Container(
-        width: 112,
-        height: 112,
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: color.withValues(alpha: 0.25),
-            width: 1.4,
-          ),
-        ),
-        child: Icon(icon, size: 58, color: color),
-      ),
+      child: child,
     );
   }
 }
@@ -11727,50 +12149,7 @@ class OnboardingGlassLogo extends StatelessWidget {
           ),
         );
       },
-      child: Container(
-        width: 128,
-        height: 128,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.teal,
-              AppColors.tealMid,
-            ],
-          ),
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.teal.withValues(alpha: 0.28),
-              blurRadius: 36,
-              offset: const Offset(0, 18),
-            ),
-          ],
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Positioned(
-              top: 18,
-              right: 18,
-              child: Container(
-                width: 26,
-                height: 26,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.18),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            const Icon(
-              Icons.volunteer_activism_rounded,
-              color: Colors.white,
-              size: 70,
-            ),
-          ],
-        ),
-      ),
+      child: const AppLogo(size: 128, withBackground: true),
     );
   }
 }
@@ -12803,6 +13182,14 @@ class _FormView extends StatelessWidget {
           progressPercent: state.progressPercent,
         ),
         const SizedBox(height: 16),
+        CekPointSummaryCard(
+          totalPoints: state.totalPoints,
+          streak: state.currentStreak,
+          reward: state.nextRewardEstimate,
+          canSubmit: state.canSubmit,
+          submitted: false,
+        ),
+        const SizedBox(height: 16),
         _PeduliCekGuidanceCard(profile: profile),
         const PkSectionTitle(
           title: 'Form kesehatan',
@@ -13163,6 +13550,14 @@ class _ResultView extends StatelessWidget {
               ),
             ],
           ),
+        ),
+        const SizedBox(height: 16),
+        CekPointSummaryCard(
+          totalPoints: state.totalPoints,
+          streak: state.currentStreak,
+          reward: state.lastRewardPoints,
+          canSubmit: true,
+          submitted: true,
         ),
         const PkSectionTitle(
           title: 'Ringkasan hasil',
@@ -13528,6 +13923,117 @@ class CekProgressTracker extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CekPointSummaryCard extends StatelessWidget {
+  const CekPointSummaryCard({
+    required this.totalPoints,
+    required this.streak,
+    required this.reward,
+    required this.canSubmit,
+    required this.submitted,
+    super.key,
+  });
+
+  final int totalPoints;
+  final int streak;
+  final int reward;
+  final bool canSubmit;
+  final bool submitted;
+
+  @override
+  Widget build(BuildContext context) {
+    final tone = submitted ? PkTone.green : PkTone.amber;
+    final rewardText = submitted
+        ? '+$reward poin didapat dari cek hari ini'
+        : canSubmit
+            ? 'Siap klaim hingga $reward poin setelah submit'
+            : 'Lengkapi form untuk mendapatkan poin';
+
+    return PkCard(
+      tint: pkToneSoft(tone),
+      borderColor: pkToneColor(tone).withValues(alpha: 0.16),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 620;
+
+          final header = Row(
+            children: [
+              PkIconBox(
+                icon: Icons.emoji_events_outlined,
+                tone: tone,
+                size: 46,
+              ),
+              const SizedBox(width: PkSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Poin PeduliCek',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: PkColors.text,
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      rewardText,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: PkColors.text2,
+                            height: 1.45,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+
+          final stats = Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              PkBadge(
+                label: '$totalPoints poin',
+                tone: PkTone.green,
+                icon: Icons.stars_outlined,
+              ),
+              PkBadge(
+                label: '$streak hari streak',
+                tone: PkTone.blue,
+                icon: Icons.local_fire_department_outlined,
+              ),
+              const PkBadge(
+                label: 'Bisa ditukar',
+                tone: PkTone.purple,
+                icon: Icons.redeem_outlined,
+              ),
+            ],
+          );
+
+          if (compact) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                header,
+                const SizedBox(height: 14),
+                stats,
+              ],
+            );
+          }
+
+          return Row(
+            children: [
+              Expanded(child: header),
+              const SizedBox(width: 16),
+              stats,
+            ],
+          );
+        },
       ),
     );
   }
@@ -14346,6 +14852,10 @@ class PeduliCekState {
     this.note = '',
     this.submitted = false,
     this.submittedAt,
+    this.totalPoints = 120,
+    this.currentStreak = 3,
+    this.lastRewardPoints = 0,
+    this.rewardHistory = const <String>[],
   });
 
   final int? systolic;
@@ -14357,6 +14867,10 @@ class PeduliCekState {
   final String note;
   final bool submitted;
   final DateTime? submittedAt;
+  final int totalPoints;
+  final int currentStreak;
+  final int lastRewardPoints;
+  final List<String> rewardHistory;
 
   bool get hasBloodPressure => systolic != null && diastolic != null;
 
@@ -14395,6 +14909,15 @@ class PeduliCekState {
   }
 
   int get progressPercent => (progress * 100).round();
+
+  int get nextRewardEstimate {
+    if (!canSubmit) return 0;
+    return hasRisk ? 15 : 25;
+  }
+
+  String get pointsLabel => '$totalPoints poin';
+
+  String get streakLabel => '$currentStreak hari berturut-turut';
 
   CekEvaluation get bloodPressureEvaluation {
     final s = systolic;
@@ -14702,6 +15225,10 @@ class PeduliCekState {
     String? note,
     bool? submitted,
     Object? submittedAt = _noChange,
+    int? totalPoints,
+    int? currentStreak,
+    int? lastRewardPoints,
+    List<String>? rewardHistory,
   }) {
     return PeduliCekState(
       systolic:
@@ -14720,6 +15247,10 @@ class PeduliCekState {
       submittedAt: identical(submittedAt, _noChange)
           ? this.submittedAt
           : submittedAt as DateTime?,
+      totalPoints: totalPoints ?? this.totalPoints,
+      currentStreak: currentStreak ?? this.currentStreak,
+      lastRewardPoints: lastRewardPoints ?? this.lastRewardPoints,
+      rewardHistory: rewardHistory ?? this.rewardHistory,
     );
   }
 }
@@ -14821,16 +15352,32 @@ class PeduliCekController extends Notifier<PeduliCekState> {
   bool submit() {
     if (!state.canSubmit) return false;
 
+    final now = DateTime.now();
+    final reward = state.hasRisk ? 15 : 25;
+    final rewardNote =
+        '+$reward poin PeduliCek · ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
     state = state.copyWith(
       submitted: true,
-      submittedAt: DateTime.now(),
+      submittedAt: now,
+      totalPoints: state.totalPoints + reward,
+      currentStreak: state.currentStreak + 1,
+      lastRewardPoints: reward,
+      rewardHistory: [
+        rewardNote,
+        ...state.rewardHistory,
+      ],
     );
 
     return true;
   }
 
   void reset() {
-    state = const PeduliCekState();
+    state = PeduliCekState(
+      totalPoints: state.totalPoints,
+      currentStreak: state.currentStreak,
+      rewardHistory: state.rewardHistory,
+    );
   }
 }
 
@@ -14978,6 +15525,48 @@ class MedicationReminderModel {
   final IconData icon;
 }
 
+class MedicationPrescriptionPreset {
+  const MedicationPrescriptionPreset({
+    required this.medicationId,
+    required this.disease,
+    required this.times,
+    required this.durationDays,
+    required this.tabletsPerDose,
+    required this.instruction,
+  });
+
+  final String medicationId;
+  final String disease;
+  final List<String> times;
+  final int durationDays;
+  final int tabletsPerDose;
+  final String instruction;
+}
+
+class GeneratedMedicationEntry {
+  const GeneratedMedicationEntry({
+    required this.id,
+    required this.date,
+    required this.time,
+    required this.medicationId,
+    required this.medicationName,
+    required this.dose,
+    required this.disease,
+    required this.instruction,
+    required this.tabletsPerDose,
+  });
+
+  final String id;
+  final DateTime date;
+  final String time;
+  final String medicationId;
+  final String medicationName;
+  final String dose;
+  final String disease;
+  final String instruction;
+  final int tabletsPerDose;
+}
+
 final class MedicationDummyData {
   const MedicationDummyData._();
 
@@ -15019,6 +15608,78 @@ final class MedicationDummyData {
       instructions: 'Minum 1 tablet pada malam hari.',
     ),
   ];
+
+  static const List<MedicationPrescriptionPreset> diseasePrescriptionDataset = [
+    MedicationPrescriptionPreset(
+      medicationId: 'amlodipin',
+      disease: 'Hipertensi',
+      times: ['07:00'],
+      durationDays: 30,
+      tabletsPerDose: 1,
+      instruction: 'Sesudah sarapan sesuai resep dokter.',
+    ),
+    MedicationPrescriptionPreset(
+      medicationId: 'metformin',
+      disease: 'Diabetes',
+      times: ['07:00', '13:00', '19:00'],
+      durationDays: 30,
+      tabletsPerDose: 1,
+      instruction: 'Sesudah makan pagi, siang, dan malam.',
+    ),
+    MedicationPrescriptionPreset(
+      medicationId: 'simvastatin',
+      disease: 'Kolesterol',
+      times: ['19:00'],
+      durationDays: 30,
+      tabletsPerDose: 1,
+      instruction: 'Malam hari sesudah makan.',
+    ),
+  ];
+
+  static List<GeneratedMedicationEntry> generateMonthlySchedule({
+    required DateTime startDate,
+    int days = 30,
+  }) {
+    final normalizedStart = DateTime(startDate.year, startDate.month, startDate.day);
+    final entries = <GeneratedMedicationEntry>[];
+
+    for (var dayIndex = 0; dayIndex < days; dayIndex++) {
+      final date = normalizedStart.add(Duration(days: dayIndex));
+
+      for (final preset in diseasePrescriptionDataset) {
+        final medication = medications.firstWhere(
+          (item) => item.id == preset.medicationId,
+        );
+
+        for (final time in preset.times) {
+          final dateKey =
+              '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}';
+
+          entries.add(
+            GeneratedMedicationEntry(
+              id: "generated-$dateKey-${time.replaceAll(':', '')}-${medication.id}",
+              date: date,
+              time: time,
+              medicationId: medication.id,
+              medicationName: medication.name,
+              dose: medication.dose,
+              disease: preset.disease,
+              instruction: preset.instruction,
+              tabletsPerDose: preset.tabletsPerDose,
+            ),
+          );
+        }
+      }
+    }
+
+    entries.sort((a, b) {
+      final dateCompare = a.date.compareTo(b.date);
+      if (dateCompare != 0) return dateCompare;
+      return a.time.compareTo(b.time);
+    });
+
+    return entries;
+  }
 
   static const List<MedicationScheduleModel> schedules = [
     MedicationScheduleModel(
@@ -15097,6 +15758,7 @@ final class MedicationDummyData {
 =========================================================
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15150,6 +15812,27 @@ class PeduliObatPage extends ConsumerWidget {
                           );
                         },
                       ),
+                      const SizedBox(height: 16),
+                      MedicationGeneratorCard(
+                        state: state,
+                        onGenerate: () {
+                          notifier.generateMonthlySchedule();
+                          _showMessage(
+                            context,
+                            'Jadwal obat 1 bulan berhasil dibuat. Yang tampil tetap jadwal hari ini.',
+                          );
+                        },
+                        onCopyCalendar: () async {
+                          await Clipboard.setData(
+                            ClipboardData(text: state.calendarExportText),
+                          );
+                          if (!context.mounted) return;
+                          _showMessage(
+                            context,
+                            'Teks kalender .ics disalin. Impor manual ke Google Calendar atau kalender lain.',
+                          );
+                        },
+                      ),
                       const PkSectionTitle(
                         title: 'Jadwal Obat',
                         subtitle: 'Jadwal dan catatan harian',
@@ -15157,7 +15840,7 @@ class PeduliObatPage extends ConsumerWidget {
                       PeduliObatResponsiveGrid(
                         left: [
                           MedicationScheduleCard(
-                            schedules: state.schedules,
+                            schedules: state.effectiveSchedules,
                             takenIds: state.takenScheduleIds,
                             onMarkTaken: (id) {
                               notifier.markScheduleTaken(id);
@@ -15623,6 +16306,119 @@ class _MedicationHeroPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+class MedicationGeneratorCard extends StatelessWidget {
+  const MedicationGeneratorCard({
+    required this.state,
+    required this.onGenerate,
+    required this.onCopyCalendar,
+    super.key,
+  });
+
+  final PeduliObatState state;
+  final VoidCallback onGenerate;
+  final VoidCallback onCopyCalendar;
+
+  @override
+  Widget build(BuildContext context) {
+    final generatedAt = state.generatedAt;
+    final generatedLabel = generatedAt == null
+        ? 'Belum dibuat'
+        : '${generatedAt.day.toString().padLeft(2, '0')}/${generatedAt.month.toString().padLeft(2, '0')}/${generatedAt.year} ${generatedAt.hour.toString().padLeft(2, '0')}:${generatedAt.minute.toString().padLeft(2, '0')}';
+
+    return PkCard(
+      tint: state.hasGeneratedSchedule ? PkColors.greenSoft : PkColors.brandSoft,
+      borderColor: (state.hasGeneratedSchedule ? PkColors.green : PkColors.brand)
+          .withValues(alpha: 0.16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _CardTitleRow(
+            eyebrow: 'Generate jadwal',
+            title: 'Jadwal obat otomatis 1 bulan',
+            subtitle:
+                'Obat diambil dari dataset penyakit dan resep dokter. Kalender utama tetap menampilkan jadwal hari ini.',
+            icon: Icons.auto_awesome_outlined,
+            tone: state.hasGeneratedSchedule ? PkTone.green : PkTone.brand,
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              PkBadge(
+                label: state.hasGeneratedSchedule
+                    ? '${state.generatedDayCount} hari dibuat'
+                    : 'Siap generate',
+                tone: state.hasGeneratedSchedule ? PkTone.green : PkTone.brand,
+                icon: state.hasGeneratedSchedule
+                    ? Icons.check_circle_outline_rounded
+                    : Icons.calendar_month_outlined,
+              ),
+              PkBadge(
+                label: 'Tampil hari ini: ${state.effectiveSchedules.length} jadwal',
+                tone: PkTone.blue,
+                icon: Icons.today_outlined,
+              ),
+              PkBadge(
+                label: 'Dibuat: $generatedLabel',
+                tone: PkTone.gray,
+                icon: Icons.history_outlined,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Integrasi Google Calendar API tidak dipakai agar tidak membutuhkan API key. Alternatifnya, PeduliObat membuat teks kalender standar .ics yang bisa disalin dan diimpor ke kalender.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: PkColors.text2,
+                  height: 1.55,
+                ),
+          ),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final compact = constraints.maxWidth < 560;
+
+              final generateButton = FilledButton.icon(
+                onPressed: onGenerate,
+                icon: const Icon(Icons.auto_awesome_outlined),
+                label: Text(state.hasGeneratedSchedule
+                    ? 'Generate ulang 1 bulan'
+                    : 'Generate Jadwal 1 Bulan'),
+              );
+
+              final calendarButton = OutlinedButton.icon(
+                onPressed: onCopyCalendar,
+                icon: const Icon(Icons.content_copy_outlined),
+                label: const Text('Salin kalender .ics'),
+              );
+
+              if (compact) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    generateButton,
+                    const SizedBox(height: 10),
+                    calendarButton,
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(child: generateButton),
+                  const SizedBox(width: 10),
+                  Expanded(child: calendarButton),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class MedicationLowStockWarning extends StatelessWidget {
   const MedicationLowStockWarning({
     required this.items,
@@ -15900,16 +16696,24 @@ class MedicationScheduleCard extends StatelessWidget {
             tone: PkTone.brand,
           ),
           const SizedBox(height: 16),
-          for (final item in schedules)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _ScheduleItem(
-                item: item,
-                taken: takenIds.contains(item.id),
-                onMarkTaken: () => onMarkTaken(item.id),
-                onUndo: () => onUndo(item.id),
+          if (schedules.isEmpty)
+            Text(
+              'Belum ada jadwal obat hari ini.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: PkColors.text2,
+                  ),
+            )
+          else
+            for (final item in schedules)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _ScheduleItem(
+                  item: item,
+                  taken: takenIds.contains(item.id),
+                  onMarkTaken: () => onMarkTaken(item.id),
+                  onUndo: () => onUndo(item.id),
+                ),
               ),
-            ),
         ],
       ),
     );
@@ -16738,6 +17542,8 @@ class PeduliObatState {
     required this.logs,
     required this.reminders,
     required this.takenScheduleIds,
+    this.generatedMonthlyEntries = const <GeneratedMedicationEntry>[],
+    this.generatedAt,
     this.reminderEnabled = true,
   });
 
@@ -16746,11 +17552,43 @@ class PeduliObatState {
   final List<MedicationLogModel> logs;
   final List<MedicationReminderModel> reminders;
   final Set<String> takenScheduleIds;
+  final List<GeneratedMedicationEntry> generatedMonthlyEntries;
+  final DateTime? generatedAt;
   final bool reminderEnabled;
 
-  int get totalSchedules => schedules.length;
+  bool get hasGeneratedSchedule => generatedMonthlyEntries.isNotEmpty;
 
-  int get completedSchedules => takenScheduleIds.length;
+  int get generatedDayCount {
+    return generatedMonthlyEntries
+        .map((item) => _dateKey(item.date))
+        .toSet()
+        .length;
+  }
+
+  List<GeneratedMedicationEntry> get generatedTodayEntries {
+    final now = DateTime.now();
+
+    return generatedMonthlyEntries
+        .where((item) => _isSameDate(item.date, now))
+        .toList();
+  }
+
+  List<MedicationScheduleModel> get effectiveSchedules {
+    if (!hasGeneratedSchedule) return schedules;
+
+    final todayEntries = generatedTodayEntries;
+    if (todayEntries.isEmpty) return schedules;
+
+    return _groupGeneratedEntries(todayEntries, takenScheduleIds);
+  }
+
+  int get totalSchedules => effectiveSchedules.length;
+
+  int get completedSchedules {
+    final todayIds = effectiveSchedules.map((item) => item.id).toSet();
+
+    return takenScheduleIds.where(todayIds.contains).length;
+  }
 
   int get pendingSchedules => totalSchedules - completedSchedules;
 
@@ -16768,7 +17606,7 @@ class PeduliObatState {
   int get lowStockCount => lowStockMedications.length;
 
   MedicationScheduleModel? get nextSchedule {
-    for (final item in schedules) {
+    for (final item in effectiveSchedules) {
       if (!takenScheduleIds.contains(item.id)) return item;
     }
 
@@ -16795,12 +17633,63 @@ class PeduliObatState {
     return PkTone.red;
   }
 
+  String get calendarExportText {
+    final entries = generatedMonthlyEntries.isNotEmpty
+        ? generatedMonthlyEntries
+        : MedicationDummyData.generateMonthlySchedule(
+            startDate: DateTime.now(),
+          );
+
+    final grouped = <String, List<GeneratedMedicationEntry>>{};
+
+    for (final entry in entries) {
+      final key = '${_dateKey(entry.date)}-${entry.time}';
+      grouped.putIfAbsent(key, () => <GeneratedMedicationEntry>[]).add(entry);
+    }
+
+    final keys = grouped.keys.toList()..sort();
+    final buffer = StringBuffer()
+      ..writeln('BEGIN:VCALENDAR')
+      ..writeln('VERSION:2.0')
+      ..writeln('PRODID:-//PeduliKeluarga//PeduliObat//ID')
+      ..writeln('CALSCALE:GREGORIAN')
+      ..writeln('METHOD:PUBLISH');
+
+    for (final key in keys) {
+      final items = grouped[key]!;
+      items.sort((a, b) => a.medicationName.compareTo(b.medicationName));
+
+      final first = items.first;
+      final start = _entryDateTime(first);
+      final end = start.add(const Duration(minutes: 15));
+      final title = items.map((item) => '${item.medicationName} ${item.dose}').join(' + ');
+      final description = items
+          .map((item) => '${item.medicationName} ${item.dose}: ${item.instruction}')
+          .join('\\n');
+
+      buffer
+        ..writeln('BEGIN:VEVENT')
+        ..writeln("UID:${key.replaceAll(':', '')}@pedulikeluarga.local")
+        ..writeln('DTSTAMP:${_icsDateTime(DateTime.now())}')
+        ..writeln('DTSTART:${_icsDateTime(start)}')
+        ..writeln('DTEND:${_icsDateTime(end)}')
+        ..writeln('SUMMARY:${_icsEscape('PeduliObat - $title')}')
+        ..writeln('DESCRIPTION:${_icsEscape(description)}')
+        ..writeln('END:VEVENT');
+    }
+
+    buffer.writeln('END:VCALENDAR');
+    return buffer.toString();
+  }
+
   PeduliObatState copyWith({
     List<MedicationModel>? medications,
     List<MedicationScheduleModel>? schedules,
     List<MedicationLogModel>? logs,
     List<MedicationReminderModel>? reminders,
     Set<String>? takenScheduleIds,
+    List<GeneratedMedicationEntry>? generatedMonthlyEntries,
+    DateTime? generatedAt,
     bool? reminderEnabled,
   }) {
     return PeduliObatState(
@@ -16809,6 +17698,9 @@ class PeduliObatState {
       logs: logs ?? this.logs,
       reminders: reminders ?? this.reminders,
       takenScheduleIds: takenScheduleIds ?? this.takenScheduleIds,
+      generatedMonthlyEntries:
+          generatedMonthlyEntries ?? this.generatedMonthlyEntries,
+      generatedAt: generatedAt ?? this.generatedAt,
       reminderEnabled: reminderEnabled ?? this.reminderEnabled,
     );
   }
@@ -16836,6 +17728,33 @@ class PeduliObatController extends Notifier<PeduliObatState> {
     );
   }
 
+  void generateMonthlySchedule() {
+    final now = DateTime.now();
+    final generated = MedicationDummyData.generateMonthlySchedule(
+      startDate: now,
+      days: 30,
+    );
+
+    final nextLogs = [
+      MedicationLogModel(
+        id: 'log-${now.millisecondsSinceEpoch}',
+        title: 'Jadwal obat 1 bulan berhasil dibuat',
+        copy:
+            'PeduliObat membuat jadwal dari dataset penyakit dan resep dokter. Tampilan utama tetap menampilkan jadwal hari ini.',
+        time: _clock(now),
+        tone: PkTone.brand,
+      ),
+      ...state.logs,
+    ];
+
+    state = state.copyWith(
+      generatedMonthlyEntries: generated,
+      generatedAt: now,
+      takenScheduleIds: <String>{},
+      logs: nextLogs,
+    );
+  }
+
   void toggleReminder() {
     state = state.copyWith(
       reminderEnabled: !state.reminderEnabled,
@@ -16845,7 +17764,7 @@ class PeduliObatController extends Notifier<PeduliObatState> {
   void markScheduleTaken(String scheduleId) {
     if (state.takenScheduleIds.contains(scheduleId)) return;
 
-    final schedule = state.schedules.firstWhere(
+    final schedule = state.effectiveSchedules.firstWhere(
       (item) => item.id == scheduleId,
     );
 
@@ -16874,7 +17793,7 @@ class PeduliObatController extends Notifier<PeduliObatState> {
   void undoSchedule(String scheduleId) {
     if (!state.takenScheduleIds.contains(scheduleId)) return;
 
-    final schedule = state.schedules.firstWhere(
+    final schedule = state.effectiveSchedules.firstWhere(
       (item) => item.id == scheduleId,
     );
 
@@ -16942,6 +17861,115 @@ class PeduliObatController extends Notifier<PeduliObatState> {
 
     return '$hour:$minute';
   }
+}
+
+List<MedicationScheduleModel> _groupGeneratedEntries(
+  List<GeneratedMedicationEntry> entries,
+  Set<String> takenScheduleIds,
+) {
+  final grouped = <String, List<GeneratedMedicationEntry>>{};
+
+  for (final entry in entries) {
+    grouped.putIfAbsent(entry.time, () => <GeneratedMedicationEntry>[]).add(entry);
+  }
+
+  final times = grouped.keys.toList()..sort();
+
+  String? firstPendingId;
+
+  for (final time in times) {
+    final scheduleId = _generatedScheduleId(grouped[time]!);
+    if (!takenScheduleIds.contains(scheduleId)) {
+      firstPendingId = scheduleId;
+      break;
+    }
+  }
+
+  return [
+    for (final time in times)
+      _buildGeneratedSchedule(
+        time: time,
+        entries: grouped[time]!,
+        firstPendingId: firstPendingId,
+      ),
+  ];
+}
+
+MedicationScheduleModel _buildGeneratedSchedule({
+  required String time,
+  required List<GeneratedMedicationEntry> entries,
+  required String? firstPendingId,
+}) {
+  entries.sort((a, b) => a.medicationName.compareTo(b.medicationName));
+
+  final id = _generatedScheduleId(entries);
+  final title = entries.map((item) => '${item.medicationName} ${item.dose}').join(' + ');
+  final diseases = entries.map((item) => item.disease).toSet().join(', ');
+  final totalTablets = entries.fold<int>(
+    0,
+    (previous, item) => previous + item.tabletsPerDose,
+  );
+  final instruction = entries.map((item) => item.instruction).toSet().join(' ');
+  final medicationIds = entries.map((item) => item.medicationId).toSet().toList();
+
+  return MedicationScheduleModel(
+    id: id,
+    time: time,
+    title: title,
+    copy: '$instruction · $totalTablets tablet · Dataset: $diseases',
+    medicationIds: medicationIds,
+    initialTaken: false,
+    isNext: id == firstPendingId,
+  );
+}
+
+String _generatedScheduleId(List<GeneratedMedicationEntry> entries) {
+  final first = entries.first;
+  return "generated-${_dateKey(first.date)}-${first.time.replaceAll(':', '')}";
+}
+
+bool _isSameDate(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
+String _dateKey(DateTime value) {
+  final month = value.month.toString().padLeft(2, '0');
+  final day = value.day.toString().padLeft(2, '0');
+
+  return '${value.year}$month$day';
+}
+
+DateTime _entryDateTime(GeneratedMedicationEntry entry) {
+  final parts = entry.time.split(':');
+  final hour = int.tryParse(parts.first) ?? 0;
+  final minute = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+
+  return DateTime(
+    entry.date.year,
+    entry.date.month,
+    entry.date.day,
+    hour,
+    minute,
+  );
+}
+
+String _icsDateTime(DateTime value) {
+  final year = value.year.toString().padLeft(4, '0');
+  final month = value.month.toString().padLeft(2, '0');
+  final day = value.day.toString().padLeft(2, '0');
+  final hour = value.hour.toString().padLeft(2, '0');
+  final minute = value.minute.toString().padLeft(2, '0');
+  final second = value.second.toString().padLeft(2, '0');
+
+  return '$year$month${day}T$hour$minute$second';
+}
+
+String _icsEscape(String value) {
+  return value
+      .replaceAll('\\', '\\\\')
+      .replaceAll('\n', r'\n')
+      .replaceAll(',', r'\,')
+      .replaceAll(';', r'\;');
 }
 
 =========================================================
@@ -20056,6 +21084,448 @@ class PeduliKonsulController extends Notifier<PeduliKonsulState> {
 }
 
 =========================================================
+?? PATH: lib/features/peduli_pantau/presentation/pages/peduli_pantau_page.dart
+=========================================================
+
+import 'package:flutter/material.dart';
+
+import '../../../../core/theme/pk_design.dart';
+
+class PeduliPantauPage extends StatelessWidget {
+  const PeduliPantauPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return PkGradientBackground(
+      child: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(
+              _horizontalPadding(context),
+              26,
+              _horizontalPadding(context),
+              72,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1180),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const _PantauHero(),
+                      const SizedBox(height: 18),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final compact = constraints.maxWidth < 860;
+
+                          final camera = const _CctvMockFrame();
+                          final status = const _PantauStatusPanel();
+
+                          if (compact) {
+                            return const Column(
+                              children: [
+                                _CctvMockFrame(),
+                                SizedBox(height: 16),
+                                _PantauStatusPanel(),
+                              ],
+                            );
+                          }
+
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(flex: 3, child: camera),
+                              const SizedBox(width: 16),
+                              Expanded(child: status),
+                            ],
+                          );
+                        },
+                      ),
+                      const PkSectionTitle(
+                        title: 'Kamera Rumah',
+                        subtitle: 'Mockup koneksi CCTV',
+                      ),
+                      const _CameraGrid(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  double _horizontalPadding(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+
+    if (width < 640) return 16;
+    if (width < 920) return 20;
+    return 24;
+  }
+}
+
+class _PantauHero extends StatelessWidget {
+  const _PantauHero();
+
+  @override
+  Widget build(BuildContext context) {
+    return PkCard(
+      tint: PkColors.brand,
+      borderColor: Colors.white.withValues(alpha: 0.12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const PkBadge(
+            label: 'PeduliPantau',
+            tone: PkTone.brand,
+            icon: Icons.videocam_outlined,
+          ),
+          const SizedBox(height: 14),
+          Text(
+            'Pantau kondisi rumah lansia dari aplikasi anak.',
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -1.2,
+                  height: 1.1,
+                ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Ini mockup kamera CCTV. Pada versi produksi, halaman ini bisa dihubungkan ke perangkat kamera rumah menggunakan sistem autentikasi dan izin keluarga.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.white.withValues(alpha: 0.78),
+                  height: 1.6,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CctvMockFrame extends StatelessWidget {
+  const _CctvMockFrame();
+
+  @override
+  Widget build(BuildContext context) {
+    return PkCard(
+      padding: EdgeInsets.zero,
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF071513),
+                    Color(0xFF123B36),
+                    Color(0xFF071513),
+                  ],
+                ),
+              ),
+            ),
+            Positioned.fill(
+              child: CustomPaint(
+                painter: _CctvGridPainter(),
+              ),
+            ),
+            Positioned(
+              top: 18,
+              left: 18,
+              child: Row(
+                children: [
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: const BoxDecoration(
+                      color: PkColors.red,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'LIVE · Ruang Tamu',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              right: 18,
+              top: 18,
+              child: Text(
+                _dateLabel(DateTime.now()),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w800,
+                    ),
+              ),
+            ),
+            Center(
+              child: Container(
+                width: 118,
+                height: 118,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.10),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white24),
+                ),
+                child: const Icon(
+                  Icons.videocam_outlined,
+                  color: Colors.white,
+                  size: 54,
+                ),
+              ),
+            ),
+            Positioned(
+              left: 18,
+              right: 18,
+              bottom: 18,
+              child: Row(
+                children: [
+                  _CameraControl(icon: Icons.volume_up_outlined, label: 'Audio'),
+                  const SizedBox(width: 10),
+                  _CameraControl(icon: Icons.fullscreen_rounded, label: 'Layar penuh'),
+                  const Spacer(),
+                  _CameraControl(icon: Icons.motion_photos_on_outlined, label: 'Gerak: aman'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static String _dateLabel(DateTime value) {
+    final hour = value.hour.toString().padLeft(2, '0');
+    final minute = value.minute.toString().padLeft(2, '0');
+    return '$hour:$minute WIB';
+  }
+}
+
+class _CameraControl extends StatelessWidget {
+  const _CameraControl({
+    required this.icon,
+    required this.label,
+  });
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 8,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.34),
+        borderRadius: PkRadius.pillRadius,
+        border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PantauStatusPanel extends StatelessWidget {
+  const _PantauStatusPanel();
+
+  @override
+  Widget build(BuildContext context) {
+    return PkCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const PkBadge(
+            label: 'Mockup aktif',
+            tone: PkTone.green,
+            icon: Icons.check_circle_outline_rounded,
+          ),
+          const SizedBox(height: 14),
+          Text(
+            'Status CCTV',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: PkColors.text,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+          const SizedBox(height: 14),
+          const _StatusRow(label: 'Koneksi', value: 'Online', icon: Icons.wifi_rounded, tone: PkTone.green),
+          const _StatusRow(label: 'Kamera', value: 'Ruang Tamu', icon: Icons.meeting_room_outlined, tone: PkTone.brand),
+          const _StatusRow(label: 'Deteksi gerak', value: 'Tidak ada anomali', icon: Icons.sensors_outlined, tone: PkTone.blue),
+          const _StatusRow(label: 'Privasi', value: 'Akses anak disetujui', icon: Icons.lock_outline_rounded, tone: PkTone.purple),
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Mockup: koneksi kamera rumah berhasil dimuat.')),
+              );
+            },
+            icon: const Icon(Icons.refresh_rounded),
+            label: const Text('Refresh CCTV'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusRow extends StatelessWidget {
+  const _StatusRow({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.tone,
+  });
+
+  final String label;
+  final String value;
+  final IconData icon;
+  final PkTone tone;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          PkIconBox(icon: icon, tone: tone, size: 38, iconSize: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: PkColors.text2,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+          ),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: pkToneColor(tone),
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CameraGrid extends StatelessWidget {
+  const _CameraGrid();
+
+  @override
+  Widget build(BuildContext context) {
+    const cameras = [
+      ('Ruang Tamu', 'Online', Icons.meeting_room_outlined, PkTone.green),
+      ('Dapur', 'Standby', Icons.restaurant_outlined, PkTone.amber),
+      ('Teras', 'Online', Icons.home_outlined, PkTone.green),
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final count = constraints.maxWidth >= 900
+            ? 3
+            : constraints.maxWidth >= 560
+                ? 2
+                : 1;
+
+        return GridView.count(
+          crossAxisCount: count,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: count == 1 ? 3.1 : 2.1,
+          children: [
+            for (final camera in cameras)
+              PkCard(
+                clean: true,
+                child: Row(
+                  children: [
+                    PkIconBox(icon: camera.$3, tone: camera.$4, size: 46),
+                    const SizedBox(width: PkSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            camera.$1,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: PkColors.text,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'CCTV ${camera.$2.toLowerCase()} · mockup',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: PkColors.text2),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PkBadge(label: camera.$2, tone: camera.$4),
+                  ],
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _CctvGridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.05)
+      ..strokeWidth = 1;
+
+    const gap = 46.0;
+
+    for (double x = 0; x <= size.width; x += gap) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+
+    for (double y = 0; y <= size.height; y += gap) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+=========================================================
 ?? PATH: lib/features/profile/presentation/pages/profile_page.dart
 =========================================================
 
@@ -20073,6 +21543,8 @@ import '../../../caregiver_profile/providers/caregiver_profile_provider.dart';
 import '../../../elder_profile/domain/elder_profile.dart';
 import '../../../elder_profile/presentation/widgets/connection_code_card.dart';
 import '../../../elder_profile/providers/elder_profile_provider.dart';
+import '../../../pedulicek/providers/peduli_cek_provider.dart';
+import '../../../peduliobat/providers/peduli_obat_provider.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -20082,6 +21554,8 @@ class ProfilePage extends ConsumerWidget {
     final mode = ref.watch(appModeControllerProvider);
     final profile = ref.watch(elderProfileProvider);
     final caregiver = ref.watch(caregiverProfileProvider);
+    final medicationState = ref.watch(peduliObatProvider);
+    final cekState = ref.watch(peduliCekProvider);
 
     if (mode == AppUserMode.caregiver) {
       return PageShell(
@@ -20130,6 +21604,14 @@ class ProfilePage extends ConsumerWidget {
           ),
           const SizedBox(height: PkSpacing.lg),
           _LinkedElderCard(profile: profile, caregiver: caregiver),
+          const SizedBox(height: PkSpacing.lg),
+          _ProfileCompleteRecordCard(
+            profile: profile,
+            caregiver: caregiver,
+            medicationState: medicationState,
+            cekState: cekState,
+            mode: mode,
+          ),
         ],
       );
     }
@@ -20149,6 +21631,14 @@ class ProfilePage extends ConsumerWidget {
         ConnectionCodeCard(profile: profile),
         const SizedBox(height: PkSpacing.lg),
         _CaregiverListCard(caregivers: profile.linkedCaregivers),
+        const SizedBox(height: PkSpacing.lg),
+        _ProfileCompleteRecordCard(
+          profile: profile,
+          caregiver: caregiver,
+          medicationState: medicationState,
+          cekState: cekState,
+          mode: mode,
+        ),
       ],
     );
   }
@@ -20890,6 +22380,195 @@ class _InfoRow extends StatelessWidget {
                   value,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: PkColors.text,
+                        height: 1.45,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileCompleteRecordCard extends StatelessWidget {
+  const _ProfileCompleteRecordCard({
+    required this.profile,
+    required this.caregiver,
+    required this.medicationState,
+    required this.cekState,
+    required this.mode,
+  });
+
+  final ElderProfile profile;
+  final CaregiverProfile caregiver;
+  final PeduliObatState medicationState;
+  final PeduliCekState cekState;
+  final AppUserMode mode;
+
+  @override
+  Widget build(BuildContext context) {
+    final isCaregiver = mode == AppUserMode.caregiver;
+
+    return PkCard(
+      tint: PkColors.surface.withValues(alpha: 0.96),
+      borderColor: PkColors.blue.withValues(alpha: 0.14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const PkIconBox(icon: Icons.folder_shared_outlined, tone: PkTone.blue),
+              const SizedBox(width: PkSpacing.md),
+              Expanded(
+                child: Text(
+                  'Data Lengkap & Riwayat',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: PkColors.text,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+              ),
+              PkBadge(
+                label: isCaregiver ? 'PeduliPenuh' : 'PeduliDiri',
+                tone: isCaregiver ? PkTone.blue : PkTone.brand,
+              ),
+            ],
+          ),
+          const SizedBox(height: PkSpacing.lg),
+          _InfoRow(
+            label: 'Nama lansia',
+            value: profile.name.trim().isEmpty ? caregiver.displayElderName : profile.displayName,
+            icon: Icons.elderly_rounded,
+          ),
+          _InfoRow(label: 'Nama anak/pendamping', value: caregiver.displayName, icon: Icons.groups_outlined),
+          _InfoRow(label: 'Nomor lansia', value: profile.displayPhone, icon: Icons.phone_outlined),
+          _InfoRow(label: 'Nomor anak/pendamping', value: caregiver.displayPhone, icon: Icons.phone_android_outlined),
+          _InfoRow(label: 'Alamat lansia', value: profile.displayAddress, icon: Icons.home_outlined),
+          _InfoRow(label: 'Riwayat penyakit', value: profile.medicalHistoryLabel, icon: Icons.medical_information_outlined),
+          const Divider(height: 28),
+          Text(
+            'Catatan jadwal obat hari ini',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: PkColors.text,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+          const SizedBox(height: PkSpacing.md),
+          if (medicationState.effectiveSchedules.isEmpty)
+            Text(
+              'Belum ada jadwal obat hari ini.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: PkColors.text2),
+            )
+          else
+            for (final schedule in medicationState.effectiveSchedules)
+              _CompactRecordTile(
+                icon: Icons.schedule_outlined,
+                tone: medicationState.takenScheduleIds.contains(schedule.id)
+                    ? PkTone.green
+                    : PkTone.amber,
+                title: '${schedule.time} · ${schedule.title}',
+                subtitle: medicationState.takenScheduleIds.contains(schedule.id)
+                    ? 'Sudah diminum · ${schedule.copy}'
+                    : 'Menunggu · ${schedule.copy}',
+              ),
+          const SizedBox(height: PkSpacing.md),
+          Text(
+            'Riwayat obat',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: PkColors.text,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+          const SizedBox(height: PkSpacing.md),
+          for (final log in medicationState.logs.take(3))
+            _CompactRecordTile(
+              icon: Icons.history_outlined,
+              tone: log.tone,
+              title: log.title,
+              subtitle: '${log.time} · ${log.copy}',
+            ),
+          const SizedBox(height: PkSpacing.md),
+          Text(
+            'Riwayat PeduliCek & poin',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: PkColors.text,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+          const SizedBox(height: PkSpacing.md),
+          _CompactRecordTile(
+            icon: Icons.fact_check_outlined,
+            tone: cekState.submitted ? cekState.overallLevel.tone : PkTone.amber,
+            title: cekState.submitted ? cekState.resultTitle : 'PeduliCek hari ini belum dikirim',
+            subtitle: cekState.submittedAt == null
+                ? 'Belum ada ringkasan cek harian terbaru.'
+                : 'Dikirim pukul ${_formatProfileTime(cekState.submittedAt!)} · ${cekState.bloodPressureValue} · ${cekState.glucoseValue}',
+          ),
+          _CompactRecordTile(
+            icon: Icons.emoji_events_outlined,
+            tone: PkTone.green,
+            title: '${cekState.totalPoints} poin terkumpul',
+            subtitle: '${cekState.currentStreak} hari streak · poin bisa ditukarkan pada fitur reward.',
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatProfileTime(DateTime value) {
+    final hour = value.hour.toString().padLeft(2, '0');
+    final minute = value.minute.toString().padLeft(2, '0');
+
+    return '$hour:$minute';
+  }
+}
+
+class _CompactRecordTile extends StatelessWidget {
+  const _CompactRecordTile({
+    required this.icon,
+    required this.tone,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final IconData icon;
+  final PkTone tone;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: PkSpacing.sm),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: pkToneSoft(tone),
+        borderRadius: PkRadius.smRadius,
+        border: Border.all(color: pkToneColor(tone).withValues(alpha: 0.12)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PkIconBox(icon: icon, tone: tone, size: 38, iconSize: 20),
+          const SizedBox(width: PkSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: PkColors.text,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: PkColors.text2,
                         height: 1.45,
                       ),
                 ),
@@ -22613,8 +24292,8 @@ class AppNavigationShell extends ConsumerWidget {
                 AppRoute.home,
                 AppRoute.peduliRiwayat,
                 AppRoute.peduliObat,
+                AppRoute.peduliPantau,
                 AppRoute.peduliAntar,
-                AppRoute.ahliPeduli,
               }.contains(item.route),
             )
             .toList()
@@ -23756,6 +25435,86 @@ class AppErrorPage extends StatelessWidget {
 }
 
 =========================================================
+?? PATH: lib/shared/widgets/app_logo.dart
+=========================================================
+
+import 'package:flutter/material.dart';
+
+import '../../core/constants/app_assets.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/pk_design.dart';
+
+class AppLogo extends StatelessWidget {
+  const AppLogo({
+    this.size = 40,
+    this.withBackground = false,
+    this.semanticLabel = 'Logo PeduliKeluarga',
+    super.key,
+  });
+
+  final double size;
+  final bool withBackground;
+  final String semanticLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final logo = ClipRRect(
+      borderRadius: BorderRadius.circular(size * 0.22),
+      child: Image.asset(
+        AppAssets.logoPeduliKeluarga,
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: size,
+            height: size,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: PkColors.brandSoft,
+              borderRadius: BorderRadius.circular(size * 0.22),
+              border: Border.all(color: AppColors.teal.withValues(alpha: 0.18)),
+            ),
+            child: Icon(
+              Icons.family_restroom_rounded,
+              color: AppColors.teal,
+              size: size * 0.58,
+            ),
+          );
+        },
+      ),
+    );
+
+    final child = withBackground
+        ? Container(
+            width: size,
+            height: size,
+            padding: EdgeInsets.all(size * 0.10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(size * 0.28),
+              border: Border.all(color: AppColors.teal.withValues(alpha: 0.14)),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.teal.withValues(alpha: 0.16),
+                  blurRadius: size * 0.22,
+                  offset: Offset(0, size * 0.08),
+                ),
+              ],
+            ),
+            child: logo,
+          )
+        : logo;
+
+    return Semantics(
+      image: true,
+      label: semanticLabel,
+      child: child,
+    );
+  }
+}
+
+=========================================================
 ?? PATH: lib/shared/widgets/app_navigation_rail.dart
 =========================================================
 
@@ -23766,6 +25525,7 @@ import '../../core/routing/app_navigation_destination.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/utils/responsive.dart';
+import 'app_logo.dart';
 
 class AppNavigationRail extends StatelessWidget {
   const AppNavigationRail({
@@ -23831,10 +25591,7 @@ class _NavigationBrand extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Icon(
-          Icons.volunteer_activism,
-          color: AppColors.teal,
-        ),
+        const AppLogo(size: 34),
         if (context.breakpoint == AppBreakpoint.large) ...[
           const SizedBox(width: AppSpacing.sm),
           Text(
@@ -23861,6 +25618,7 @@ import '../../core/routing/navigation_helper.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../state/providers/app_mode_provider.dart';
+import 'app_logo.dart';
 
 class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
   const AppTopBar({
@@ -23882,10 +25640,7 @@ class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
       titleSpacing: AppSpacing.lg,
       title: Row(
         children: [
-          const Icon(
-            Icons.volunteer_activism,
-            color: AppColors.teal,
-          ),
+          const AppLogo(size: 32),
           const SizedBox(width: AppSpacing.sm),
           Flexible(
             child: Text(
