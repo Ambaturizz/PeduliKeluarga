@@ -12,60 +12,42 @@ class AppLogo extends StatelessWidget {
   });
 
   final double size;
+
+  /// Tetap dipertahankan agar pemanggilan lama seperti:
+  /// AppLogo(size: 96, withBackground: true)
+  /// tidak error.
+  ///
+  /// Tetapi background sengaja tidak dipakai lagi,
+  /// supaya logo tampil transparan tanpa kotak putih.
   final bool withBackground;
+
   final String semanticLabel;
 
   @override
   Widget build(BuildContext context) {
-    final image = ClipRRect(
-      borderRadius: BorderRadius.circular(size * 0.24),
-      child: Image.asset(
-        AppAssets.logoPeduliKeluarga,
-        width: size,
-        height: size,
-        fit: BoxFit.contain,
-        filterQuality: FilterQuality.high,
-        isAntiAlias: true,
-        gaplessPlayback: true,
-        errorBuilder: (context, error, stackTrace) {
-          debugPrint('GAGAL LOAD LOGO: ${AppAssets.logoPeduliKeluarga}');
-          debugPrint('DETAIL ERROR: $error');
-          return _LogoAssetError(size: size);
-        },
-      ),
-    );
-
-    final content = SizedBox(
-      width: size,
-      height: size,
-      child: withBackground
-          ? DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(size * 0.30),
-                border: Border.all(
-                  color: AppColors.teal.withValues(alpha: 0.14),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.teal.withValues(alpha: 0.14),
-                    blurRadius: size * 0.24,
-                    offset: Offset(0, size * 0.08),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(size * 0.10),
-                child: image,
-              ),
-            )
-          : image,
-    );
-
     return Semantics(
       image: true,
       label: semanticLabel,
-      child: ExcludeSemantics(child: content),
+      child: ExcludeSemantics(
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: Image.asset(
+            AppAssets.logoPeduliKeluarga,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.high,
+            isAntiAlias: true,
+            gaplessPlayback: true,
+            errorBuilder: (context, error, stackTrace) {
+              debugPrint('GAGAL LOAD LOGO: ${AppAssets.logoPeduliKeluarga}');
+              debugPrint('DETAIL ERROR: $error');
+              return _LogoAssetError(size: size);
+            },
+          ),
+        ),
+      ),
     );
   }
 }
@@ -87,7 +69,9 @@ class _LogoAssetError extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFFFF3F3),
         borderRadius: BorderRadius.circular(size * 0.24),
-        border: Border.all(color: AppColors.red.withValues(alpha: 0.35)),
+        border: Border.all(
+          color: AppColors.red.withValues(alpha: 0.35),
+        ),
       ),
       child: Text(
         'LOGO\nMISSING',
