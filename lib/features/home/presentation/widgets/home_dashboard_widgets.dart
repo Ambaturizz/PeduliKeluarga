@@ -996,13 +996,23 @@ class PremiumMetricTile extends StatelessWidget {
   }
 }
 
-class PremiumAiCard extends StatelessWidget {
+class PremiumAiCard extends StatefulWidget {
   const PremiumAiCard({
     required this.data,
     super.key,
   });
 
   final HomeDashboardData data;
+
+  @override
+  State<PremiumAiCard> createState() => _PremiumAiCardState();
+}
+
+class _PremiumAiCardState extends State<PremiumAiCard> {
+  final List<_AiPeduliMessage> _aiMessages = <_AiPeduliMessage>[];
+  int _aiQuestionCount = 0;
+
+  HomeDashboardData get data => widget.data;
 
   @override
   Widget build(BuildContext context) {
@@ -1044,21 +1054,30 @@ class PremiumAiCard extends StatelessWidget {
               ActionChip(
                 avatar: const Icon(Icons.help_outline_rounded, size: 18),
                 label: Text(data.isElder ? 'Kondisi saya baik?' : 'Apa yang perlu diperhatikan?'),
-                onPressed: () => _showAiAnswer(context, data.isElder
-                    ? 'Kondisi hari ini tampak cukup baik dari catatan yang ada. Jika ada keluhan berat, gunakan PeduliKonsul atau PeduliDarurat.'
-                    : 'Perhatikan cek harian yang belum diisi dan stok Simvastatin yang hampir habis.'),
+                onPressed: () => _showAiAnswer(
+                  context,
+                  data.isElder
+                      ? 'Kondisi hari ini tampak cukup baik dari catatan yang ada. Jika ada keluhan berat, gunakan PeduliKonsul atau PeduliDarurat.'
+                      : 'Perhatikan cek harian yang belum diisi dan stok Simvastatin yang hampir habis.',
+                ),
               ),
               ActionChip(
                 avatar: const Icon(Icons.medication_outlined, size: 18),
                 label: Text(data.isElder ? 'Obat hari ini' : 'Obat hampir habis?'),
-                onPressed: () => _showAiAnswer(context, data.isElder
-                    ? 'Obat berikutnya pukul 13:00. Ikuti jadwal PeduliObat.'
-                    : 'Simvastatin hampir habis dan perlu dikonfirmasi lewat PeduliAntar.'),
+                onPressed: () => _showAiAnswer(
+                  context,
+                  data.isElder
+                      ? 'Obat berikutnya pukul 13:00. Ikuti jadwal PeduliObat.'
+                      : 'Simvastatin hampir habis dan perlu dikonfirmasi lewat PeduliAntar.',
+                ),
               ),
               ActionChip(
                 avatar: const Icon(Icons.monitor_heart_outlined, size: 18),
                 label: const Text('Kapan cek tekanan darah?'),
-                onPressed: () => _showAiAnswer(context, 'Cek tekanan darah cukup 1 kali seminggu, kecuali dokter meminta lebih sering.'),
+                onPressed: () => _showAiAnswer(
+                  context,
+                  'Cek tekanan darah cukup 1 kali seminggu, kecuali dokter meminta lebih sering.',
+                ),
               ),
             ],
           ),
@@ -1067,7 +1086,7 @@ class PremiumAiCard extends StatelessWidget {
             builder: (context, constraints) {
               final narrow = constraints.maxWidth < 390;
               final aiButton = OutlinedButton.icon(
-                onPressed: () => _showAiAnswer(context, data.aiCopy),
+                onPressed: () => _openAiPeduliChat(context),
                 icon: const Icon(Icons.auto_awesome_outlined),
                 label: const Text(
                   'Tanya AIPeduli',
@@ -1079,8 +1098,8 @@ class PremiumAiCard extends StatelessWidget {
               final consultButton = FilledButton.icon(
                 onPressed: () => context.go(AppRoutes.peduliKonsulPath),
                 icon: const Icon(Icons.chat_bubble_outline_rounded),
-                label: Text(
-                  data.isElder ? 'Konsultasi Dokter' : 'PeduliKonsul',
+                label: const Text(
+                  'PeduliKonsul',
                   maxLines: 1,
                   softWrap: false,
                   overflow: TextOverflow.ellipsis,
@@ -1110,8 +1129,8 @@ class PremiumAiCard extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             data.isElder
-                ? 'AIPeduli hanya membantu memberi ringkasan awal. Untuk keluhan serius, hubungi dokter melalui PeduliKonsul atau gunakan PeduliDarurat.'
-                : 'AIPeduli membantu membaca ringkasan awal. Untuk keputusan medis, gunakan PeduliKonsul atau AhliPeduli.',
+                ? 'AIPeduli adalah chatbot untuk bertanya keluhan awal. PeduliKonsul digunakan untuk bertanya keluhan langsung kepada dokter. Jika chat AI sudah lebih dari 5 kali, aplikasi akan menyarankan pindah ke PeduliKonsul, tetapi AIPeduli tetap bisa dipakai.'
+                : 'AIPeduli membantu membaca keluhan awal keluarga. Untuk keputusan medis dan keluhan yang perlu ditangani tenaga kesehatan, gunakan PeduliKonsul atau AhliPeduli.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: PkColors.text2,
                   height: 1.5,
@@ -1123,9 +1142,263 @@ class PremiumAiCard extends StatelessWidget {
     );
   }
 
+  Future<void> _openAiPeduliChat(BuildContext rootContext) async {
+    if (_aiMessages.isEmpty) {
+      _aiMessages.add(
+        _AiPeduliMessage(
+          text: 'Halo, saya AIPeduli. Ceritakan keluhan yang dirasakan hari ini. Saya akan bantu memberi arahan awal. Untuk kondisi berat, segera gunakan PeduliKonsul atau PeduliDarurat.',
+          isUser: false,
+        ),
+      );
+    }
+
+    final controller = TextEditingController();
+
+    await showModalBottomSheet<void>(
+      context: rootContext,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (context, modalSetState) {
+            void sendQuestion() {
+              final question = controller.text.trim();
+              if (question.isEmpty) return;
+
+              final answer = _buildAiPeduliResponse(question, _aiQuestionCount + 1);
+
+              setState(() {
+                _aiQuestionCount += 1;
+                _aiMessages
+                  ..add(_AiPeduliMessage(text: question, isUser: true))
+                  ..add(_AiPeduliMessage(text: answer, isUser: false));
+              });
+              modalSetState(() {});
+              controller.clear();
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 18,
+                right: 18,
+                bottom: MediaQuery.viewInsetsOf(context).bottom + 18,
+              ),
+              child: SizedBox(
+                height: MediaQuery.sizeOf(context).height * 0.76,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const PkIconBox(
+                          icon: Icons.auto_awesome_outlined,
+                          tone: PkTone.purple,
+                          size: 44,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tanya AIPeduli',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      color: PkColors.text,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Chatbot untuk bertanya keluhan awal. PeduliKonsul tetap menjadi pilihan untuk bertanya langsung kepada dokter.',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: PkColors.text2,
+                                      height: 1.45,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (_aiQuestionCount > 5) ...[
+                      const SizedBox(height: 12),
+                      _AiPeduliRecommendationBanner(
+                        onOpenPeduliKonsul: () {
+                          Navigator.of(sheetContext).pop();
+                          rootContext.go(AppRoutes.peduliKonsulPath);
+                        },
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _aiMessages.length,
+                        itemBuilder: (context, index) {
+                          return _AiPeduliBubble(message: _aiMessages[index]);
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: controller,
+                            minLines: 1,
+                            maxLines: 4,
+                            textInputAction: TextInputAction.send,
+                            onSubmitted: (_) => sendQuestion(),
+                            decoration: const InputDecoration(
+                              labelText: 'Tulis keluhan',
+                              hintText: 'Contoh: kepala pusing sejak pagi',
+                              prefixIcon: Icon(Icons.chat_bubble_outline_rounded),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        FilledButton.icon(
+                          onPressed: sendQuestion,
+                          icon: const Icon(Icons.send_rounded),
+                          label: const Text('Kirim'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    controller.dispose();
+  }
+
+  String _buildAiPeduliResponse(String question, int nextQuestionCount) {
+    final lower = question.toLowerCase();
+    final shouldRecommendDoctor = nextQuestionCount > 5;
+
+    String response;
+    if (lower.contains('sesak') || lower.contains('nyeri dada') || lower.contains('pingsan') || lower.contains('stroke')) {
+      response = 'Keluhan ini perlu perhatian cepat. Jika sesak, nyeri dada, pingsan, atau gejala stroke terasa berat, gunakan PeduliDarurat atau segera hubungi tenaga medis. Untuk konsultasi langsung, buka PeduliKonsul.';
+    } else if (lower.contains('pusing') || lower.contains('kepala')) {
+      response = 'Catat sejak kapan pusing muncul, ukur tekanan darah jika memungkinkan, minum air yang cukup, dan hindari berdiri mendadak. Jika pusing berat, berulang, atau disertai lemas separuh badan, gunakan PeduliKonsul.';
+    } else if (lower.contains('obat') || lower.contains('tablet') || lower.contains('minum')) {
+      response = 'Periksa kembali jadwal di PeduliObat dan jangan menggandakan dosis tanpa arahan dokter. Jika ada efek samping atau ragu aturan minum, tanyakan langsung melalui PeduliKonsul.';
+    } else if (lower.contains('gula') || lower.contains('diabetes')) {
+      response = 'Pantau kadar gula sesuai jadwal, catat makanan terakhir, dan perhatikan tanda lemas, gemetar, atau haus berlebihan. Untuk penyesuaian obat diabetes, gunakan PeduliKonsul.';
+    } else if (lower.contains('tekanan') || lower.contains('darah') || lower.contains('hipertensi')) {
+      response = 'Ukur tekanan darah dalam kondisi duduk dan tenang, lalu catat hasilnya. Jika angka sangat tinggi, ada nyeri dada, sesak, atau sakit kepala berat, gunakan PeduliKonsul atau PeduliDarurat.';
+    } else {
+      response = 'Terima kasih sudah mencatat keluhan. Pantau gejala, durasi, pemicu, obat yang diminum, dan apakah keluhan membaik atau memburuk. Jika keluhan menetap atau mengganggu aktivitas, lanjutkan ke PeduliKonsul.';
+    }
+
+    if (shouldRecommendDoctor) {
+      response += ' Karena chat dengan AIPeduli sudah lebih dari 5 kali, sebaiknya lanjutkan ke PeduliKonsul agar keluhan dapat ditangani langsung oleh dokter. AIPeduli tetap bisa digunakan untuk ringkasan awal.';
+    }
+
+    return response;
+  }
+
   void _showAiAnswer(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
+    );
+  }
+}
+
+class _AiPeduliMessage {
+  const _AiPeduliMessage({
+    required this.text,
+    required this.isUser,
+  });
+
+  final String text;
+  final bool isUser;
+}
+
+class _AiPeduliBubble extends StatelessWidget {
+  const _AiPeduliBubble({required this.message});
+
+  final _AiPeduliMessage message;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = message.isUser ? PkColors.brand : PkColors.surfaceSoft;
+    final borderColor = message.isUser ? PkColors.brand : PkColors.line;
+    final textColor = message.isUser ? Colors.white : PkColors.text2;
+
+    return Align(
+      alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.sizeOf(context).width * 0.74,
+        ),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(18),
+            topRight: const Radius.circular(18),
+            bottomLeft: Radius.circular(message.isUser ? 18 : 4),
+            bottomRight: Radius.circular(message.isUser ? 4 : 18),
+          ),
+          border: Border.all(color: borderColor),
+        ),
+        child: Text(
+          message.text,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: textColor,
+                height: 1.45,
+                fontWeight: FontWeight.w700,
+              ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AiPeduliRecommendationBanner extends StatelessWidget {
+  const _AiPeduliRecommendationBanner({required this.onOpenPeduliKonsul});
+
+  final VoidCallback onOpenPeduliKonsul;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: PkColors.amberSoft,
+        borderRadius: PkRadius.smRadius,
+        border: Border.all(color: PkColors.amber.withValues(alpha: 0.18)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.health_and_safety_outlined, color: PkColors.amber, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Anda sudah bertanya ke AIPeduli lebih dari 5 kali. Untuk keluhan yang berlanjut, disarankan pindah ke PeduliKonsul agar bisa bertanya langsung kepada dokter. AIPeduli tetap bisa dipakai.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: PkColors.amber,
+                    height: 1.45,
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          TextButton(
+            onPressed: onOpenPeduliKonsul,
+            child: const Text('PeduliKonsul'),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1806,3 +2079,4 @@ class CardTitleRow extends StatelessWidget {
     );
   }
 }
+
