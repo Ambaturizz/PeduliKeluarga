@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../../core/routing/app_route.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/pk_design.dart';
 import '../../../../shared/layouts/page_shell.dart';
 import '../../../../shared/widgets/app_logo.dart';
@@ -119,8 +120,30 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (_step == 0) ...[
-                  const Center(child: AppLogo(size: 300, withBackground: false)),
-                  const SizedBox(height: PkSpacing.lg),
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const AppLogo(size: 200, withBackground: false),
+                        const SizedBox(height: 0),
+                        Transform.translate(
+                          offset: const Offset(0, -24),
+                          child: Text(
+                            'PeduliKeluarga',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                  color: AppColors.teal,
+                                  fontSize: 34,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: -0.6,
+                                  height: 1.0,
+                                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 0),
                 ],
                 _RegisterProgressHeader(
                   currentStep: _step + 1,

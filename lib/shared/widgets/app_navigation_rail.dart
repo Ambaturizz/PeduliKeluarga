@@ -71,7 +71,7 @@ class _NavigationBrand extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const AppLogo(size: 120),
+        const AppLogo(size: 70),
         if (context.breakpoint == AppBreakpoint.large) ...[
           const SizedBox(width: AppSpacing.sm),
           Text(

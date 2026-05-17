@@ -27,7 +27,7 @@ class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
       titleSpacing: AppSpacing.lg,
       title: Row(
         children: [
-          const AppLogo(size: 120),
+          const AppLogo(size: 70),
           const SizedBox(width: AppSpacing.sm),
           Flexible(
             child: Text(
