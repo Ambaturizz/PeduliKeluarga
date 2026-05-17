@@ -214,7 +214,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           textCapitalization: TextCapitalization.words,
           decoration: const InputDecoration(
             labelText: 'Nama',
-            hintText: 'Contoh: Faryvd',
+            hintText: 'Contoh: Adyra',
             prefixIcon: Icon(Icons.badge_outlined),
           ),
           textInputAction: TextInputAction.next,

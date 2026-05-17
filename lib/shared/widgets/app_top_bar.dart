@@ -16,7 +16,7 @@ class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
   final bool showMenuButton;
 
   @override
-  Size get preferredSize => const Size.fromHeight(64);
+  Size get preferredSize => const Size.fromHeight(74);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,15 +27,16 @@ class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
       titleSpacing: AppSpacing.lg,
       title: Row(
         children: [
-          const AppLogo(size: 32),
+          const AppLogo(size: 120),
           const SizedBox(width: AppSpacing.sm),
           Flexible(
             child: Text(
               'PeduliKeluarga',
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: AppColors.teal,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.4,
                   ),
             ),
           ),

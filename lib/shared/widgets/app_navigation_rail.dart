@@ -71,14 +71,15 @@ class _NavigationBrand extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const AppLogo(size: 34),
+        const AppLogo(size: 120),
         if (context.breakpoint == AppBreakpoint.large) ...[
           const SizedBox(width: AppSpacing.sm),
           Text(
             'PeduliKeluarga',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: AppColors.teal,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.4,
                 ),
           ),
         ],
