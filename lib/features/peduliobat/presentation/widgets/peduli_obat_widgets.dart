@@ -928,13 +928,19 @@ class MedicationStockGrid extends StatelessWidget {
                 ? 2
                 : 1;
 
+        final aspectRatio = switch (count) {
+          1 => 1.02,
+          2 => 0.96,
+          _ => 1.04,
+        };
+
         return GridView.count(
           crossAxisCount: count,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 12,
+          mainAxisSpacing: 18,
           crossAxisSpacing: 12,
-          childAspectRatio: count == 1 ? 1.58 : 1.12,
+          childAspectRatio: aspectRatio,
           children: [
             for (final medication in medications)
               MedicationStockCard(
@@ -1070,11 +1076,11 @@ class MedicationStockCard extends StatelessWidget {
                 ),
           ),
           const SizedBox(height: 14),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              OutlinedButton(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final compactActions = constraints.maxWidth < 430;
+
+              final historyButton = OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: PkColors.text2,
                   shape: const StadiumBorder(),
@@ -1085,8 +1091,9 @@ class MedicationStockCard extends StatelessWidget {
                   );
                 },
                 child: const Text('Riwayat'),
-              ),
-              OutlinedButton(
+              );
+
+              final scheduleButton = OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: PkColors.text2,
                   shape: const StadiumBorder(),
@@ -1097,8 +1104,9 @@ class MedicationStockCard extends StatelessWidget {
                   );
                 },
                 child: const Text('Ubah jadwal'),
-              ),
-              FilledButton.icon(
+              );
+
+              final reorderButton = FilledButton.icon(
                 style: FilledButton.styleFrom(
                   backgroundColor:
                       medication.isLowStock ? PkColors.red : PkColors.brand,
@@ -1112,8 +1120,35 @@ class MedicationStockCard extends StatelessWidget {
                       ? 'Pesan Sekarang'
                       : 'Pesan via PeduliAntar',
                 ),
-              ),
-            ],
+              );
+
+              if (compactActions) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: historyButton),
+                        const SizedBox(width: 8),
+                        Expanded(child: scheduleButton),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    reorderButton,
+                  ],
+                );
+              }
+
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  historyButton,
+                  scheduleButton,
+                  reorderButton,
+                ],
+              );
+            },
           ),
         ],
       ),
