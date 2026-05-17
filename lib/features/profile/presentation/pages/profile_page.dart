@@ -170,8 +170,10 @@ class _FamilyProfileFormCardState extends ConsumerState<_FamilyProfileFormCard> 
   late final TextEditingController _childNameController;
   late final TextEditingController _childPhoneController;
   late final TextEditingController _relationshipController;
+  late final TextEditingController _childAddressController;
   late final TextEditingController _elderNameController;
   late final TextEditingController _elderAgeController;
+  late final TextEditingController _elderHeightController;
   late final TextEditingController _elderWeightController;
   late final TextEditingController _elderGenderController;
   late final TextEditingController _elderPhoneController;
@@ -189,8 +191,10 @@ class _FamilyProfileFormCardState extends ConsumerState<_FamilyProfileFormCard> 
     _childNameController = TextEditingController(text: widget.caregiver.name);
     _childPhoneController = TextEditingController(text: widget.caregiver.phoneNumber);
     _relationshipController = TextEditingController(text: widget.caregiver.relationship);
+    _childAddressController = TextEditingController(text: widget.caregiver.address);
     _elderNameController = TextEditingController(text: elderName);
     _elderAgeController = TextEditingController(text: widget.profile.age);
+    _elderHeightController = TextEditingController(text: widget.profile.height);
     _elderWeightController = TextEditingController(text: widget.profile.weight);
     _elderGenderController = TextEditingController(text: widget.profile.gender);
     _elderPhoneController = TextEditingController(text: widget.profile.phoneNumber);
@@ -203,8 +207,10 @@ class _FamilyProfileFormCardState extends ConsumerState<_FamilyProfileFormCard> 
     _childNameController.dispose();
     _childPhoneController.dispose();
     _relationshipController.dispose();
+    _childAddressController.dispose();
     _elderNameController.dispose();
     _elderAgeController.dispose();
+    _elderHeightController.dispose();
     _elderWeightController.dispose();
     _elderGenderController.dispose();
     _elderPhoneController.dispose();
@@ -294,6 +300,15 @@ class _FamilyProfileFormCardState extends ConsumerState<_FamilyProfileFormCard> 
                       icon: Icons.family_restroom_rounded,
                     ),
                   ),
+                  SizedBox(
+                    width: fieldWidth,
+                    child: _ProfileTextField(
+                      controller: _childAddressController,
+                      label: 'Alamat anak / pendamping',
+                      hint: 'Contoh: Tangerang',
+                      icon: Icons.home_outlined,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: PkSpacing.lg),
@@ -322,6 +337,16 @@ class _FamilyProfileFormCardState extends ConsumerState<_FamilyProfileFormCard> 
                       label: 'Umur lansia',
                       hint: 'Contoh: 68',
                       icon: Icons.cake_outlined,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  SizedBox(
+                    width: fieldWidth,
+                    child: _ProfileTextField(
+                      controller: _elderHeightController,
+                      label: 'Tinggi badan lansia',
+                      hint: 'Contoh: 160',
+                      icon: Icons.height_rounded,
                       keyboardType: TextInputType.number,
                     ),
                   ),
@@ -400,6 +425,7 @@ class _FamilyProfileFormCardState extends ConsumerState<_FamilyProfileFormCard> 
     ref.read(elderProfileProvider.notifier).updateFamilyIdentity(
           elderName: _elderNameController.text,
           elderAge: _elderAgeController.text,
+          elderHeight: _elderHeightController.text,
           elderWeight: _elderWeightController.text,
           elderGender: _elderGenderController.text,
           elderPhoneNumber: _elderPhoneController.text,
@@ -411,6 +437,7 @@ class _FamilyProfileFormCardState extends ConsumerState<_FamilyProfileFormCard> 
           childName: _childNameController.text,
           childPhoneNumber: _childPhoneController.text,
           relationship: _relationshipController.text,
+          childAddress: _childAddressController.text,
           elderName: _elderNameController.text,
         );
 
@@ -516,6 +543,7 @@ class _CaregiverIdentityCard extends StatelessWidget {
           _InfoRow(label: 'Mode', value: 'PeduliPenuh', icon: Icons.verified_user_outlined),
           _InfoRow(label: 'Nomor telepon', value: caregiver.displayPhone, icon: Icons.phone_outlined),
           _InfoRow(label: 'Hubungan dengan lansia', value: caregiver.displayRelationship, icon: Icons.family_restroom_rounded),
+          _InfoRow(label: 'Alamat anak/pendamping', value: caregiver.displayAddress, icon: Icons.home_outlined),
           _InfoRow(label: 'Nama orang tua/lansia', value: caregiver.displayElderName, icon: Icons.elderly_rounded),
           _InfoRow(label: 'Status koneksi', value: caregiver.hasLinkedElder ? 'Terhubung' : 'Belum terhubung', icon: Icons.link_rounded),
           _InfoRow(label: 'Tanggal terhubung', value: caregiver.displayConnectedAt, icon: Icons.event_available_outlined),
@@ -768,6 +796,7 @@ class _LinkedElderCard extends StatelessWidget {
           const SizedBox(height: PkSpacing.lg),
           _InfoRow(label: 'Nama lansia', value: profile.name.trim().isEmpty ? caregiver.displayElderName : profile.displayName, icon: Icons.person_outline_rounded),
           _InfoRow(label: 'Umur', value: profile.displayAge, icon: Icons.cake_outlined),
+          _InfoRow(label: 'Tinggi badan', value: profile.displayHeight, icon: Icons.height_rounded),
           _InfoRow(label: 'Berat badan', value: profile.displayWeight, icon: Icons.monitor_weight_outlined),
           _InfoRow(label: 'Jenis kelamin', value: profile.displayGender, icon: Icons.wc_rounded),
           _InfoRow(label: 'Alamat lansia', value: profile.displayAddress, icon: Icons.home_outlined),
@@ -806,6 +835,7 @@ class _ProfileIdentityCard extends StatelessWidget {
           ),
           const SizedBox(height: PkSpacing.lg),
           _InfoRow(label: 'Umur', value: profile.displayAge, icon: Icons.cake_outlined),
+          _InfoRow(label: 'Tinggi badan', value: profile.displayHeight, icon: Icons.height_rounded),
           _InfoRow(label: 'Berat badan', value: profile.displayWeight, icon: Icons.monitor_weight_outlined),
           _InfoRow(label: 'Jenis kelamin', value: profile.displayGender, icon: Icons.wc_rounded),
           _InfoRow(label: 'Nomor telepon', value: profile.displayPhone, icon: Icons.phone_outlined),
@@ -914,6 +944,8 @@ class _ProfileCompleteRecordCard extends StatelessWidget {
           _InfoRow(label: 'Nama anak/pendamping', value: caregiver.displayName, icon: Icons.groups_outlined),
           _InfoRow(label: 'Nomor lansia', value: profile.displayPhone, icon: Icons.phone_outlined),
           _InfoRow(label: 'Nomor anak/pendamping', value: caregiver.displayPhone, icon: Icons.phone_android_outlined),
+          _InfoRow(label: 'Alamat anak/pendamping', value: caregiver.displayAddress, icon: Icons.home_outlined),
+          _InfoRow(label: 'Tinggi badan lansia', value: profile.displayHeight, icon: Icons.height_rounded),
           _InfoRow(label: 'Alamat lansia', value: profile.displayAddress, icon: Icons.home_outlined),
           _InfoRow(label: 'Riwayat penyakit', value: profile.medicalHistoryLabel, icon: Icons.medical_information_outlined),
           const Divider(height: 28),

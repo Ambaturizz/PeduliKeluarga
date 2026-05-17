@@ -15,6 +15,8 @@ class AuthUser {
   final String name;
   final String identifier;
   final AppUserMode mode;
+
+  String get email => identifier;
 }
 
 class AuthState {
@@ -59,59 +61,52 @@ class AuthController extends Notifier<AuthState> {
     return const AuthState.unauthenticated();
   }
 
+  /// Login masih mockup: form dapat dicoba, tetapi belum mengubah status auth.
   Future<bool> login({
-    required String identifier,
+    required String email,
     required String password,
-    required AppUserMode mode,
   }) async {
-    final cleanIdentifier = identifier.trim();
+    final cleanEmail = email.trim();
 
-    if (cleanIdentifier.isEmpty || password.isEmpty) {
+    if (cleanEmail.isEmpty || password.isEmpty) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Email/nomor HP dan password wajib diisi.',
+        errorMessage: 'Email dan password wajib diisi.',
       );
       return false;
     }
 
     state = state.copyWith(isLoading: true, clearError: true);
-
     await Future<void>.delayed(const Duration(milliseconds: 250));
 
-    ref.read(appModeControllerProvider.notifier).setMode(mode);
-
-    state = AuthState(
-      isAuthenticated: true,
+    state = state.copyWith(
+      isAuthenticated: false,
       isLoading: false,
-      user: AuthUser(
-        name: mode == AppUserMode.elder ? 'Pengguna PeduliDiri' : 'Pengguna PeduliPenuh',
-        identifier: cleanIdentifier,
-        mode: mode,
-      ),
+      errorMessage: 'Login masih mockup dan belum bisa digunakan. Silakan daftar akun baru.',
+      clearUser: true,
     );
 
-    return true;
+    return false;
   }
 
   Future<bool> register({
     required String name,
-    required String identifier,
+    required String email,
     required String password,
     required AppUserMode mode,
   }) async {
     final cleanName = name.trim();
-    final cleanIdentifier = identifier.trim();
+    final cleanEmail = email.trim();
 
-    if (cleanName.isEmpty || cleanIdentifier.isEmpty || password.isEmpty) {
+    if (cleanName.isEmpty || cleanEmail.isEmpty || password.isEmpty) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Nama, email/nomor HP, dan password wajib diisi.',
+        errorMessage: 'Nama, email, dan password wajib diisi.',
       );
       return false;
     }
 
     state = state.copyWith(isLoading: true, clearError: true);
-
     await Future<void>.delayed(const Duration(milliseconds: 250));
 
     ref.read(appModeControllerProvider.notifier).setMode(mode);
@@ -121,7 +116,7 @@ class AuthController extends Notifier<AuthState> {
       isLoading: false,
       user: AuthUser(
         name: cleanName,
-        identifier: cleanIdentifier,
+        identifier: cleanEmail,
         mode: mode,
       ),
     );

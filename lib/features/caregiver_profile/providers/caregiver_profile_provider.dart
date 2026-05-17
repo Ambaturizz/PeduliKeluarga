@@ -18,6 +18,7 @@ class CaregiverProfileController extends Notifier<CaregiverProfile> {
       name: onboarding.fullName.trim(),
       phoneNumber: onboarding.phoneNumber.trim(),
       relationship: onboarding.relationship.trim(),
+      address: onboarding.address.trim(),
       elderName: onboarding.elderName.trim(),
     );
     state = next;
@@ -57,17 +58,18 @@ class CaregiverProfileController extends Notifier<CaregiverProfile> {
     return true;
   }
 
-
   void updateFamilyIdentity({
     required String childName,
     required String childPhoneNumber,
     required String relationship,
+    required String childAddress,
     required String elderName,
   }) {
     state = state.copyWith(
       name: childName.trim(),
       phoneNumber: childPhoneNumber.trim(),
       relationship: relationship.trim(),
+      address: childAddress.trim(),
       elderName: elderName.trim(),
     );
   }
@@ -76,12 +78,14 @@ class CaregiverProfileController extends Notifier<CaregiverProfile> {
     required String name,
     required String phoneNumber,
     required String relationship,
+    required String address,
     String? elderName,
   }) {
     state = state.copyWith(
       name: name.trim(),
       phoneNumber: phoneNumber.trim(),
       relationship: relationship.trim(),
+      address: address.trim(),
       elderName: elderName?.trim(),
     );
   }

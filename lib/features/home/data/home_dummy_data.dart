@@ -192,6 +192,7 @@ final class HomeDummyData {
     final elder = profile;
     final name = elder?.displayName ?? 'Belum diisi';
     final age = elder?.displayAge ?? 'Belum diisi';
+    final height = elder?.displayHeight ?? 'Belum diisi';
     final weight = elder?.displayWeight ?? 'Belum diisi';
     final gender = elder?.displayGender ?? 'Belum diisi';
     final history = elder?.medicalHistoryLabel ?? 'Belum diisi';
@@ -202,7 +203,7 @@ final class HomeDummyData {
       kicker: 'Mode Lansia — PeduliDiri',
       heroTitle: name,
       heroSubtitle:
-          '$age · $gender · BB: $weight · Anak/Pendamping: $caregiverName. Riwayat: $history. Data ini dapat diperbarui dari profil.',
+          '$age · $gender · TB: $height · BB: $weight · Anak/Pendamping: $caregiverName. Riwayat: $history. Data ini dapat diperbarui dari profil.',
       liveLabel: 'Diperbarui ${_clock(now)}',
       primaryButton: 'Cek Hari Ini',
       secondaryButton: 'Minum Obat',
@@ -384,6 +385,7 @@ final class HomeDummyData {
             ? elderNameFromCaregiver
             : 'Belum diisi';
     final elderAge = profile?.displayAge ?? 'Belum diisi';
+    final elderHeight = profile?.displayHeight ?? 'Belum diisi';
     final elderWeight = profile?.displayWeight ?? 'Belum diisi';
     final elderHistory = profile?.medicalHistoryLabel ?? 'Belum diisi';
     final relation = caregiver?.displayRelationship ?? 'Anak atau pendamping';
@@ -392,7 +394,7 @@ final class HomeDummyData {
       mode: AppUserMode.caregiver,
       kicker: 'Mode Anak — PeduliPenuh',
       heroTitle: 'Halo, $caregiverName',
-      heroSubtitle: 'Anda memantau $elderName sebagai $relation. Umur: $elderAge. BB: $elderWeight. Riwayat: $elderHistory. Data ini berasal dari profil keluarga.',
+      heroSubtitle: 'Anda memantau $elderName sebagai $relation. Umur: $elderAge. TB: $elderHeight. BB: $elderWeight. Riwayat: $elderHistory. Data ini berasal dari profil keluarga.',
       liveLabel: 'Diperbarui ${_clock(now)}',
       primaryButton: 'Lihat Riwayat',
       secondaryButton: 'Atur Obat',

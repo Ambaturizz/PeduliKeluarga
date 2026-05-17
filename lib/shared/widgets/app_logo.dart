@@ -5,7 +5,7 @@ import '../../core/theme/app_colors.dart';
 
 class AppLogo extends StatelessWidget {
   const AppLogo({
-    this.size = 40,
+    this.size = 200,
     this.withBackground = false,
     this.semanticLabel = 'Logo PeduliKeluarga',
     super.key,

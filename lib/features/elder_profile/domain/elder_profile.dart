@@ -45,6 +45,7 @@ class ElderProfile {
     required this.id,
     required this.name,
     required this.age,
+    required this.height,
     required this.weight,
     required this.gender,
     required this.phoneNumber,
@@ -58,6 +59,7 @@ class ElderProfile {
   final String id;
   final String name;
   final String age;
+  final String height;
   final String weight;
   final String gender;
   final String phoneNumber;
@@ -75,6 +77,7 @@ class ElderProfile {
       id: id,
       name: '',
       age: '',
+      height: '',
       weight: '',
       gender: '',
       phoneNumber: '',
@@ -107,6 +110,7 @@ class ElderProfile {
 
   String get displayName => name.trim().isEmpty ? 'Belum diisi' : name.trim();
   String get displayAge => age.trim().isEmpty ? 'Belum diisi' : '${age.trim()} tahun';
+  String get displayHeight => height.trim().isEmpty ? 'Belum diisi' : '${height.trim()} cm';
   String get displayWeight => weight.trim().isEmpty ? 'Belum diisi' : '${weight.trim()} kg';
   String get displayGender => gender.trim().isEmpty ? 'Belum diisi' : gender.trim();
   String get displayPhone => phoneNumber.trim().isEmpty ? 'Belum diisi' : phoneNumber.trim();
@@ -133,6 +137,7 @@ class ElderProfile {
     String? id,
     String? name,
     String? age,
+    String? height,
     String? weight,
     String? gender,
     String? phoneNumber,
@@ -149,6 +154,7 @@ class ElderProfile {
       id: nextId,
       name: name ?? this.name,
       age: age ?? this.age,
+      height: height ?? this.height,
       weight: weight ?? this.weight,
       gender: gender ?? this.gender,
       phoneNumber: phoneNumber ?? this.phoneNumber,
@@ -165,6 +171,7 @@ class ElderProfile {
       'id': id,
       'name': name,
       'age': age,
+      'height': height,
       'weight': weight,
       'gender': gender,
       'phoneNumber': phoneNumber,
@@ -184,6 +191,7 @@ class ElderProfile {
       id: id,
       name: json['name'] as String? ?? '',
       age: json['age'] as String? ?? '',
+      height: json['height'] as String? ?? '',
       weight: json['weight'] as String? ?? '',
       gender: json['gender'] as String? ?? '',
       phoneNumber: json['phoneNumber'] as String? ?? '',

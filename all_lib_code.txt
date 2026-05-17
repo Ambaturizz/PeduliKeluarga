@@ -454,15 +454,15 @@ final class AppInitializer {
 final class AppAssets {
   const AppAssets._();
 
-  static const String iconsPath = 'lib/assets/icons';
-  static const String imagesPath = 'lib/assets/images';
+  static const String iconsPath = 'assets/icons';
+  static const String imagesPath = 'assets/images';
 
   static const String logoPeduliKeluarga =
       '$imagesPath/logo_peduli_keluarga.png';
 
-  static const String illustrationsPath = 'lib/assets/illustrations';
-  static const String animationsPath = 'lib/assets/animations';
-  static const String soundsPath = 'lib/assets/sounds';
+  static const String illustrationsPath = 'assets/illustrations';
+  static const String animationsPath = 'assets/animations';
+  static const String soundsPath = 'assets/sounds';
 }
 
 =========================================================
@@ -4025,7 +4025,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Center(
-                  child: AppLogo(size: 96, withBackground: true),
+                  child: AppLogo(size: 300, withBackground: false),
                 ),
                 const SizedBox(height: PkSpacing.lg),
                 Text(
@@ -4435,7 +4435,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Center(
-                  child: AppLogo(size: 96, withBackground: true),
+                  child: AppLogo(size: 300, withBackground: false),
                 ),
                 const SizedBox(height: PkSpacing.lg),
                 Text(
@@ -25458,67 +25458,49 @@ import '../../core/theme/app_colors.dart';
 
 class AppLogo extends StatelessWidget {
   const AppLogo({
-    this.size = 40,
+    this.size = 200,
     this.withBackground = false,
     this.semanticLabel = 'Logo PeduliKeluarga',
     super.key,
   });
 
   final double size;
+
+  /// Tetap dipertahankan agar pemanggilan lama seperti:
+  /// AppLogo(size: 96, withBackground: true)
+  /// tidak error.
+  ///
+  /// Tetapi background sengaja tidak dipakai lagi,
+  /// supaya logo tampil transparan tanpa kotak putih.
   final bool withBackground;
+
   final String semanticLabel;
 
   @override
   Widget build(BuildContext context) {
-    final image = ClipRRect(
-      borderRadius: BorderRadius.circular(size * 0.24),
-      child: Image.asset(
-        AppAssets.logoPeduliKeluarga,
-        width: size,
-        height: size,
-        fit: BoxFit.contain,
-        filterQuality: FilterQuality.high,
-        isAntiAlias: true,
-        gaplessPlayback: true,
-        errorBuilder: (context, error, stackTrace) {
-          debugPrint('GAGAL LOAD LOGO: ${AppAssets.logoPeduliKeluarga}');
-          debugPrint('DETAIL ERROR: $error');
-          return _LogoAssetError(size: size);
-        },
-      ),
-    );
-
-    final content = SizedBox(
-      width: size,
-      height: size,
-      child: withBackground
-          ? DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(size * 0.30),
-                border: Border.all(
-                  color: AppColors.teal.withValues(alpha: 0.14),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.teal.withValues(alpha: 0.14),
-                    blurRadius: size * 0.24,
-                    offset: Offset(0, size * 0.08),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(size * 0.10),
-                child: image,
-              ),
-            )
-          : image,
-    );
-
     return Semantics(
       image: true,
       label: semanticLabel,
-      child: ExcludeSemantics(child: content),
+      child: ExcludeSemantics(
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: Image.asset(
+            AppAssets.logoPeduliKeluarga,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.high,
+            isAntiAlias: true,
+            gaplessPlayback: true,
+            errorBuilder: (context, error, stackTrace) {
+              debugPrint('GAGAL LOAD LOGO: ${AppAssets.logoPeduliKeluarga}');
+              debugPrint('DETAIL ERROR: $error');
+              return _LogoAssetError(size: size);
+            },
+          ),
+        ),
+      ),
     );
   }
 }
@@ -25540,7 +25522,9 @@ class _LogoAssetError extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFFFF3F3),
         borderRadius: BorderRadius.circular(size * 0.24),
-        border: Border.all(color: AppColors.red.withValues(alpha: 0.35)),
+        border: Border.all(
+          color: AppColors.red.withValues(alpha: 0.35),
+        ),
       ),
       child: Text(
         'LOGO\nMISSING',

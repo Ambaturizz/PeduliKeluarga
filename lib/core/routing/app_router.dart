@@ -75,7 +75,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: AppRoute.login.path,
+    initialLocation: AppRoute.register.path,
     debugLogDiagnostics: config.enableRouterLogs,
     redirect: (context, state) {
       final location = state.uri.path;
@@ -86,7 +86,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isOnboardingRoute = location == AppRoute.onboarding.path;
 
       if (!auth.isAuthenticated) {
-        return isAuthRoute ? null : AppRoute.login.path;
+        return isAuthRoute ? null : AppRoute.register.path;
       }
 
       if (isAuthRoute || isOnboardingRoute) {

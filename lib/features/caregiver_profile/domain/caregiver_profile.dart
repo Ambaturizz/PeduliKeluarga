@@ -8,6 +8,7 @@ class CaregiverProfile {
     required this.name,
     required this.phoneNumber,
     required this.relationship,
+    required this.address,
     required this.elderName,
     required this.linkedElderId,
     required this.usedConnectionCode,
@@ -18,6 +19,7 @@ class CaregiverProfile {
   final String name;
   final String phoneNumber;
   final String relationship;
+  final String address;
   final String elderName;
   final String linkedElderId;
   final String usedConnectionCode;
@@ -28,6 +30,7 @@ class CaregiverProfile {
   String get displayName => name.trim().isEmpty ? 'Belum diisi' : name.trim();
   String get displayPhone => phoneNumber.trim().isEmpty ? 'Belum diisi' : phoneNumber.trim();
   String get displayRelationship => relationship.trim().isEmpty ? 'Anak atau pendamping' : relationship.trim();
+  String get displayAddress => address.trim().isEmpty ? 'Belum diisi' : address.trim();
   String get displayElderName => elderName.trim().isEmpty ? 'Belum diisi' : elderName.trim();
   String get displayConnectionCode => usedConnectionCode.trim().isEmpty ? 'Belum ada' : usedConnectionCode.trim();
   String get displayConnectedAt {
@@ -42,6 +45,7 @@ class CaregiverProfile {
       name: '',
       phoneNumber: '',
       relationship: '',
+      address: '',
       elderName: '',
       linkedElderId: '',
       usedConnectionCode: '',
@@ -54,6 +58,7 @@ class CaregiverProfile {
     String? name,
     String? phoneNumber,
     String? relationship,
+    String? address,
     String? elderName,
     String? linkedElderId,
     String? usedConnectionCode,
@@ -65,6 +70,7 @@ class CaregiverProfile {
       name: name ?? this.name,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       relationship: relationship ?? this.relationship,
+      address: address ?? this.address,
       elderName: elderName ?? this.elderName,
       linkedElderId: linkedElderId ?? this.linkedElderId,
       usedConnectionCode: usedConnectionCode ?? this.usedConnectionCode,

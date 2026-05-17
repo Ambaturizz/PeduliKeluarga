@@ -30,6 +30,7 @@ class ElderProfileController extends Notifier<ElderProfile> {
     final previous = state;
     final conditions = <String>{
       ...onboarding.healthConditions,
+      ...onboarding.mobilityNeeds,
       if (onboarding.allergies.trim().isNotEmpty) onboarding.allergies.trim(),
     }.where((item) => item.trim().isNotEmpty).toList();
 
@@ -50,10 +51,10 @@ class ElderProfileController extends Notifier<ElderProfile> {
     saveProfile(profile);
   }
 
-
   void updateFamilyIdentity({
     required String elderName,
     required String elderAge,
+    required String elderHeight,
     required String elderWeight,
     required String elderGender,
     required String elderPhoneNumber,
@@ -64,6 +65,7 @@ class ElderProfileController extends Notifier<ElderProfile> {
       state.copyWith(
         name: elderName.trim(),
         age: elderAge.trim(),
+        height: elderHeight.trim(),
         weight: elderWeight.trim(),
         gender: elderGender.trim(),
         phoneNumber: elderPhoneNumber.trim(),
