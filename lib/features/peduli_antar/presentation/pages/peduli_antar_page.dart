@@ -770,12 +770,17 @@ class _PriceRow extends StatelessWidget {
           Expanded(
             child: Text(label, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: PkColors.text2)),
           ),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: strong ? PkColors.brand : PkColors.text,
-                  fontWeight: strong ? FontWeight.w900 : FontWeight.w700,
-                ),
+          Flexible(
+            child: Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: strong ? PkColors.brand : PkColors.text,
+                    fontWeight: strong ? FontWeight.w900 : FontWeight.w700,
+                  ),
+            ),
           ),
         ],
       ),

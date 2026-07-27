@@ -116,19 +116,24 @@ class _NotificationCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: PkSpacing.sm),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                item.timeLabel,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: PkColors.muted,
-                      fontWeight: FontWeight.w900,
-                    ),
-              ),
-              const SizedBox(height: 8),
-              const Icon(Icons.chevron_right_rounded, color: PkColors.muted),
-            ],
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 80),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  item.timeLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: PkColors.muted,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                const Icon(Icons.chevron_right_rounded, color: PkColors.muted),
+              ],
+            ),
           ),
         ],
       ),

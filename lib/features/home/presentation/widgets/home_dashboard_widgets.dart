@@ -487,11 +487,10 @@ class _FamilyContactActions extends StatelessWidget {
     }
 
     return Row(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(width: 146, child: chatButton),
+        Expanded(child: chatButton),
         const SizedBox(width: PkSpacing.sm),
-        SizedBox(width: 138, child: phoneButton),
+        Expanded(child: phoneButton),
       ],
     );
   }

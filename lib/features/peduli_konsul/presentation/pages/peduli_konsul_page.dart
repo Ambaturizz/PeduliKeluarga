@@ -143,10 +143,12 @@ class _Header extends StatelessWidget {
                       ),
                 ),
               ),
-              OutlinedButton.icon(
-                onPressed: onAhliPeduli,
-                icon: const Icon(Icons.health_and_safety_outlined),
-                label: const Text('AhliPeduli'),
+              Flexible(
+                child: OutlinedButton.icon(
+                  onPressed: onAhliPeduli,
+                  icon: const Icon(Icons.health_and_safety_outlined),
+                  label: const Text('AhliPeduli'),
+                ),
               ),
             ],
           ),
