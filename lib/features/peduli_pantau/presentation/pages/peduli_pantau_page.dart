@@ -125,6 +125,7 @@ class _CctvCamera {
     required this.status,
     required this.icon,
     required this.tone,
+    required this.imageAsset,
     this.isLive = true,
   });
 
@@ -132,6 +133,7 @@ class _CctvCamera {
   final String status;
   final IconData icon;
   final PkTone tone;
+  final String imageAsset;
   final bool isLive;
 }
 
@@ -141,18 +143,21 @@ const _cctvCameras = [
     status: 'Online',
     icon: Icons.meeting_room_outlined,
     tone: PkTone.green,
+    imageAsset: 'assets/videos/VideoRuangTamu.gif',
   ),
   _CctvCamera(
     roomName: 'Ruang Makan',
     status: 'Online',
     icon: Icons.restaurant_outlined,
     tone: PkTone.green,
+    imageAsset: 'assets/videos/VideoRuangMakan.gif',
   ),
   _CctvCamera(
     roomName: 'Dapur',
     status: 'Standby',
     icon: Icons.kitchen_outlined,
     tone: PkTone.amber,
+    imageAsset: 'assets/videos/VideoDapur.gif',
     isLive: false,
   ),
   _CctvCamera(
@@ -160,6 +165,7 @@ const _cctvCameras = [
     status: 'Online',
     icon: Icons.home_outlined,
     tone: PkTone.green,
+    imageAsset: 'assets/videos/VideoTeras.gif',
   ),
 ];
 
@@ -214,29 +220,14 @@ class _CctvMockFrame extends StatelessWidget {
             return Stack(
               children: [
                 Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: camera.isLive
-                            ? const [
-                                Color(0xFF071513),
-                                Color(0xFF123B36),
-                                Color(0xFF071513),
-                              ]
-                            : const [
-                                Color(0xFF19150B),
-                                Color(0xFF4A3511),
-                                Color(0xFF11100A),
-                              ],
-                      ),
-                    ),
+                  child: Image.asset(
+                    camera.imageAsset,
+                    fit: BoxFit.cover,
                   ),
                 ),
                 Positioned.fill(
-                  child: CustomPaint(
-                    painter: _CctvGridPainter(),
+                  child: ColoredBox(
+                    color: Colors.black.withValues(alpha: 0.2),
                   ),
                 ),
                 Positioned(
@@ -276,22 +267,7 @@ class _CctvMockFrame extends StatelessWidget {
                     ],
                   ),
                 ),
-                Center(
-                  child: Container(
-                    width: centerSize,
-                    height: centerSize,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.10),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white24),
-                    ),
-                    child: Icon(
-                      camera.icon,
-                      color: Colors.white,
-                      size: iconSize,
-                    ),
-                  ),
-                ),
+
                 Positioned(
                   left: compact ? 10 : 14,
                   right: compact ? 10 : 14,
