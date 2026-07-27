@@ -820,23 +820,44 @@ class _RegisterProgressHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            PkBadge(label: 'Langkah $currentStep dari $totalSteps'),
-            const SizedBox(width: PkSpacing.sm),
-            Expanded(
-              child: Text(
-                subtitle,
-                textAlign: TextAlign.right,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: PkColors.text2,
-                      fontWeight: FontWeight.w800,
-                    ),
-              ),
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final isMobile = constraints.maxWidth < 420;
+            if (isMobile) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  PkBadge(label: 'Langkah $currentStep dari $totalSteps'),
+                  const SizedBox(height: PkSpacing.xs),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: PkColors.text2,
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                ],
+              );
+            }
+            return Row(
+              children: [
+                PkBadge(label: 'Langkah $currentStep dari $totalSteps'),
+                const SizedBox(width: PkSpacing.sm),
+                Expanded(
+                  child: Text(
+                    subtitle,
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: PkColors.text2,
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
         const SizedBox(height: PkSpacing.md),
         LinearProgressIndicator(

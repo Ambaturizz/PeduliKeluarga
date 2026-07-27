@@ -25,22 +25,31 @@ class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
     return AppBar(
       automaticallyImplyLeading: showMenuButton,
       titleSpacing: AppSpacing.lg,
-      title: Row(
-        children: [
-          const AppLogo(size: 70),
-          const SizedBox(width: AppSpacing.sm),
-          Flexible(
-            child: Text(
-              'PeduliKeluarga',
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: AppColors.teal,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.4,
+      title: Builder(
+        builder: (context) {
+          final width = MediaQuery.sizeOf(context).width;
+          final isCompact = width < 440;
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppLogo(size: isCompact ? 44 : 54),
+              if (!isCompact) ...[
+                const SizedBox(width: AppSpacing.sm),
+                Flexible(
+                  child: Text(
+                    'PeduliKeluarga',
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: AppColors.teal,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.4,
+                        ),
                   ),
-            ),
-          ),
-        ],
+                ),
+              ],
+            ],
+          );
+        },
       ),
       actions: [
         Padding(

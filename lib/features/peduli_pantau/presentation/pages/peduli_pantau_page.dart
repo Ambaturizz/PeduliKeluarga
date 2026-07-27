@@ -235,7 +235,7 @@ class _CctvMockFrameState extends State<_CctvMockFrame>
         borderRadius: PkRadius.mdRadius,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final compact = constraints.maxWidth < 360;
+            final compact = constraints.maxWidth < 420;
             final centerSize = compact ? 58.0 : 86.0;
             final iconSize = compact ? 28.0 : 42.0;
 
