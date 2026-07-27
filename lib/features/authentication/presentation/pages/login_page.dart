@@ -155,12 +155,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (auth.isLoading) return;
     if (!_formKey.currentState!.validate()) return;
 
-    await ref.read(authControllerProvider.notifier).login(
+    final success = await ref.read(authControllerProvider.notifier).login(
           email: _emailController.text,
           password: _passwordController.text,
         );
 
     if (!mounted) return;
+
+    if (success) {
+      context.goNamed(AppRoute.home.name);
+      return;
+    }
+
     final message = ref.read(authControllerProvider).errorMessage;
     if (message != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
