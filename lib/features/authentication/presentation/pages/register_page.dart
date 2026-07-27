@@ -188,7 +188,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   }
 
   String get _stepTitle {
-    if (_step == 0) return 'Buat akun dengan email';
+    if (_step == 0) return '';
     if (_step == 1) {
       if (_isCaregiver) return 'Lengkapi profil anak';
       return 'Lengkapi profil lansia';
@@ -825,13 +825,18 @@ class _RegisterProgressHeader extends StatelessWidget {
         Row(
           children: [
             PkBadge(label: 'Langkah $currentStep dari $totalSteps', icon: Icons.flag_outlined),
-            const Spacer(),
-            Text(
-              subtitle,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: PkColors.text2,
-                    fontWeight: FontWeight.w800,
-                  ),
+            const SizedBox(width: PkSpacing.sm),
+            Expanded(
+              child: Text(
+                subtitle,
+                textAlign: TextAlign.right,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: PkColors.text2,
+                      fontWeight: FontWeight.w800,
+                    ),
+              ),
             ),
           ],
         ),
@@ -842,14 +847,16 @@ class _RegisterProgressHeader extends StatelessWidget {
           borderRadius: PkRadius.pillRadius,
           backgroundColor: PkColors.brandSoft,
         ),
-        const SizedBox(height: PkSpacing.lg),
-        Text(
-          title,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: PkColors.text,
-                fontWeight: FontWeight.w900,
-              ),
-        ),
+        if (title.isNotEmpty) ...[
+          const SizedBox(height: PkSpacing.lg),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: PkColors.text,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+        ],
       ],
     );
   }
