@@ -1,10 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/animations/app_motion.dart';
 import '../../core/routing/app_navigation_destination.dart';
-import '../../core/routing/app_route.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/utils/responsive.dart';
 import '../../state/providers/app_mode_provider.dart';
@@ -41,19 +41,10 @@ class AppNavigationShell extends ConsumerWidget {
       ),
     );
 
-    final bottomDestinations = mode == AppUserMode.caregiver
-        ? destinations
-            .where(
-              (item) => const {
-                AppRoute.home,
-                AppRoute.peduliRiwayat,
-                AppRoute.peduliObat,
-                AppRoute.peduliPantau,
-                AppRoute.peduliAntar,
-              }.contains(item.route),
-            )
-            .toList()
-        : destinations;
+    // Tampilkan semua fitur yang tersedia untuk mode aktif pada APK.
+    // AppBottomNavigation menampilkan 4 fitur per layar dalam 1 baris.
+    // Fitur lainnya tetap tersedia dengan menggeser menu ke kanan.
+    final bottomDestinations = destinations;
 
     if (context.isExpanded) {
       return Scaffold(
