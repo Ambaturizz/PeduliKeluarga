@@ -824,7 +824,7 @@ class _RegisterProgressHeader extends StatelessWidget {
       children: [
         Row(
           children: [
-            PkBadge(label: 'Langkah $currentStep dari $totalSteps', icon: Icons.flag_outlined),
+            PkBadge(label: 'Langkah $currentStep dari $totalSteps'),
             const SizedBox(width: PkSpacing.sm),
             Expanded(
               child: Text(
