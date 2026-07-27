@@ -18,10 +18,8 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# VS Code configuration (uncommented: tidak perlu masuk repo)
+.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -45,3 +43,14 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Build output — jangan di-commit, Vercel build sendiri dari source
+/build/
+build/
+
+# Script Python sementara
+*.py
+
+# File teks sementara / catatan lokal
+prompt.txt
+structure.txt
