@@ -34,9 +34,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     final auth = ref.watch(authControllerProvider);
 
+    ref.listen<AuthState>(authControllerProvider, (previous, next) {
+      if (next.isAuthenticated && mounted) {
+        context.goNamed(AppRoute.home.name);
+      }
+    });
+
     return PageShell(
       title: 'Masuk',
-      subtitle: 'Halaman ini masih mockup. Login belum menghubungkan akun sungguhan.',
+      subtitle: 'Gunakan akun dummy untuk mencoba aplikasi.',
       icon: Icons.lock_outline_rounded,
       maxWidth: 560,
       children: [
@@ -72,7 +78,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
                 const SizedBox(height: 0),
                 Text(
-                  'Login mockup',
+                  'Masuk ke akun Anda',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: PkColors.text,
                         fontWeight: FontWeight.w900,
@@ -80,7 +86,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
                 const SizedBox(height: PkSpacing.xs),
                 Text(
-                  'Form ini sengaja belum bisa masuk. Untuk mencoba alur aplikasi, gunakan daftar akun baru dengan email.',
+                  'Masukkan email dan password untuk melanjutkan.',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: PkColors.text2,
                         height: 1.5,
@@ -135,7 +141,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.login_rounded),
-                  label: Text(auth.isLoading ? 'Memproses...' : 'Coba Login Mockup'),
+                  label: Text(auth.isLoading ? 'Memproses...' : 'Masuk'),
                 ),
                 const SizedBox(height: PkSpacing.md),
                 OutlinedButton.icon(
@@ -155,22 +161,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (auth.isLoading) return;
     if (!_formKey.currentState!.validate()) return;
 
-    final success = await ref.read(authControllerProvider.notifier).login(
+    await ref.read(authControllerProvider.notifier).login(
           email: _emailController.text,
           password: _passwordController.text,
         );
-
-    if (!mounted) return;
-
-    if (success) {
-      context.goNamed(AppRoute.home.name);
-      return;
-    }
-
-    final message = ref.read(authControllerProvider).errorMessage;
-    if (message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-    }
+    // Navigation handled by ref.listen above
   }
 
   String? _validateEmail(String? value) {

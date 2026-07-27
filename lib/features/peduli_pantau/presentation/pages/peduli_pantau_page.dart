@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gif/gif.dart';
 
 import '../../../../core/theme/pk_design.dart';
 
@@ -198,7 +199,7 @@ class _CctvMultiViewPanel extends StatelessWidget {
   }
 }
 
-class _CctvMockFrame extends StatelessWidget {
+class _CctvMockFrame extends StatefulWidget {
   const _CctvMockFrame({
     required this.camera,
   });
@@ -206,7 +207,28 @@ class _CctvMockFrame extends StatelessWidget {
   final _CctvCamera camera;
 
   @override
+  State<_CctvMockFrame> createState() => _CctvMockFrameState();
+}
+
+class _CctvMockFrameState extends State<_CctvMockFrame>
+    with SingleTickerProviderStateMixin {
+  late final GifController _gifController;
+
+  @override
+  void initState() {
+    super.initState();
+    _gifController = GifController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _gifController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final camera = widget.camera;
     return PkCard(
       padding: EdgeInsets.zero,
       child: ClipRRect(
@@ -220,9 +242,20 @@ class _CctvMockFrame extends StatelessWidget {
             return Stack(
               children: [
                 Positioned.fill(
-                  child: Image.asset(
-                    camera.imageAsset,
+                  child: Gif(
+                    image: AssetImage(camera.imageAsset),
+                    controller: _gifController,
                     fit: BoxFit.cover,
+                    autostart: Autostart.loop,
+                    placeholder: (context) => Container(
+                      color: Colors.black54,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 Positioned.fill(
