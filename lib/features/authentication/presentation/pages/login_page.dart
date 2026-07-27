@@ -41,9 +41,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
 
     return PageShell(
-      title: 'Masuk',
-      subtitle: 'Gunakan akun dummy untuk mencoba aplikasi.',
-      icon: Icons.lock_outline_rounded,
+      showPageHeader: false,
       maxWidth: 560,
       children: [
         PkCard(

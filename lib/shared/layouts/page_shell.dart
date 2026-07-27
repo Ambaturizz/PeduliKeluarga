@@ -5,12 +5,13 @@ import 'app_page.dart';
 
 class PageShell extends StatelessWidget {
   const PageShell({
-    required this.title,
-    required this.subtitle,
+    this.title = '',
+    this.subtitle = '',
     this.icon,
     required this.children,
     this.maxWidth = 840,
     this.headerTrailing,
+    this.showPageHeader = true,
     super.key,
   });
 
@@ -20,14 +21,13 @@ class PageShell extends StatelessWidget {
   final List<Widget> children;
   final double maxWidth;
   final Widget? headerTrailing;
+  final bool showPageHeader;
 
   @override
   Widget build(BuildContext context) {
-    // Root routes such as Login/Register are rendered outside AppNavigationShell,
-    // so they do not automatically get a Scaffold/Material ancestor.
-    // TextField/TextFormField requires Material. This transparent Material keeps
-    // the existing AppPage gradient/layout intact and also remains safe when
-    // PageShell is used inside an existing Scaffold.
+    final hasHeaderContent = title.isNotEmpty || subtitle.isNotEmpty || icon != null || headerTrailing != null;
+    final shouldShowHeader = showPageHeader && hasHeaderContent;
+
     return Material(
       type: MaterialType.transparency,
       child: AppPage(
@@ -35,13 +35,15 @@ class PageShell extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppPageHeader(
-              title: title,
-              subtitle: subtitle,
-              icon: icon,
-              trailing: headerTrailing,
-            ),
-            const SizedBox(height: AppSpacing.xxl),
+            if (shouldShowHeader) ...[
+              AppPageHeader(
+                title: title,
+                subtitle: subtitle,
+                icon: icon,
+                trailing: headerTrailing,
+              ),
+              const SizedBox(height: AppSpacing.xxl),
+            ],
             ...children,
           ],
         ),

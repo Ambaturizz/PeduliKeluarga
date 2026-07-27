@@ -107,8 +107,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             : 'Daftar sebagai Anak/Pendamping';
 
     return PageShell(
-      title: 'Daftar',
-      subtitle: 'Daftar menjadi halaman default. Login masih mockup dan belum aktif.',
+      showPageHeader: false,
       maxWidth: 760,
       children: [
         PkCard(
