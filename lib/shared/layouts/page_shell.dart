@@ -7,7 +7,7 @@ class PageShell extends StatelessWidget {
   const PageShell({
     required this.title,
     required this.subtitle,
-    required this.icon,
+    this.icon,
     required this.children,
     this.maxWidth = 840,
     this.headerTrailing,
@@ -16,7 +16,7 @@ class PageShell extends StatelessWidget {
 
   final String title;
   final String subtitle;
-  final IconData icon;
+  final IconData? icon;
   final List<Widget> children;
   final double maxWidth;
   final Widget? headerTrailing;

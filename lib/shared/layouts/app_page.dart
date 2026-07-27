@@ -48,14 +48,14 @@ class AppPageHeader extends StatelessWidget {
   const AppPageHeader({
     required this.title,
     required this.subtitle,
-    required this.icon,
+    this.icon,
     this.trailing,
     super.key,
   });
 
   final String title;
   final String subtitle;
-  final IconData icon;
+  final IconData? icon;
   final Widget? trailing;
 
   @override
@@ -65,8 +65,10 @@ class AppPageHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          PkIconBox(icon: icon, size: 48, iconSize: 24),
-          const SizedBox(width: PkSpacing.md),
+          if (icon != null) ...[
+            PkIconBox(icon: icon!, size: 48, iconSize: 24),
+            const SizedBox(width: PkSpacing.md),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
