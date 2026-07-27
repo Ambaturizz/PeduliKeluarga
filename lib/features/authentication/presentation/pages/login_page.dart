@@ -202,7 +202,7 @@ class _MockInfoBanner extends StatelessWidget {
           const SizedBox(width: PkSpacing.sm),
           Expanded(
             child: Text(
-              'Login belum aktif. Aplikasi akan membuka halaman Daftar sebagai default agar alur mockup bisa langsung dicoba.',
+              'Email: otw@puncak.com Password: otwpuncak',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: PkColors.amber,
                     fontWeight: FontWeight.w800,

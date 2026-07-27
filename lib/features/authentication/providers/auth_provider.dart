@@ -79,10 +79,25 @@ class AuthController extends Notifier<AuthState> {
     state = state.copyWith(isLoading: true, clearError: true);
     await Future<void>.delayed(const Duration(milliseconds: 250));
 
+    if (cleanEmail == 'otw@puncak.com' && password == 'otwpuncak') {
+      const mode = AppUserMode.caregiver;
+      ref.read(appModeControllerProvider.notifier).setMode(mode);
+      state = AuthState(
+        isAuthenticated: true,
+        isLoading: false,
+        user: AuthUser(
+          name: 'Pengguna Dummy',
+          identifier: cleanEmail,
+          mode: mode,
+        ),
+      );
+      return true;
+    }
+
     state = state.copyWith(
       isAuthenticated: false,
       isLoading: false,
-      errorMessage: 'Login masih mockup dan belum bisa digunakan. Silakan daftar akun baru.',
+      errorMessage: 'Kredensial salah atau belum terdaftar. Gunakan akun dummy atau daftar baru.',
       clearUser: true,
     );
 

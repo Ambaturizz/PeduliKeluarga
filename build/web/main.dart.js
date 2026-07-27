@@ -115143,7 +115143,7 @@ $0(){return B.vH(this.a,"register")},
 $S:0}
 B.adA.prototype={
 t(a){var s=null,r=B.by(A.dY.N(0.18),1),q=B.h(a).ok.Q
-return B.aK(s,B.a4(B.b([A.a8V,A.aF,B.a3(B.o("Login belum aktif. Aplikasi akan membuka halaman Daftar sebagai default agar alur mockup bisa langsung dicoba.",s,s,s,s,q==null?s:q.my(A.dY,A.aE,1.45),s,s),1)],t.p),A.F,A.p,A.r,0),A.L,s,s,new B.aq(A.mw,s,r,A.bm,s,s,A.U),s,s,s,A.bZ,s,s,s)}}
+return B.aK(s,B.a4(B.b([A.a8V,A.aF,B.a3(B.o("Email: otw@puncak.com Password: otwpuncak",s,s,s,s,q==null?s:q.my(A.dY,A.aE,1.45),s,s),1)],t.p),A.F,A.p,A.r,0),A.L,s,s,new B.aq(A.mw,s,r,A.bm,s,s,A.U),s,s,s,A.bZ,s,s,s)}}
 B.a9q.prototype={
 t(a){var s=null,r=B.by(A.bf.N(0.18),1),q=B.h(a).ok.Q
 q=q==null?s:q.ac(A.bf,A.bk)
