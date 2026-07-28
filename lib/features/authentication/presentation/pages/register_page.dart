@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/pk_design.dart';
 import '../../../../shared/layouts/page_shell.dart';
 import '../../../../shared/widgets/app_logo.dart';
+import '../../../../shared/widgets/terms_conditions_text.dart';
 import '../../../../state/providers/app_mode_provider.dart';
 import '../../../caregiver_profile/providers/caregiver_profile_provider.dart';
 import '../../../elder_profile/presentation/widgets/connection_code_card.dart';
@@ -177,6 +178,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   onPressed: auth.isLoading ? null : () => context.goNamed(AppRoute.login.name),
                   child: const Text('Sudah punya akun? Lihat halaman login mockup'),
                 ),
+                const TermsConditionsText(),
               ],
             ),
           ),

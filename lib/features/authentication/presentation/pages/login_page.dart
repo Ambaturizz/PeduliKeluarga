@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/pk_design.dart';
 import '../../../../shared/layouts/page_shell.dart';
 import '../../../../shared/widgets/app_logo.dart';
+import '../../../../shared/widgets/terms_conditions_text.dart';
 import '../../providers/auth_provider.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -147,6 +148,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   icon: const Icon(Icons.person_add_alt_1_rounded),
                   label: const Text('Daftar akun baru'),
                 ),
+                const TermsConditionsText(),
               ],
             ),
           ),

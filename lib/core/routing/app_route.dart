@@ -11,6 +11,10 @@ enum AppRoute {
     name: 'register',
     path: '/register',
   ),
+  termsConditions(
+    name: 'termsConditions',
+    path: '/terms-conditions',
+  ),
   home(
     name: 'home',
     path: '/',

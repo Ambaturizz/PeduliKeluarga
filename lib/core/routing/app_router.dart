@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/ahli_peduli/presentation/pages/ahli_peduli_page.dart';
 import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/authentication/presentation/pages/register_page.dart';
+import '../../features/authentication/presentation/pages/terms_conditions_page.dart';
 import '../../features/authentication/providers/auth_provider.dart';
 import '../../features/family_alert/presentation/pages/family_alert_page.dart';
 import '../../features/family_chat/presentation/pages/family_chat_page.dart';
@@ -132,6 +133,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return RouteTransitions.fade(
             key: state.pageKey,
             child: const RegisterPage(),
+          );
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: AppRoute.termsConditions.path,
+        name: AppRoute.termsConditions.name,
+        pageBuilder: (context, state) {
+          return RouteTransitions.fade(
+            key: state.pageKey,
+            child: const TermsConditionsPage(),
           );
         },
       ),
