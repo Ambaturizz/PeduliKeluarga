@@ -712,13 +712,13 @@ class _HeroStatTile extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Icon(
             stat.icon,
             color: Colors.white.withValues(alpha: 0.82),
             size: 20,
           ),
-          const Spacer(),
           Text(
             stat.value,
             maxLines: 1,

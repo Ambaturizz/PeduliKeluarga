@@ -312,7 +312,7 @@ class _SummaryGrid extends StatelessWidget {
             crossAxisCount: columns,
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
-            childAspectRatio: columns == 1 ? 1.45 : 0.88,
+            mainAxisExtent: 260,
           ),
           itemCount: metrics.length,
           itemBuilder: (context, index) => AppAnimatedEntrance(

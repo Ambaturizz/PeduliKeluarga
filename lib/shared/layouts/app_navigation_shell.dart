@@ -28,18 +28,7 @@ class AppNavigationShell extends ConsumerWidget {
     final destinations = AppNavigationDestinations.forMode(mode);
     final theme = Theme.of(context);
 
-    final body = AnimatedSwitcher(
-      duration: AppMotion.fast,
-      switchInCurve: AppMotion.standard,
-      switchOutCurve: AppMotion.exit,
-      transitionBuilder: (child, animation) {
-        return AppFadeSlideTransition(animation: animation, child: child);
-      },
-      child: KeyedSubtree(
-        key: ValueKey<int>(navigationShell.currentIndex),
-        child: RepaintBoundary(child: navigationShell),
-      ),
-    );
+    final body = navigationShell;
 
     // Tampilkan semua fitur yang tersedia untuk mode aktif pada APK.
     // AppBottomNavigation menampilkan 4 fitur per layar dalam 1 baris.
