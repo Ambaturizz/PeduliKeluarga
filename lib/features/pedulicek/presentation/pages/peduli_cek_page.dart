@@ -201,43 +201,42 @@ class _FormView extends StatelessWidget {
             builder: (context, constraints) {
               final compact = constraints.maxWidth < 520;
 
-              final fields = [
-                Expanded(
-                  child: CekLargeNumberField(
-                    label: 'Sistolik',
-                    hint: '138',
-                    unit: 'mmHg',
-                    controller: systolicController,
-                    onChanged: (value) {
-                      notifier.setSystolic(parseNumber(value));
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12, height: 12),
-                Expanded(
-                  child: CekLargeNumberField(
-                    label: 'Diastolik',
-                    hint: '88',
-                    unit: 'mmHg',
-                    controller: diastolicController,
-                    onChanged: (value) {
-                      notifier.setDiastolic(parseNumber(value));
-                    },
-                  ),
-                ),
-              ];
+              final field1 = CekLargeNumberField(
+                label: 'Sistolik',
+                hint: '138',
+                unit: 'mmHg',
+                controller: systolicController,
+                onChanged: (value) {
+                  notifier.setSystolic(parseNumber(value));
+                },
+              );
+              final field2 = CekLargeNumberField(
+                label: 'Diastolik',
+                hint: '88',
+                unit: 'mmHg',
+                controller: diastolicController,
+                onChanged: (value) {
+                  notifier.setDiastolic(parseNumber(value));
+                },
+              );
 
               if (compact) {
                 return Column(
                   children: [
-                    fields[0],
-                    fields[1],
-                    fields[2],
+                    field1,
+                    const SizedBox(height: 12),
+                    field2,
                   ],
                 );
               }
 
-              return Row(children: fields);
+              return Row(
+                children: [
+                  Expanded(child: field1),
+                  const SizedBox(width: 12),
+                  Expanded(child: field2),
+                ],
+              );
             },
           ),
         ),
