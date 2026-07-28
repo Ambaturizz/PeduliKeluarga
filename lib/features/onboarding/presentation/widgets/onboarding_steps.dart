@@ -199,48 +199,60 @@ class SetupProfileOnboardingScreen extends ConsumerWidget {
           ),
         ],
         const SizedBox(height: AppSpacing.md),
-        Row(
-          children: [
-            Expanded(
-              child: OnboardingTextField(
-                label: isElder ? 'Usia' : 'Nomor HP',
-                initialValue: isElder ? state.age : state.phoneNumber,
-                hintText: isElder ? '68' : '0812...',
-                prefixIcon:
-                    isElder ? Icons.cake_outlined : Icons.phone_outlined,
-                keyboardType:
-                    isElder ? TextInputType.number : TextInputType.phone,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9+]')),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final narrow = constraints.maxWidth < 400;
+            final field1 = OnboardingTextField(
+              label: isElder ? 'Usia' : 'Nomor HP',
+              initialValue: isElder ? state.age : state.phoneNumber,
+              hintText: isElder ? '68' : '0812...',
+              prefixIcon:
+                  isElder ? Icons.cake_outlined : Icons.phone_outlined,
+              keyboardType:
+                  isElder ? TextInputType.number : TextInputType.phone,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9+]')),
+              ],
+              textInputAction: TextInputAction.next,
+              onChanged:
+                  isElder ? notifier.setAge : notifier.setPhoneNumber,
+            );
+            final field2 = OnboardingTextField(
+              label: isElder ? 'Nomor HP' : 'Hubungan',
+              initialValue: isElder ? state.phoneNumber : state.relationship,
+              hintText: isElder ? '0812...' : 'Anak',
+              prefixIcon: isElder
+                  ? Icons.phone_outlined
+                  : Icons.favorite_border_rounded,
+              keyboardType:
+                  isElder ? TextInputType.phone : TextInputType.text,
+              inputFormatters: isElder
+                  ? [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9+]')),
+                    ]
+                  : null,
+              textInputAction: TextInputAction.next,
+              onChanged: isElder
+                  ? notifier.setPhoneNumber
+                  : notifier.setRelationship,
+            );
+            if (narrow) {
+              return Column(
+                children: [
+                  field1,
+                  const SizedBox(height: AppSpacing.md),
+                  field2,
                 ],
-                textInputAction: TextInputAction.next,
-                onChanged:
-                    isElder ? notifier.setAge : notifier.setPhoneNumber,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: OnboardingTextField(
-                label: isElder ? 'Nomor HP' : 'Hubungan',
-                initialValue: isElder ? state.phoneNumber : state.relationship,
-                hintText: isElder ? '0812...' : 'Anak',
-                prefixIcon: isElder
-                    ? Icons.phone_outlined
-                    : Icons.favorite_border_rounded,
-                keyboardType:
-                    isElder ? TextInputType.phone : TextInputType.text,
-                inputFormatters: isElder
-                    ? [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9+]')),
-                      ]
-                    : null,
-                textInputAction: TextInputAction.next,
-                onChanged: isElder
-                    ? notifier.setPhoneNumber
-                    : notifier.setRelationship,
-              ),
-            ),
-          ],
+              );
+            }
+            return Row(
+              children: [
+                Expanded(child: field1),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(child: field2),
+              ],
+            );
+          },
         ),
         const SizedBox(height: AppSpacing.md),
         if (isElder)
@@ -450,14 +462,17 @@ class ConnectFamilyOnboardingScreen extends ConsumerWidget {
                       ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                SelectableText(
-                  elderProfile.connectionCode,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        color: AppColors.teal,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                      ),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: SelectableText(
+                    elderProfile.connectionCode,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                          color: AppColors.teal,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
+                        ),
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 SizedBox(

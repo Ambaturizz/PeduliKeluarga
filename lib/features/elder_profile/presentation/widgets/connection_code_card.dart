@@ -70,13 +70,17 @@ class _CodeContent extends StatelessWidget {
           tone: PkTone.brand,
         ),
         const SizedBox(height: PkSpacing.lg),
-        SelectableText(
-          profile.connectionCode,
-          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                color: PkColors.brand,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.8,
-              ),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: SelectableText(
+            profile.connectionCode,
+            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  color: PkColors.brand,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.8,
+                ),
+          ),
         ),
         const SizedBox(height: PkSpacing.md),
         SizedBox(

@@ -27,30 +27,36 @@ class SettingsPage extends ConsumerWidget {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: AppSpacing.md),
-              SegmentedButton<ThemeMode>(
-                segments: const [
-                  ButtonSegment(
-                    value: ThemeMode.system,
-                    label: Text('Sistem'),
-                    icon: Icon(Icons.brightness_auto_outlined),
+              SizedBox(
+                width: double.infinity,
+                child: SegmentedButton<ThemeMode>(
+                  style: const ButtonStyle(
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  ButtonSegment(
-                    value: ThemeMode.light,
-                    label: Text('Terang'),
-                    icon: Icon(Icons.light_mode_outlined),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.dark,
-                    label: Text('Gelap'),
-                    icon: Icon(Icons.dark_mode_outlined),
-                  ),
-                ],
-                selected: {themeMode},
-                onSelectionChanged: (selection) {
-                  ref
-                      .read(themeModeControllerProvider.notifier)
-                      .setThemeMode(selection.first);
-                },
+                  segments: const [
+                    ButtonSegment(
+                      value: ThemeMode.system,
+                      label: Text('Sistem'),
+                      icon: Icon(Icons.brightness_auto_outlined),
+                    ),
+                    ButtonSegment(
+                      value: ThemeMode.light,
+                      label: Text('Terang'),
+                      icon: Icon(Icons.light_mode_outlined),
+                    ),
+                    ButtonSegment(
+                      value: ThemeMode.dark,
+                      label: Text('Gelap'),
+                      icon: Icon(Icons.dark_mode_outlined),
+                    ),
+                  ],
+                  selected: {themeMode},
+                  onSelectionChanged: (selection) {
+                    ref
+                        .read(themeModeControllerProvider.notifier)
+                        .setThemeMode(selection.first);
+                  },
+                ),
               ),
             ],
           ),

@@ -1282,9 +1282,12 @@ class _ReminderItem extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          PkBadge(
-            label: item.time,
-            tone: item.tone,
+          Flexible(
+            fit: FlexFit.loose,
+            child: PkBadge(
+              label: item.time,
+              tone: item.tone,
+            ),
           ),
         ],
       ),
@@ -1381,12 +1384,17 @@ class _MedicationLogItem extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Text(
-            log.time,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: PkColors.muted,
-                  fontWeight: FontWeight.w800,
-                ),
+          Flexible(
+            fit: FlexFit.loose,
+            child: Text(
+              log.time,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: PkColors.muted,
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
           ),
         ],
       ),
