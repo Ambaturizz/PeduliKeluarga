@@ -13,20 +13,26 @@ class TermsConditionsText extends StatefulWidget {
 }
 
 class _TermsConditionsTextState extends State<TermsConditionsText> {
-  late final TapGestureRecognizer _recognizer;
+  late final TapGestureRecognizer _recognizerSnK;
+  late final TapGestureRecognizer _recognizerPrivacy;
 
   @override
   void initState() {
     super.initState();
-    _recognizer = TapGestureRecognizer()
+    _recognizerSnK = TapGestureRecognizer()
       ..onTap = () {
         context.pushNamed(AppRoute.termsConditions.name);
+      };
+    _recognizerPrivacy = TapGestureRecognizer()
+      ..onTap = () {
+        context.pushNamed(AppRoute.privacyPolicy.name);
       };
   }
 
   @override
   void dispose() {
-    _recognizer.dispose();
+    _recognizerSnK.dispose();
+    _recognizerPrivacy.dispose();
     super.dispose();
   }
 
@@ -48,7 +54,16 @@ class _TermsConditionsTextState extends State<TermsConditionsText> {
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
-              recognizer: _recognizer,
+              recognizer: _recognizerSnK,
+            ),
+            const TextSpan(text: ' serta '),
+            TextSpan(
+              text: 'Kebijakan Privasi',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+              recognizer: _recognizerPrivacy,
             ),
             const TextSpan(text: ' PeduliKeluarga'),
           ],

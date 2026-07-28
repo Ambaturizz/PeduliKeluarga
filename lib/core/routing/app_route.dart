@@ -15,6 +15,10 @@ enum AppRoute {
     name: 'termsConditions',
     path: '/terms-conditions',
   ),
+  privacyPolicy(
+    name: 'privacyPolicy',
+    path: '/privacy-policy',
+  ),
   home(
     name: 'home',
     path: '/',
