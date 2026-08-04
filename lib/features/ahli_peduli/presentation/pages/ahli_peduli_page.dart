@@ -21,6 +21,15 @@ class AhliPeduliPage extends ConsumerStatefulWidget {
 class _AhliPeduliPageState extends ConsumerState<AhliPeduliPage> {
   ProviderCategory? _selectedCategory;
   final TextEditingController _searchController = TextEditingController();
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      if (mounted) setState(() => _isLoading = false);
+    });
+  }
 
   @override
   void dispose() {
@@ -68,13 +77,22 @@ class _AhliPeduliPageState extends ConsumerState<AhliPeduliPage> {
                 ),
                 const SizedBox(height: PkSpacing.xl),
                 _NetworkMetricGrid(metrics: ahliPeduliNetworkMetrics),
-                if (bookingState.bookings.isNotEmpty) ...[
-                  const PkSectionTitle(
-                    title: 'Riwayat booking',
-                    subtitle: 'Booking AhliPeduli terbaru',
-                  ),
-                  _BookingHistoryCard(bookings: bookingState.bookings),
-                ],
+                if (_isLoading)
+                  const Padding(
+                    padding: EdgeInsets.only(top: PkSpacing.xl),
+                    child: AppLoadingState(
+                      message: 'Mencari ahli kesehatan terdekat...',
+                      cardCount: 4,
+                    ),
+                  )
+                else ...[
+                  if (bookingState.bookings.isNotEmpty) ...[
+                    const PkSectionTitle(
+                      title: 'Riwayat booking',
+                      subtitle: 'Booking AhliPeduli terbaru',
+                    ),
+                    _BookingHistoryCard(bookings: bookingState.bookings),
+                  ],
                 const PkSectionTitle(
                   title: 'Cari ahli kesehatan',
                   subtitle: 'Rating, jarak, dan slot cepat',
@@ -98,17 +116,18 @@ class _AhliPeduliPageState extends ConsumerState<AhliPeduliPage> {
                   providers: providers,
                   onBook: (provider) => _showBookingSheet(context, provider),
                   onDarurat: (provider) =>
-                      _showDaruratProvider(context, provider),
+                      _showBookingSheet(context, provider, isDarurat: true),
                 ),
               ],
-            ),
+            ],
           ),
         ),
+      ),
       ),
     );
   }
 
-  void _showBookingSheet(BuildContext context, HealthcareProvider provider) {
+  void _showBookingSheet(BuildContext context, HealthcareProvider provider, {bool isDarurat = false}) {
     final elder = ref.read(elderProfileProvider);
     final caregiver = ref.read(caregiverProfileProvider);
     final canUseAmbulance = provider.category == ProviderCategory.clinic || provider.category == ProviderCategory.hospital;
@@ -247,17 +266,6 @@ class _AhliPeduliPageState extends ConsumerState<AhliPeduliPage> {
       complaintController.dispose();
       pickupController.dispose();
     });
-  }
-
-  void _showDaruratProvider(BuildContext context, HealthcareProvider provider) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'PeduliDarurat: ${provider.name} menerima permintaan bantuan.',
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   void _showDaruratSheet(
@@ -508,12 +516,16 @@ class _HeroBadge extends StatelessWidget {
         borderRadius: PkRadius.pillRadius,
         border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.health_and_safety_outlined, color: Colors.white, size: 17),
-          SizedBox(width: 8),
-          Text(
+          Image.asset(
+            'assets/icons/ahlipeduli.webp',
+            width: 17,
+            height: 17,
+          ),
+          const SizedBox(width: 8),
+          const Text(
             'AHLIPEDULI',
             style: TextStyle(
               color: Colors.white,
@@ -779,7 +791,7 @@ class _ProviderGrid extends StatelessWidget {
             crossAxisCount: columns,
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
-            childAspectRatio: columns == 1 ? 0.94 : 0.76,
+            childAspectRatio: columns == 1 ? 0.80 : 0.76,
           ),
           itemCount: providers.length,
           itemBuilder: (context, index) {
