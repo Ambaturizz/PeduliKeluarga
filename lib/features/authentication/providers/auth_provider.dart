@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../state/providers/app_mode_provider.dart';
+import '../../caregiver_profile/providers/caregiver_profile_provider.dart';
+import '../../elder_profile/providers/elder_profile_provider.dart';
 
 final authControllerProvider =
     NotifierProvider<AuthController, AuthState>(AuthController.new);
@@ -17,6 +21,25 @@ class AuthUser {
   final AppUserMode mode;
 
   String get email => identifier;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'identifier': identifier,
+      'mode': mode.name,
+    };
+  }
+
+  factory AuthUser.fromJson(Map<String, dynamic> json) {
+    return AuthUser(
+      name: json['name'] as String? ?? '',
+      identifier: json['identifier'] as String? ?? '',
+      mode: AppUserMode.values.firstWhere(
+        (e) => e.name == json['mode'],
+        orElse: () => AppUserMode.caregiver,
+      ),
+    );
+  }
 }
 
 class AuthState {
@@ -56,9 +79,34 @@ class AuthState {
 }
 
 class AuthController extends Notifier<AuthState> {
+  static const _authKey = 'pedulikeluarga_auth_user';
+
   @override
   AuthState build() {
-    return const AuthState.unauthenticated();
+    _loadAuth();
+    // Return loading state initially while checking storage
+    return const AuthState(isAuthenticated: false, isLoading: true);
+  }
+
+  Future<void> _loadAuth() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      // Remove any previously saved auth to ensure the app always starts at login for the demo
+      await prefs.remove(_authKey);
+    } catch (_) {
+      // Ignore errors
+    }
+    state = const AuthState.unauthenticated();
+  }
+
+  Future<void> _saveAuth(AuthUser user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_authKey, jsonEncode(user.toJson()));
+  }
+
+  Future<void> _clearAuth() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_authKey);
   }
 
   /// Login masih mockup: form dapat dicoba, tetapi belum mengubah status auth.
@@ -79,17 +127,40 @@ class AuthController extends Notifier<AuthState> {
     state = state.copyWith(isLoading: true, clearError: true);
     await Future<void>.delayed(const Duration(milliseconds: 250));
 
-    if (cleanEmail == 'otw@puncak.com' && password == 'otwpuncak') {
+    if (cleanEmail == 'otw@puncak.com' && password == '12345678') {
       const mode = AppUserMode.caregiver;
+      
+      // Populate dummy data for Lansia and Anak
+      final elder = ref.read(elderProfileProvider);
+      if (elder.name.isEmpty) {
+        ref.read(elderProfileProvider.notifier).saveProfile(
+          elder.copyWith(name: 'Adyra', gender: 'Perempuan', age: '68 Tahun'),
+        );
+      }
+      
+      final caregiver = ref.read(caregiverProfileProvider);
+      if (caregiver.name.isEmpty) {
+        ref.read(caregiverProfileProvider.notifier).updateIdentity(
+          name: 'Rachel',
+          phoneNumber: '081234567890',
+          relationship: 'Anak',
+          address: 'Jakarta',
+        );
+      }
+
+      final authUser = AuthUser(
+        name: 'Rachel',
+        identifier: cleanEmail,
+        mode: mode,
+      );
+
+      await _saveAuth(authUser);
+
       ref.read(appModeControllerProvider.notifier).setMode(mode);
       state = AuthState(
         isAuthenticated: true,
         isLoading: false,
-        user: AuthUser(
-          name: 'Pengguna Dummy',
-          identifier: cleanEmail,
-          mode: mode,
-        ),
+        user: authUser,
       );
       return true;
     }
@@ -124,22 +195,27 @@ class AuthController extends Notifier<AuthState> {
     state = state.copyWith(isLoading: true, clearError: true);
     await Future<void>.delayed(const Duration(milliseconds: 250));
 
+    final authUser = AuthUser(
+      name: cleanName,
+      identifier: cleanEmail,
+      mode: mode,
+    );
+
+    await _saveAuth(authUser);
+
     ref.read(appModeControllerProvider.notifier).setMode(mode);
 
     state = AuthState(
       isAuthenticated: true,
       isLoading: false,
-      user: AuthUser(
-        name: cleanName,
-        identifier: cleanEmail,
-        mode: mode,
-      ),
+      user: authUser,
     );
 
     return true;
   }
 
   void logout() {
+    _clearAuth();
     state = const AuthState.unauthenticated();
   }
 

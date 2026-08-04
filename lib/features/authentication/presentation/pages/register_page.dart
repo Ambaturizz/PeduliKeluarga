@@ -179,6 +179,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   child: const Text('Sudah punya akun? Lihat halaman login mockup'),
                 ),
                 const TermsConditionsText(),
+                const SizedBox(height: 320),
               ],
             ),
           ),

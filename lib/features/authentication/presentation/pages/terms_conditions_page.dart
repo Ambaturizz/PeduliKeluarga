@@ -31,7 +31,7 @@ class TermsConditionsPage extends StatelessWidget {
                   'Syarat dan Ketentuan PeduliKeluarga',
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.w900,
-                    color: PkColors.text,
+                    
                     letterSpacing: -1,
                   ),
                 ),
@@ -39,7 +39,7 @@ class TermsConditionsPage extends StatelessWidget {
                 Text(
                   'Terakhir diperbarui: 28 Juli 2026\nBerlaku efektif: 28 Juli 2026',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: PkColors.text2,
+                    
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -47,7 +47,7 @@ class TermsConditionsPage extends StatelessWidget {
                 Text(
                   'Selamat datang di PeduliKeluarga. Syarat dan Ketentuan ini ("S&K") mengatur penggunaan aplikasi PeduliKeluarga ("Aplikasi", "kami") oleh Anda ("Pengguna"). Dengan mengakses, masuk, atau mendaftar pada Aplikasi, Anda menyatakan telah membaca, memahami, dan menyetujui untuk terikat pada S&K ini.',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: PkColors.text,
+                    
                     height: 1.6,
                   ),
                 ),
@@ -81,12 +81,12 @@ class TermsConditionsPage extends StatelessWidget {
                   '5. Fitur chat internal keluarga (FamilyChat)\n'
                   '6. Fitur logistik dan dukungan (PeduliAntar)\n\n'
                   'Kami berhak menambah, mengubah, atau menghentikan sebagian maupun seluruh fitur Layanan sewaktu-waktu dengan atau tanpa pemberitahuan sebelumnya, sepanjang diperlukan untuk pengembangan atau pemeliharaan Aplikasi.',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6),
+                  style: theme.textTheme.bodyMedium?.copyWith( height: 1.6),
                 ),
                 const SizedBox(height: PkSpacing.lg),
 
                 _SectionTitle(title: '5. Kewajiban dan Larangan Pengguna', theme: theme),
-                Text('Pengguna setuju untuk tidak:', style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6)),
+                Text('Pengguna setuju untuk tidak:', style: theme.textTheme.bodyMedium?.copyWith( height: 1.6)),
                 const SizedBox(height: 8),
                 _BulletText(text: 'Menggunakan Aplikasi untuk tujuan melanggar hukum atau merugikan pihak lain', theme: theme),
                 _BulletText(text: 'Mengunggah Konten yang mengandung unsur SARA, kekerasan, pornografi, ujaran kebencian, atau pelanggaran hukum lainnya', theme: theme),
@@ -98,7 +98,7 @@ class TermsConditionsPage extends StatelessWidget {
                 _SectionTitle(title: '6. Data Pribadi dan Privasi', theme: theme),
                 Text(
                   'Pengumpulan, penggunaan, dan pembagian data pribadi Pengguna diatur secara khusus dalam Kebijakan Privasi PeduliKeluarga, yang merupakan bagian tidak terpisahkan dari S&K ini.',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6),
+                  style: theme.textTheme.bodyMedium?.copyWith( height: 1.6),
                 ),
                 const SizedBox(height: PkSpacing.lg),
 
@@ -126,14 +126,14 @@ class TermsConditionsPage extends StatelessWidget {
                   '• Terdapat indikasi penyalahgunaan, penipuan, atau aktivitas mencurigakan lainnya\n'
                   '• Diwajibkan oleh ketentuan hukum yang berlaku\n\n'
                   'Pengguna juga dapat mengajukan penghapusan akun sewaktu-waktu melalui pengaturan profil atau menghubungi tim dukungan.',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6),
+                  style: theme.textTheme.bodyMedium?.copyWith( height: 1.6),
                 ),
                 const SizedBox(height: PkSpacing.lg),
 
                 _SectionTitle(title: '11. Perubahan Syarat dan Ketentuan', theme: theme),
                 Text(
                   'Kami dapat mengubah S&K ini dari waktu ke waktu. Perubahan akan diinformasikan melalui Aplikasi, dan perubahan tersebut berlaku efektif sejak tanggal yang tercantum pada versi terbaru. Penggunaan Aplikasi setelah perubahan berlaku dianggap sebagai persetujuan atas S&K yang telah diperbarui.',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6),
+                  style: theme.textTheme.bodyMedium?.copyWith( height: 1.6),
                 ),
                 const SizedBox(height: PkSpacing.lg),
 
@@ -152,7 +152,7 @@ class TermsConditionsPage extends StatelessWidget {
                   'Jika ada pertanyaan terkait S&K ini, silakan hubungi:\n'
                   '• Nama Entitas: Tim Pengembang PeduliKeluarga\n'
                   '• E-mail: support@pedulikeluarga.com',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6),
+                  style: theme.textTheme.bodyMedium?.copyWith( height: 1.6),
                 ),
                 const SizedBox(height: PkSpacing.xxl * 2),
                 Center(
@@ -190,7 +190,7 @@ class _SectionTitle extends StatelessWidget {
         title,
         style: theme.textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.w900,
-          color: PkColors.text,
+          
           letterSpacing: -0.5,
         ),
       ),
@@ -213,7 +213,7 @@ class _BulletText extends StatelessWidget {
           Text(
             '•  ',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: PkColors.text,
+              
               fontWeight: FontWeight.w900,
               height: 1.6,
             ),
@@ -222,7 +222,7 @@ class _BulletText extends StatelessWidget {
             child: Text(
               text,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: PkColors.text,
+                
                 height: 1.6,
               ),
             ),

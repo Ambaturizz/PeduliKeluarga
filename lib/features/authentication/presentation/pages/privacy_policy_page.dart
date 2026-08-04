@@ -31,7 +31,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                   'Kebijakan Privasi PeduliKeluarga',
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.w900,
-                    color: PkColors.text,
+                    
                     letterSpacing: -1,
                   ),
                 ),
@@ -39,7 +39,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 Text(
                   'Terakhir diperbarui: 28 Juli 2026\nBerlaku efektif: 28 Juli 2026',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: PkColors.text2,
+                    
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -47,7 +47,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 Text(
                   'Dokumen ini menjelaskan bagaimana PeduliKeluarga ("Aplikasi", "kami") mengumpulkan, menggunakan, menyimpan, dan melindungi data pribadi kamu ("Pengguna", "kamu") saat menggunakan layanan kami. Dengan menggunakan Aplikasi, kamu memberikan persetujuan atas praktik yang dijelaskan dalam Kebijakan Privasi ini.',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: PkColors.text,
+                    
                     height: 1.6,
                   ),
                 ),
@@ -68,7 +68,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 const SizedBox(height: PkSpacing.sm),
                 Text(
                   'Catatan: Kamu dapat mengatur atau menonaktifkan izin ini kapan saja melalui pengaturan perangkat, namun sebagian fitur mungkin tidak berfungsi optimal.',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text2, fontStyle: FontStyle.italic),
+                  style: theme.textTheme.bodyMedium?.copyWith( fontStyle: FontStyle.italic),
                 ),
                 const SizedBox(height: PkSpacing.md),
                 _Subtitle(title: '1.3 Data Teknis', theme: theme),
@@ -78,7 +78,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 const SizedBox(height: PkSpacing.lg),
 
                 _SectionTitle(title: '2. Tujuan Penggunaan Data', theme: theme),
-                Text('Kami menggunakan data yang dikumpulkan untuk:', style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6)),
+                Text('Kami menggunakan data yang dikumpulkan untuk:', style: theme.textTheme.bodyMedium?.copyWith( height: 1.6)),
                 const SizedBox(height: 8),
                 _BulletText(text: 'Menyediakan dan mengoperasikan fitur-fitur Aplikasi (pendataan, telekonsultasi, pengingat obat, dsb)', theme: theme),
                 _BulletText(text: 'Memverifikasi identitas dan keamanan akun', theme: theme),
@@ -94,7 +94,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                   'Data pribadi yang diperoleh hanya akan dibagikan dengan mitra pihak ketiga untuk kepentingan penyediaan layanan kami (misalnya: penyedia layanan cloud/hosting atau mitra fasilitas kesehatan terintegrasi).\n\n'
                   'Kami tidak menjual data pribadi kamu kepada pihak ketiga untuk kepentingan komersial di luar penyediaan layanan Aplikasi.\n\n'
                   'Kami dapat membagikan data apabila diwajibkan oleh hukum, perintah pengadilan, atau permintaan resmi dari otoritas yang berwenang.',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6),
+                  style: theme.textTheme.bodyMedium?.copyWith( height: 1.6),
                 ),
                 const SizedBox(height: PkSpacing.lg),
 
@@ -105,7 +105,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 const SizedBox(height: PkSpacing.lg),
 
                 _SectionTitle(title: '5. Hak Pengguna', theme: theme),
-                Text('Sesuai dengan peraturan yang berlaku, kamu berhak untuk:', style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6)),
+                Text('Sesuai dengan peraturan yang berlaku, kamu berhak untuk:', style: theme.textTheme.bodyMedium?.copyWith( height: 1.6)),
                 const SizedBox(height: 8),
                 _BulletText(text: 'Mengakses dan meminta salinan data pribadi', theme: theme),
                 _BulletText(text: 'Meminta koreksi atas data yang tidak akurat', theme: theme),
@@ -118,14 +118,14 @@ class PrivacyPolicyPage extends StatelessWidget {
                   'Karena Aplikasi memungkinkan pendaftaran data anggota keluarga, kami mengimbau agar:\n'
                   '• Pendaftaran data anak atau lansia dilakukan oleh orang tua/wali/keluarga yang sah\n'
                   '• Pendaftar bertanggung jawab penuh atas keakuratan dan persetujuan penggunaan data anggota keluarga tersebut',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6),
+                  style: theme.textTheme.bodyMedium?.copyWith( height: 1.6),
                 ),
                 const SizedBox(height: PkSpacing.lg),
 
                 _SectionTitle(title: '7. Perubahan Kebijakan Privasi', theme: theme),
                 Text(
                   'Kami dapat memperbarui Kebijakan Privasi ini dari waktu ke waktu. Perubahan material akan diinformasikan melalui Aplikasi atau kanal resmi lainnya sebelum berlaku efektif.',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6),
+                  style: theme.textTheme.bodyMedium?.copyWith( height: 1.6),
                 ),
                 const SizedBox(height: PkSpacing.lg),
 
@@ -134,7 +134,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                   'Jika kamu memiliki pertanyaan, keluhan, atau permintaan terkait data pribadi, silakan hubungi:\n'
                   '• Nama Entitas: Tim Pengembang PeduliKeluarga\n'
                   '• E-mail: privacy@pedulikeluarga.com',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: PkColors.text, height: 1.6),
+                  style: theme.textTheme.bodyMedium?.copyWith( height: 1.6),
                 ),
                 const SizedBox(height: PkSpacing.xxl * 2),
                 Center(
@@ -172,7 +172,7 @@ class _SectionTitle extends StatelessWidget {
         title,
         style: theme.textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.w900,
-          color: PkColors.text,
+          
           letterSpacing: -0.5,
         ),
       ),
@@ -193,7 +193,7 @@ class _Subtitle extends StatelessWidget {
         title,
         style: theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w700,
-          color: PkColors.text,
+          
         ),
       ),
     );
@@ -215,7 +215,7 @@ class _BulletText extends StatelessWidget {
           Text(
             '•  ',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: PkColors.text,
+              
               fontWeight: FontWeight.w900,
               height: 1.6,
             ),
@@ -224,7 +224,7 @@ class _BulletText extends StatelessWidget {
             child: Text(
               text,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: PkColors.text,
+                
                 height: 1.6,
               ),
             ),

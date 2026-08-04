@@ -149,6 +149,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   label: const Text('Daftar akun baru'),
                 ),
                 const TermsConditionsText(),
+                const SizedBox(height: 320),
               ],
             ),
           ),
@@ -203,7 +204,7 @@ class _MockInfoBanner extends StatelessWidget {
           const SizedBox(width: PkSpacing.sm),
           Expanded(
             child: Text(
-              'Email: otw@puncak.com Password: otwpuncak',
+              'Email: otw@puncak.com Password: 12345678',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: PkColors.amber,
                     fontWeight: FontWeight.w800,
