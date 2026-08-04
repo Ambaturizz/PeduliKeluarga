@@ -3,15 +3,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../elder_profile/domain/elder_profile.dart';
 import '../../elder_profile/providers/elder_profile_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
+import '../data/caregiver_profile_repository.dart';
 import '../domain/caregiver_profile.dart';
+
+final caregiverProfileRepositoryProvider = Provider<CaregiverProfileRepository>((ref) {
+  return CaregiverProfileRepository();
+});
 
 final caregiverProfileProvider = NotifierProvider<CaregiverProfileController, CaregiverProfile>(
   CaregiverProfileController.new,
 );
 
 class CaregiverProfileController extends Notifier<CaregiverProfile> {
+  late final CaregiverProfileRepository _repository;
+
   @override
-  CaregiverProfile build() => CaregiverProfile.empty();
+  CaregiverProfile build() {
+    _repository = ref.read(caregiverProfileRepositoryProvider);
+    return _repository.loadProfile();
+  }
 
   void saveFromOnboarding(OnboardingState onboarding) {
     final next = state.copyWith(
@@ -21,6 +31,7 @@ class CaregiverProfileController extends Notifier<CaregiverProfile> {
       address: onboarding.address.trim(),
       elderName: onboarding.elderName.trim(),
     );
+    _repository.saveProfile(next);
     state = next;
 
     if (onboarding.familyCode.trim().isNotEmpty) {
@@ -43,6 +54,7 @@ class CaregiverProfileController extends Notifier<CaregiverProfile> {
       connectedAt: connectedAt,
       elderName: state.elderName.trim().isEmpty ? elder.displayName : state.elderName.trim(),
     );
+    _repository.saveProfile(next);
     state = next;
 
     ref.read(elderProfileProvider.notifier).addCaregiver(
@@ -65,13 +77,15 @@ class CaregiverProfileController extends Notifier<CaregiverProfile> {
     required String childAddress,
     required String elderName,
   }) {
-    state = state.copyWith(
+    final next = state.copyWith(
       name: childName.trim(),
       phoneNumber: childPhoneNumber.trim(),
       relationship: relationship.trim(),
       address: childAddress.trim(),
       elderName: elderName.trim(),
     );
+    _repository.saveProfile(next);
+    state = next;
   }
 
   void updateIdentity({
@@ -81,13 +95,15 @@ class CaregiverProfileController extends Notifier<CaregiverProfile> {
     required String address,
     String? elderName,
   }) {
-    state = state.copyWith(
+    final next = state.copyWith(
       name: name.trim(),
       phoneNumber: phoneNumber.trim(),
       relationship: relationship.trim(),
       address: address.trim(),
       elderName: elderName?.trim(),
     );
+    _repository.saveProfile(next);
+    state = next;
   }
 
   void updateElderName(String value) {

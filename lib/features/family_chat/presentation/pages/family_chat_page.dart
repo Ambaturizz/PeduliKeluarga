@@ -56,6 +56,11 @@ class _FamilyChatPageState extends ConsumerState<FamilyChatPage> {
                   child: _ChatHeader(
                     contactName: contactName,
                     isElder: isElder,
+                    onClearChat: () {
+                      setState(() {
+                        _messages.clear();
+                      });
+                    },
                   ),
                 ),
               ),
@@ -64,24 +69,26 @@ class _FamilyChatPageState extends ConsumerState<FamilyChatPage> {
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 920),
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    reverse: true,
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 18),
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final message = _messages[_messages.length - index - 1];
-                      final isMine = isElder
-                          ? message.sentByMeInElderMode
-                          : !message.sentByMeInElderMode;
+                  child: _messages.isEmpty
+                      ? _EmptyChatState(contactName: contactName)
+                      : ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          reverse: true,
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 18),
+                          itemCount: _messages.length,
+                          itemBuilder: (context, index) {
+                            final message = _messages[_messages.length - index - 1];
+                            final isMine = isElder
+                                ? message.sentByMeInElderMode
+                                : !message.sentByMeInElderMode;
 
-                      return _ChatBubble(
-                        message: message,
-                        isMine: isMine,
-                        senderLabel: isMine ? 'Saya' : contactName,
-                      );
-                    },
-                  ),
+                            return _ChatBubble(
+                              message: message,
+                              isMine: isMine,
+                              senderLabel: isMine ? 'Saya' : contactName,
+                            );
+                          },
+                        ),
                 ),
               ),
             ),
@@ -109,6 +116,7 @@ class _FamilyChatPageState extends ConsumerState<FamilyChatPage> {
           text: text,
           time: time,
           sentByMeInElderMode: isElder,
+          status: MessageStatus.sent,
         ),
       );
       _messageController.clear();
@@ -118,40 +126,75 @@ class _FamilyChatPageState extends ConsumerState<FamilyChatPage> {
       if (!mounted) return;
 
       setState(() {
-        _messages.add(
-          _FamilyChatMessage(
-            text: isElder
-                ? 'Pesan diterima keluarga. Tetap kabari kalau ada keluhan ya.'
-                : 'Pesan diterima lansia. Ini mockup chat keluarga internal.',
-            time: time,
-            sentByMeInElderMode: !isElder,
-          ),
-        );
+        if (_messages.isNotEmpty) {
+           final last = _messages.last;
+           _messages[_messages.length - 1] = last.copyWith(status: MessageStatus.delivered);
+        }
+      });
+
+      Future<void>.delayed(const Duration(milliseconds: 800), () {
+        if (!mounted) return;
+
+        setState(() {
+          if (_messages.isNotEmpty) {
+             final last = _messages.last;
+             _messages[_messages.length - 1] = last.copyWith(status: MessageStatus.read);
+          }
+          _messages.add(
+            _FamilyChatMessage(
+              text: isElder
+                  ? 'Pesan diterima keluarga. Tetap kabari kalau ada keluhan ya.'
+                  : 'Pesan diterima lansia. Ini mockup chat keluarga internal.',
+              time: time,
+              sentByMeInElderMode: !isElder,
+            ),
+          );
+        });
       });
     });
   }
 }
+
+enum MessageStatus { sent, delivered, read }
 
 class _FamilyChatMessage {
   const _FamilyChatMessage({
     required this.text,
     required this.time,
     required this.sentByMeInElderMode,
+    this.status = MessageStatus.read,
   });
 
   final String text;
   final String time;
   final bool sentByMeInElderMode;
+  final MessageStatus status;
+
+  _FamilyChatMessage copyWith({
+    String? text,
+    String? time,
+    bool? sentByMeInElderMode,
+    MessageStatus? status,
+  }) {
+    return _FamilyChatMessage(
+      text: text ?? this.text,
+      time: time ?? this.time,
+      sentByMeInElderMode: sentByMeInElderMode ?? this.sentByMeInElderMode,
+      status: status ?? this.status,
+    );
+  }
 }
 
 class _ChatHeader extends StatelessWidget {
   const _ChatHeader({
     required this.contactName,
     required this.isElder,
+    required this.onClearChat,
   });
 
   final String contactName;
   final bool isElder;
+  final VoidCallback onClearChat;
 
   @override
   Widget build(BuildContext context) {
@@ -159,40 +202,46 @@ class _ChatHeader extends StatelessWidget {
       tint: PkColors.brandSoft,
       borderColor: PkColors.brand.withValues(alpha: 0.16),
       padding: const EdgeInsets.all(16),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          PkIconBox(
-            icon: isElder ? Icons.groups_outlined : Icons.elderly_rounded,
-            tone: isElder ? PkTone.blue : PkTone.brand,
-            size: 48,
-          ),
-          const SizedBox(width: PkSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+          Row(
+            children: [
+              Image.asset(
+                'assets/icons/pedulichat.webp',
+                width: 32,
+                height: 32,
+              ),
+              const SizedBox(width: PkSpacing.md),
+              Expanded(
+                child: Text(
                   'PeduliChat Keluarga',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: PkColors.text,
                         fontWeight: FontWeight.w900,
                       ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Chat langsung dengan $contactName. Fitur ini berbeda dari PeduliKonsul yang digunakan untuk konsultasi tenaga kesehatan.',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: PkColors.text2,
-                        height: 1.45,
-                      ),
-                ),
-              ],
-            ),
+              ),
+              const PkBadge(
+                label: 'Mock chat',
+                tone: PkTone.brand,
+                icon: Icons.chat_bubble_outline_rounded,
+              ),
+              const SizedBox(width: PkSpacing.sm),
+              IconButton(
+                icon: const Icon(Icons.delete_outline_rounded, color: PkColors.red),
+                tooltip: 'Hapus Chat',
+                onPressed: onClearChat,
+              ),
+            ],
           ),
-          const PkBadge(
-            label: 'Mock chat',
-            tone: PkTone.brand,
-            icon: Icons.chat_bubble_outline_rounded,
+          const SizedBox(height: PkSpacing.sm),
+          Text(
+            'Chat langsung dengan $contactName. Fitur ini berbeda dari PeduliKonsul yang digunakan untuk konsultasi tenaga kesehatan.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: PkColors.text2,
+                  height: 1.45,
+                ),
           ),
         ],
       ),
@@ -253,16 +302,73 @@ class _ChatBubble extends StatelessWidget {
             const SizedBox(height: 6),
             Align(
               alignment: Alignment.centerRight,
-              child: Text(
-                message.time,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: isMine ? Colors.white70 : PkColors.muted,
-                      fontWeight: FontWeight.w800,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    message.time,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: isMine ? Colors.white70 : PkColors.muted,
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                  if (isMine) ...[
+                    const SizedBox(width: 4),
+                    Icon(
+                      message.status == MessageStatus.read
+                          ? Icons.done_all_rounded
+                          : message.status == MessageStatus.delivered
+                              ? Icons.done_all_rounded
+                              : Icons.check_rounded,
+                      size: 14,
+                      color: message.status == MessageStatus.read
+                          ? Colors.blue.shade200
+                          : Colors.white70,
                     ),
+                  ],
+                ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _EmptyChatState extends StatelessWidget {
+  const _EmptyChatState({required this.contactName});
+  
+  final String contactName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.mark_chat_unread_rounded,
+            size: 64,
+            color: PkColors.brand.withValues(alpha: 0.2),
+          ),
+          const SizedBox(height: PkSpacing.md),
+          Text(
+            'Belum ada percakapan',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: PkColors.text,
+                ),
+          ),
+          const SizedBox(height: PkSpacing.xs),
+          Text(
+            'Mulai sapa $contactName sekarang.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: PkColors.text2,
+                ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

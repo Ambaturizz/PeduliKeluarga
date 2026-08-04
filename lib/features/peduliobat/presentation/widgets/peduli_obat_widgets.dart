@@ -43,7 +43,6 @@ class MedicationPageHero extends StatelessWidget {
                 children: [
                   _HeroBadge(
                     label: 'PeduliObat',
-                    icon: Icons.medication_outlined,
                   ),
                   const SizedBox(height: 18),
                   Text(
@@ -139,11 +138,9 @@ class MedicationPageHero extends StatelessWidget {
 class _HeroBadge extends StatelessWidget {
   const _HeroBadge({
     required this.label,
-    required this.icon,
   });
 
   final String label;
-  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +154,11 @@ class _HeroBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white, size: 16),
+          Image.asset(
+            'assets/icons/peduliobat.webp',
+            width: 17,
+            height: 17,
+          ),
           const SizedBox(width: 8),
           Text(
             label,
@@ -228,7 +229,7 @@ class _HeroPanel extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                childAspectRatio: narrow ? 4.6 : 1.08,
+                childAspectRatio: narrow ? 2.8 : 1.08,
                 children: [
                   _HeroStatTile(
                     value: '${state.adherencePercent}%',

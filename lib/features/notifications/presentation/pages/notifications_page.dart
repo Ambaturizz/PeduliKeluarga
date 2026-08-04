@@ -60,13 +60,50 @@ class NotificationsPage extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: PkColors.text2),
                   ),
                   const SizedBox(height: PkSpacing.xl),
-                  for (final item in items) ...[
-                    _NotificationCard(
-                      item: item,
-                      onTap: () => context.go(item.routePath),
-                    ),
-                    const SizedBox(height: PkSpacing.md),
-                  ],
+                  if (items.isEmpty)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 60),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.notifications_off_outlined,
+                              size: 56,
+                              color: PkColors.muted,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Tidak ada notifikasi',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    color: PkColors.text,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Semua notifikasi penting akan muncul di sini.',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: PkColors.text2),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    for (final item in items) ...[
+                      _NotificationCard(
+                        item: item,
+                        onTap: () => context.go(item.routePath),
+                      ),
+                      const SizedBox(height: PkSpacing.md),
+                    ],
                 ],
               ),
             ),

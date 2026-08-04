@@ -91,10 +91,23 @@ class _PantauHero extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const PkBadge(
-            label: 'PeduliPantau',
-            tone: PkTone.brand,
-            icon: Icons.videocam_outlined,
+          Row(
+            children: [
+              Image.asset(
+                'assets/icons/pedulipantau.webp',
+                width: 32,
+                height: 32,
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                'PeduliPantau',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 20,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 14),
           Text(
@@ -236,8 +249,6 @@ class _CctvMockFrameState extends State<_CctvMockFrame>
         child: LayoutBuilder(
           builder: (context, constraints) {
             final compact = constraints.maxWidth < 420;
-            final centerSize = compact ? 58.0 : 86.0;
-            final iconSize = compact ? 28.0 : 42.0;
 
             return Stack(
               children: [
@@ -551,24 +562,3 @@ class _CameraGrid extends StatelessWidget {
   }
 }
 
-class _CctvGridPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.05)
-      ..strokeWidth = 1;
-
-    const gap = 46.0;
-
-    for (double x = 0; x <= size.width; x += gap) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
-
-    for (double y = 0; y <= size.height; y += gap) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}

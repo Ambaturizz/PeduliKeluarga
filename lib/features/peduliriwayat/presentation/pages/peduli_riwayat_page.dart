@@ -22,6 +22,23 @@ class PeduliRiwayatPage extends StatefulWidget {
 
 class _PeduliRiwayatPageState extends State<PeduliRiwayatPage> {
   int _selectedRange = 7;
+  bool _isLoading = true;
+  bool _isEmpty = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _simulateLoading();
+  }
+
+  void _simulateLoading() {
+    setState(() => _isLoading = true);
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,27 +56,60 @@ class _PeduliRiwayatPageState extends State<PeduliRiwayatPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _RiwayatHero(selectedRange: _selectedRange, onRangeChanged: (range) => setState(() => _selectedRange = range)),
-                const PkSectionTitle(
-                  title: 'Ringkasan Kesehatan',
-                  subtitle: 'Ringkasan kondisi terbaru',
+                _RiwayatHero(
+                  selectedRange: _selectedRange,
+                  onRangeChanged: (range) {
+                    setState(() => _selectedRange = range);
+                    _simulateLoading();
+                  },
+                  isEmpty: _isEmpty,
+                  onToggleEmpty: () {
+                    setState(() => _isEmpty = !_isEmpty);
+                  },
                 ),
-                _SummaryGrid(metrics: healthSummaryMetrics),
-                const PkSectionTitle(
-                  title: 'Grafik Kesehatan',
-                  subtitle: 'Tekanan darah dan gula darah',
-                ),
-                _ChartsGrid(labels: labels),
-                const PkSectionTitle(
-                  title: 'Analisis dan Ringkasan',
-                  subtitle: 'Analisis dan simpan PDF',
-                ),
-                _InsightExportGrid(),
-                const PkSectionTitle(
-                  title: 'Catatan Kesehatan',
-                  subtitle: 'Linimasa dan catatan kesehatan',
-                ),
-                _HistoryTimelineAndLogs(),
+                if (_isLoading)
+                  const Padding(
+                    padding: EdgeInsets.only(top: PkSpacing.xl),
+                    child: AppLoadingState(message: 'Memuat riwayat kesehatan...'),
+                  )
+                else if (_isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: PkSpacing.xl),
+                    child: AppEmptyState(
+                      title: 'Belum Ada Riwayat',
+                      message: 'Lansia belum melakukan pengisian PeduliCek. Data akan muncul di sini setelah diisi.',
+                      icon: Icons.history_rounded,
+                      action: FilledButton.tonalIcon(
+                        onPressed: () {
+                          setState(() => _isEmpty = false);
+                        },
+                        icon: const Icon(Icons.refresh_rounded),
+                        label: const Text('Muat Ulang'),
+                      ),
+                    ),
+                  )
+                else ...[
+                  const PkSectionTitle(
+                    title: 'Ringkasan Kesehatan',
+                    subtitle: 'Ringkasan kondisi terbaru',
+                  ),
+                  _SummaryGrid(metrics: healthSummaryMetrics),
+                  const PkSectionTitle(
+                    title: 'Grafik Kesehatan',
+                    subtitle: 'Tekanan darah dan gula darah',
+                  ),
+                  _ChartsGrid(labels: labels),
+                  const PkSectionTitle(
+                    title: 'Analisis dan Ringkasan',
+                    subtitle: 'Analisis dan simpan PDF',
+                  ),
+                  _InsightExportGrid(),
+                  const PkSectionTitle(
+                    title: 'Catatan Kesehatan',
+                    subtitle: 'Linimasa dan catatan kesehatan',
+                  ),
+                  _HistoryTimelineAndLogs(),
+                ],
               ],
             ),
           ),
@@ -70,10 +120,17 @@ class _PeduliRiwayatPageState extends State<PeduliRiwayatPage> {
 }
 
 class _RiwayatHero extends StatelessWidget {
-  const _RiwayatHero({required this.selectedRange, required this.onRangeChanged});
+  const _RiwayatHero({
+    required this.selectedRange,
+    required this.onRangeChanged,
+    required this.isEmpty,
+    required this.onToggleEmpty,
+  });
 
   final int selectedRange;
   final ValueChanged<int> onRangeChanged;
+  final bool isEmpty;
+  final VoidCallback onToggleEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -106,12 +163,16 @@ class _RiwayatHero extends StatelessWidget {
                   borderRadius: PkRadius.pillRadius,
                   border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.assignment_outlined, color: Colors.white, size: 17),
-                    SizedBox(width: 8),
-                    Text(
+                    Image.asset(
+                      'assets/icons/peduliriwayat.webp',
+                      width: 17,
+                      height: 17,
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
                       'PEDULIRIWAYAT',
                       style: TextStyle(
                         color: Colors.white,
@@ -161,6 +222,15 @@ class _RiwayatHero extends StatelessWidget {
                       ),
                     )
                     .toList(),
+              ),
+              const SizedBox(height: 24),
+              GestureDetector(
+                onTap: onToggleEmpty,
+                child: PkBadge(
+                  label: isEmpty ? 'Tampilkan Data' : 'Kosongkan Data',
+                  tone: isEmpty ? PkTone.brand : PkTone.red,
+                  icon: isEmpty ? Icons.visibility_rounded : Icons.delete_outline_rounded,
+                ),
               ),
             ],
           );
@@ -312,7 +382,7 @@ class _SummaryGrid extends StatelessWidget {
             crossAxisCount: columns,
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
-            mainAxisExtent: 260,
+            mainAxisExtent: 286,
           ),
           itemCount: metrics.length,
           itemBuilder: (context, index) => AppAnimatedEntrance(

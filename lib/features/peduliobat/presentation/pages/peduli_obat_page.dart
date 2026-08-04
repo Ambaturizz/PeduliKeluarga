@@ -114,22 +114,25 @@ class PeduliObatPage extends ConsumerWidget {
                           MedicationReorderCta(
                             lowStockItems: state.lowStockMedications,
                             onReorderAll: () {
-                              final items = List<MedicationModel>.from(
-                                state.lowStockMedications,
-                              );
-
-                              for (final item in items) {
-                                ref.read(peduliAntarProvider.notifier).createRequest(item);
-                                notifier.requestMedicationPurchase(item.id);
-                              }
-
-                              context.go(AppRoutes.peduliAntarPath);
-                              final mode = ref.read(appModeControllerProvider);
-                              _showMessage(
+                              _showReorderConfirmDialog(
                                 context,
-                                mode == AppUserMode.caregiver
-                                    ? 'Draft pesanan dibuat. Periksa detail lalu tekan Konfirmasi Pesanan.'
-                                    : 'Permintaan pembelian obat sudah dikirim ke keluarga. Tunggu konfirmasi dari anak atau pendamping.',
+                                'semua obat yang habis',
+                                () {
+                                  final items = List<MedicationModel>.from(state.lowStockMedications);
+                                  for (final item in items) {
+                                    ref.read(peduliAntarProvider.notifier).createRequest(item);
+                                    notifier.requestMedicationPurchase(item.id);
+                                  }
+
+                                  context.go(AppRoutes.peduliAntarPath);
+                                  final mode = ref.read(appModeControllerProvider);
+                                  _showMessage(
+                                    context,
+                                    mode == AppUserMode.caregiver
+                                        ? 'Draft pesanan dibuat. Periksa detail lalu tekan Konfirmasi Pesanan.'
+                                        : 'Permintaan pembelian obat dikirim ke keluarga.',
+                                  );
+                                },
                               );
                             },
                           ),
@@ -176,16 +179,47 @@ class PeduliObatPage extends ConsumerWidget {
     required PeduliObatController notifier,
     required MedicationModel medication,
   }) {
-    ref.read(peduliAntarProvider.notifier).createRequest(medication);
-    notifier.requestMedicationPurchase(medication.id);
-
-    context.go(AppRoutes.peduliAntarPath);
-    final mode = ref.read(appModeControllerProvider);
-    _showMessage(
+    _showReorderConfirmDialog(
       context,
-      mode == AppUserMode.caregiver
-          ? 'Draft pesanan dibuat. Periksa detail lalu tekan Konfirmasi Pesanan.'
-          : 'Permintaan pembelian obat sudah dikirim ke keluarga. Tunggu konfirmasi dari anak atau pendamping.',
+      medication.name,
+      () {
+        ref.read(peduliAntarProvider.notifier).createRequest(medication);
+        notifier.requestMedicationPurchase(medication.id);
+
+        context.go(AppRoutes.peduliAntarPath);
+        final mode = ref.read(appModeControllerProvider);
+        _showMessage(
+          context,
+          mode == AppUserMode.caregiver
+              ? 'Draft pesanan dibuat. Periksa detail lalu tekan Konfirmasi Pesanan.'
+              : 'Permintaan pembelian obat dikirim ke keluarga.',
+        );
+      },
+    );
+  }
+
+  void _showReorderConfirmDialog(BuildContext context, String itemName, VoidCallback onConfirm) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Konfirmasi Pembelian'),
+          content: Text('Lanjutkan pembelian atau permintaan ulang untuk $itemName via PeduliAntar?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Batal'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(context);
+                onConfirm();
+              },
+              child: const Text('Lanjutkan'),
+            ),
+          ],
+        );
+      },
     );
   }
 

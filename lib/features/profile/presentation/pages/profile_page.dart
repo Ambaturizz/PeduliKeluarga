@@ -74,6 +74,7 @@ class ProfilePage extends ConsumerWidget {
           const SizedBox(height: PkSpacing.lg),
           _LinkedElderCard(profile: profile, caregiver: caregiver),
           const SizedBox(height: PkSpacing.lg),
+          const SizedBox(height: PkSpacing.lg),
           _ProfileCompleteRecordCard(
             profile: profile,
             caregiver: caregiver,
@@ -81,6 +82,8 @@ class ProfilePage extends ConsumerWidget {
             cekState: cekState,
             mode: mode,
           ),
+          const SizedBox(height: PkSpacing.lg),
+          const _LegalAndPrivacyCard(),
         ],
       );
     }
@@ -108,6 +111,8 @@ class ProfilePage extends ConsumerWidget {
           cekState: cekState,
           mode: mode,
         ),
+        const SizedBox(height: PkSpacing.lg),
+        const _LegalAndPrivacyCard(),
       ],
     );
   }
@@ -405,7 +410,10 @@ class _FamilyProfileFormCardState extends ConsumerState<_FamilyProfileFormCard> 
                 child: FilledButton.icon(
                   onPressed: _save,
                   icon: const Icon(Icons.save_outlined),
-                  label: const Text('Simpan Profil Keluarga'),
+                  label: const Text('Simpan dan Lanjutkan'),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
                 ),
               ),
             ],
@@ -498,17 +506,49 @@ class _ProfileTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      textInputAction: maxLines == 1 ? TextInputAction.next : TextInputAction.newline,
-      minLines: minLines,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        prefixIcon: Icon(icon),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF424242), // Dark gray
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          textInputAction: maxLines == 1 ? TextInputAction.next : TextInputAction.newline,
+          minLines: minLines,
+          maxLines: maxLines,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+          ),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 15), // distinct light gray
+            prefixIcon: Icon(icon, color: const Color(0xFF455A64), size: 22), // dark blue/gray
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF37474F), width: 1.5), // dark charcoal
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF263238), width: 2.0),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -1126,6 +1166,63 @@ class _CaregiverListCard extends StatelessWidget {
                 title: Text(caregiver.displayName),
                 subtitle: Text('${caregiver.displayRelationship} · ${caregiver.displayPhone}'),
               ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LegalAndPrivacyCard extends StatelessWidget {
+  const _LegalAndPrivacyCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return PkCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              PkIconBox(icon: Icons.gavel_rounded, tone: PkTone.blue),
+              SizedBox(width: PkSpacing.md),
+              Expanded(
+                child: Text(
+                  'Legal & Kebijakan Privasi',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18,
+                    color: PkColors.text,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: PkSpacing.md),
+          Text(
+            'Informasi hukum, syarat penggunaan, dan kebijakan perlindungan data pribadi Anda.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: PkColors.text2,
+                  height: 1.45,
+                ),
+          ),
+          const SizedBox(height: PkSpacing.md),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.description_outlined, color: PkColors.brand),
+            title: const Text('Syarat dan Ketentuan', style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: const Text('Aturan penggunaan layanan PeduliKeluarga'),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(AppRoute.termsConditions.path),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.privacy_tip_outlined, color: PkColors.blue),
+            title: const Text('Kebijakan Privasi', style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: const Text('Perlindungan dan tata kelola data pengguna'),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push(AppRoute.privacyPolicy.path),
+          ),
         ],
       ),
     );

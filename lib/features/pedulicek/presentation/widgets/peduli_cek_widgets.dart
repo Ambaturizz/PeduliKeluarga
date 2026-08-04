@@ -28,10 +28,32 @@ class CekPageHeader extends StatelessWidget {
           final copy = Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PkBadge(
-                label: 'PeduliCek harian',
-                tone: PkTone.brand,
-                icon: Icons.medical_services_outlined,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: PkColors.brand.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/icons/pedulicek.webp',
+                      width: 17,
+                      height: 17,
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'PEDULICEK HARIAN',
+                      style: TextStyle(
+                        color: PkColors.brand,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.1,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 14),
               Text(

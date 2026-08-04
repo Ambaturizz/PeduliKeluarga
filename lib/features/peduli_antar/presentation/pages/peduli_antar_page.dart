@@ -25,7 +25,7 @@ class PeduliAntarPage extends ConsumerWidget {
       subtitle: isCaregiver
           ? 'Periksa dan konfirmasi pembelian obat untuk orang tua.'
           : 'Permintaan pembelian obat akan dikonfirmasi keluarga terlebih dahulu.',
-      icon: Icons.local_shipping_outlined,
+      imageAssetIcon: 'assets/icons/peduliantar.webp',
       children: [
         _PeduliAntarMapCard(
           address: elder.displayAddress,
@@ -206,7 +206,7 @@ class _PeduliAntarMapCardState extends ConsumerState<_PeduliAntarMapCard> {
                           Marker(
                             point: _dummyDestination,
                             width: 166,
-                            height: 58,
+                            height: 68,
                             child: _MapMarkerBubble(
                               label: 'Contoh tujuan',
                               icon: Icons.local_pharmacy_outlined,
@@ -217,7 +217,7 @@ class _PeduliAntarMapCardState extends ConsumerState<_PeduliAntarMapCard> {
                             Marker(
                               point: userPosition,
                               width: 150,
-                              height: 58,
+                              height: 68,
                               child: const _MapMarkerBubble(
                                 label: 'Lokasi saya',
                                 icon: Icons.my_location_rounded,
@@ -330,7 +330,10 @@ class _MapHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const PkIconBox(icon: Icons.map_outlined, tone: PkTone.blue),
+        const PkIconBox(
+          icon: Icons.map_outlined,
+          tone: PkTone.blue,
+        ),
         const SizedBox(width: PkSpacing.md),
         Expanded(
           child: Column(

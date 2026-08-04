@@ -58,11 +58,16 @@ class _PeduliKonsulPageState extends ConsumerState<PeduliKonsulPage> {
                 Expanded(
                   child: PkCard(
                     padding: const EdgeInsets.all(PkSpacing.lg),
-                    child: ListView.separated(
-                      itemCount: state.messages.length,
-                      separatorBuilder: (context, index) => const SizedBox(height: PkSpacing.md),
+                    child: ListView.builder(
+                      itemCount: state.messages.length + (state.isTyping ? 1 : 0),
                       itemBuilder: (context, index) {
-                        return _MessageBubble(message: state.messages[index]);
+                        if (index == state.messages.length && state.isTyping) {
+                          return _TypingBubble();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: PkSpacing.md),
+                          child: _MessageBubble(message: state.messages[index]),
+                        );
                       },
                     ),
                   ),
@@ -93,19 +98,34 @@ class _PeduliKonsulPageState extends ConsumerState<PeduliKonsulPage> {
                         controller: _controller,
                         minLines: 1,
                         maxLines: 3,
+                        enabled: !state.isTyping,
                         style: Theme.of(context).textTheme.bodyLarge,
-                        decoration: const InputDecoration(
-                          hintText: 'Tulis keluhan singkat...',
-                          prefixIcon: Icon(Icons.chat_bubble_outline_rounded),
+                        decoration: InputDecoration(
+                          hintText: state.isTyping
+                              ? 'Dokter sedang membalas...'
+                              : 'Tulis keluhan singkat...',
+                          prefixIcon: const Icon(Icons.chat_bubble_outline_rounded),
                         ),
                         onSubmitted: (_) => _send(),
                       ),
                     ),
                     const SizedBox(width: PkSpacing.sm),
-                    FilledButton.icon(
-                      onPressed: _send,
-                      icon: const Icon(Icons.send_rounded),
-                      label: const Text('Kirim'),
+                    FilledButton(
+                      onPressed: state.isTyping ? null : _send,
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.all(14),
+                        minimumSize: const Size(52, 52),
+                      ),
+                      child: state.isTyping
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.send_rounded),
                     ),
                   ],
                 ),
@@ -132,7 +152,11 @@ class _Header extends StatelessWidget {
         children: [
           Row(
             children: [
-              const PkIconBox(icon: Icons.chat_bubble_outline_rounded, tone: PkTone.brand),
+              Image.asset(
+                'assets/icons/pedulikonsul.webp',
+                width: 44,
+                height: 44,
+              ),
               const SizedBox(width: PkSpacing.md),
               Expanded(
                 child: Text(
@@ -143,12 +167,10 @@ class _Header extends StatelessWidget {
                       ),
                 ),
               ),
-              Flexible(
-                child: OutlinedButton.icon(
-                  onPressed: onAhliPeduli,
-                  icon: const Icon(Icons.health_and_safety_outlined),
-                  label: const Text('AhliPeduli'),
-                ),
+              OutlinedButton.icon(
+                onPressed: onAhliPeduli,
+                icon: const Icon(Icons.health_and_safety_outlined),
+                label: const Text('AhliPeduli'),
               ),
             ],
           ),
@@ -189,6 +211,44 @@ class _MessageBubble extends StatelessWidget {
                 color: message.isUser ? Colors.white : PkColors.text,
                 height: 1.55,
               ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TypingBubble extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: PkSpacing.md),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: PkColors.surfaceSoft,
+            borderRadius: PkRadius.mdRadius,
+            border: Border.all(color: PkColors.line),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Dokter sedang mengetik',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: PkColors.text2,
+                      fontStyle: FontStyle.italic,
+                    ),
+              ),
+              const SizedBox(width: 8),
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ],
+          ),
         ),
       ),
     );

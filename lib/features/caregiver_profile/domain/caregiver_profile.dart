@@ -77,6 +77,34 @@ class CaregiverProfile {
       connectedAt: clearConnectedAt ? null : connectedAt ?? this.connectedAt,
     );
   }
+
+  Map<String, Object?> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'phoneNumber': phoneNumber,
+      'relationship': relationship,
+      'address': address,
+      'elderName': elderName,
+      'linkedElderId': linkedElderId,
+      'usedConnectionCode': usedConnectionCode,
+      'connectedAt': connectedAt?.toIso8601String(),
+    };
+  }
+
+  factory CaregiverProfile.fromJson(Map<String, Object?> json) {
+    return CaregiverProfile(
+      id: json['id'] as String? ?? 'caregiver-${DateTime.now().millisecondsSinceEpoch}',
+      name: json['name'] as String? ?? '',
+      phoneNumber: json['phoneNumber'] as String? ?? '',
+      relationship: json['relationship'] as String? ?? '',
+      address: json['address'] as String? ?? '',
+      elderName: json['elderName'] as String? ?? '',
+      linkedElderId: json['linkedElderId'] as String? ?? '',
+      usedConnectionCode: json['usedConnectionCode'] as String? ?? '',
+      connectedAt: json['connectedAt'] != null ? DateTime.tryParse(json['connectedAt'] as String) : null,
+    );
+  }
 }
 
 class ConnectionPayloadParser {

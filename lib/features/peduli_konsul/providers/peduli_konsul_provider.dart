@@ -22,18 +22,22 @@ class PeduliKonsulState {
   const PeduliKonsulState({
     required this.messages,
     this.showAhliPeduliCta = false,
+    this.isTyping = false,
   });
 
   final List<KonsulMessage> messages;
   final bool showAhliPeduliCta;
+  final bool isTyping;
 
   PeduliKonsulState copyWith({
     List<KonsulMessage>? messages,
     bool? showAhliPeduliCta,
+    bool? isTyping,
   }) {
     return PeduliKonsulState(
       messages: messages ?? this.messages,
       showAhliPeduliCta: showAhliPeduliCta ?? this.showAhliPeduliCta,
+      isTyping: isTyping ?? this.isTyping,
     );
   }
 }
@@ -57,19 +61,16 @@ class PeduliKonsulController extends Notifier<PeduliKonsulState> {
     );
   }
 
-  void send(String text) {
+  Future<void> send(String text) async {
     final clean = text.trim();
-    if (clean.isEmpty) return;
+    if (clean.isEmpty || state.isTyping) return;
 
     final now = DateTime.now();
     final needsDoctor = _needsDoctorFollowUp(clean);
 
-    final reply = needsDoctor
-        ? 'Terima kasih sudah cerita. Keluhan ini sebaiknya dibahas langsung dengan dokter. Saya belum bisa memberi diagnosis. Silakan lanjut ke AhliPeduli atau gunakan PeduliDarurat bila terasa berat.'
-        : 'Terima kasih. Catat keluhan ini, istirahat, minum air cukup, dan pantau perubahan. Jika keluhan memburuk atau membuat Bapak/Ibu khawatir, lanjutkan konsultasi dokter.';
-
+    // Add user message and show typing indicator
     state = state.copyWith(
-      showAhliPeduliCta: state.showAhliPeduliCta || needsDoctor,
+      isTyping: true,
       messages: [
         ...state.messages,
         KonsulMessage(
@@ -78,11 +79,26 @@ class PeduliKonsulController extends Notifier<PeduliKonsulState> {
           sender: KonsulSender.user,
           createdAt: now,
         ),
+      ],
+    );
+
+    // Simulate doctor typing delay
+    await Future<void>.delayed(const Duration(milliseconds: 1400));
+
+    final reply = needsDoctor
+        ? 'Terima kasih sudah cerita. Keluhan ini sebaiknya dibahas langsung dengan dokter. Saya belum bisa memberi diagnosis. Silakan lanjut ke AhliPeduli atau gunakan PeduliDarurat bila terasa berat.'
+        : 'Terima kasih. Catat keluhan ini, istirahat, minum air cukup, dan pantau perubahan. Jika keluhan memburuk atau membuat Bapak/Ibu khawatir, lanjutkan konsultasi dokter.';
+
+    state = state.copyWith(
+      isTyping: false,
+      showAhliPeduliCta: state.showAhliPeduliCta || needsDoctor,
+      messages: [
+        ...state.messages,
         KonsulMessage(
-          id: 'doctor-${now.microsecondsSinceEpoch}',
+          id: 'doctor-${DateTime.now().microsecondsSinceEpoch}',
           text: reply,
           sender: KonsulSender.doctor,
-          createdAt: now.add(const Duration(seconds: 1)),
+          createdAt: DateTime.now(),
         ),
       ],
     );
