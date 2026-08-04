@@ -5,7 +5,7 @@ final class AppAssets {
   static const String imagesPath = 'assets/images';
 
   static const String logoPeduliKeluarga =
-      '$imagesPath/logo_peduli_keluarga.png';
+      '$imagesPath/logo_peduli_keluarga.webp';
 
   static const String illustrationsPath = 'assets/illustrations';
   static const String animationsPath = 'assets/animations';
