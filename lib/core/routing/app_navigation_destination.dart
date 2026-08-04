@@ -126,6 +126,17 @@ final class AppNavigationDestinations {
       },
     ),
     AppNavigationDestination(
+      route: AppRoute.familyChat,
+      branchIndex: 8,
+      label: 'PeduliChat',
+      icon: Icons.forum_outlined,
+      selectedIcon: Icons.forum,
+      allowedModes: {
+        AppUserMode.elder,
+        AppUserMode.caregiver,
+      },
+    ),
+    AppNavigationDestination(
       route: AppRoute.peduliPantau,
       branchIndex: 9,
       label: 'PeduliPantau',
@@ -135,43 +146,55 @@ final class AppNavigationDestinations {
         AppUserMode.caregiver,
       },
     ),
+    AppNavigationDestination(
+      route: AppRoute.peduliDiri,
+      branchIndex: 10,
+      label: 'PeduliDiri',
+      icon: Icons.menu_book_outlined,
+      selectedIcon: Icons.menu_book,
+      allowedModes: {
+        AppUserMode.elder,
+      },
+    ),
   ];
 
   static List<AppNavigationDestination> forMode(AppUserMode mode) {
-    final filtered = primary
-        .where((item) => item.isAllowedFor(mode))
-        .map((item) {
-          if (mode == AppUserMode.elder && item.route == AppRoute.home) {
-            return item.copyWith(label: 'PeduliDiri');
-          }
-          return item;
-        })
-        .toList();
+    final filtered = primary.where((item) => item.isAllowedFor(mode)).toList();
 
     if (mode == AppUserMode.elder) {
-      final order = <AppRoute>[
+      final allowedRoutes = {
         AppRoute.home,
-        AppRoute.peduliCek,
-        AppRoute.peduliObat,
         AppRoute.familyAlert,
         AppRoute.peduliKonsul,
-        AppRoute.peduliRiwayat,
+        AppRoute.familyChat,
+      };
+      final finalItems = filtered.where((item) => allowedRoutes.contains(item.route)).toList();
+      final order = <AppRoute>[
+        AppRoute.home,
+        AppRoute.familyAlert,
+        AppRoute.peduliKonsul,
+        AppRoute.familyChat,
       ];
-      filtered.sort((a, b) => order.indexOf(a.route).compareTo(order.indexOf(b.route)));
+      finalItems.sort((a, b) => order.indexOf(a.route).compareTo(order.indexOf(b.route)));
+      return finalItems;
     }
 
     if (mode == AppUserMode.caregiver) {
+      final allowedRoutes = {
+        AppRoute.home,
+        AppRoute.peduliPantau,
+        AppRoute.familyChat,
+        AppRoute.familyAlert,
+      };
+      final finalItems = filtered.where((item) => allowedRoutes.contains(item.route)).toList();
       final order = <AppRoute>[
         AppRoute.home,
-        AppRoute.peduliRiwayat,
-        AppRoute.peduliObat,
         AppRoute.peduliPantau,
-        AppRoute.peduliAntar,
-        AppRoute.ahliPeduli,
+        AppRoute.familyChat,
         AppRoute.familyAlert,
-        AppRoute.peduliKonsul,
       ];
-      filtered.sort((a, b) => order.indexOf(a.route).compareTo(order.indexOf(b.route)));
+      finalItems.sort((a, b) => order.indexOf(a.route).compareTo(order.indexOf(b.route)));
+      return finalItems;
     }
 
     return filtered;

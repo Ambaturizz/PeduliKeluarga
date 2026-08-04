@@ -379,3 +379,29 @@ class PkSectionTitle extends StatelessWidget {
     );
   }
 }
+
+class PkToneHelper {
+  static Color mainColor(PkTone tone) {
+    switch (tone) {
+      case PkTone.red: return PkColors.red;
+      case PkTone.amber: return PkColors.amber;
+      case PkTone.green: return PkColors.green;
+      case PkTone.blue: return PkColors.blue;
+      case PkTone.purple: return PkColors.purple;
+      case PkTone.brand: return PkColors.brand;
+      case PkTone.gray: return PkColors.text2;
+    }
+  }
+
+  static Color softColor(PkTone tone) {
+    switch (tone) {
+      case PkTone.red: return PkColors.redSoft;
+      case PkTone.amber: return PkColors.amberSoft;
+      case PkTone.green: return PkColors.greenSoft;
+      case PkTone.blue: return PkColors.blueSoft;
+      case PkTone.purple: return PkColors.purpleSoft;
+      case PkTone.brand: return PkColors.brandSoft;
+      case PkTone.gray: return Colors.grey.shade100;
+    }
+  }
+}

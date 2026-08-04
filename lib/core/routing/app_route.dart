@@ -70,6 +70,22 @@ enum AppRoute {
   settings(
     name: 'settings',
     path: '/settings',
+  ),
+  peduliDiri(
+    name: 'peduliDiri',
+    path: '/peduli-diri',
+  ),
+  peduliLiterasi(
+    name: 'peduliLiterasi',
+    path: '/peduli-literasi',
+  ),
+  aiInsight(
+    name: 'aiInsight',
+    path: '/ai-insight',
+  ),
+  familyManagement(
+    name: 'familyManagement',
+    path: '/family-management',
   );
 
   const AppRoute({

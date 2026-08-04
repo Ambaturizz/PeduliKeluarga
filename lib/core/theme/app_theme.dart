@@ -147,6 +147,10 @@ final class AppTheme {
           vertical: AppSpacing.md,
         ),
         labelStyle: textTheme.bodySmall,
+        floatingLabelStyle: textTheme.bodySmall?.copyWith(
+          color: colorScheme.primary,
+          backgroundColor: isLight ? AppColors.white : AppColors.darkSurfaceVariant,
+        ),
         hintStyle: textTheme.bodySmall?.copyWith(
           color: isLight ? AppColors.textMuted : AppColors.white.withValues(alpha: 0.45),
         ),
