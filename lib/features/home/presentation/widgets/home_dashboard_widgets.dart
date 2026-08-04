@@ -116,26 +116,9 @@ class PremiumPageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final compact = MediaQuery.sizeOf(context).width < 640;
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
-      child: compact
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _TitleBlock(liveLabel: liveLabel, mode: mode),
-                const SizedBox(height: 12),
-                PremiumModeSwitch(mode: mode, onChanged: onModeChanged),
-              ],
-            )
-          : Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: _TitleBlock(liveLabel: liveLabel, mode: mode)),
-                PremiumModeSwitch(mode: mode, onChanged: onModeChanged),
-              ],
-            ),
+      child: _TitleBlock(liveLabel: liveLabel, mode: mode),
     );
   }
 }
@@ -182,8 +165,6 @@ class _TitleBlock extends StatelessWidget {
                 height: 1.6,
               ),
         ),
-        const SizedBox(height: 12),
-        LivePill(label: liveLabel),
       ],
     );
   }
@@ -893,7 +874,7 @@ class PremiumSummaryCard extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: count == 1 ? 2.45 : 1.55,
+                childAspectRatio: count == 1 ? 2.2 : 1.4,
                 children: [
                   for (final metric in data.metrics)
                     PremiumMetricTile(metric: metric),
@@ -1600,7 +1581,7 @@ class _QuickActionCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            PkIconBox(icon: action.icon, tone: action.tone, size: 44),
+            PkIconBox(icon: Icons.star, tone: action.tone, size: 44),
             const SizedBox(width: PkSpacing.md),
             Expanded(
               child: _QuickActionText(action: action),
@@ -1630,7 +1611,7 @@ class _QuickActionCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              PkIconBox(icon: action.icon, tone: action.tone, size: 44),
+              PkIconBox(icon: Icons.star, tone: action.tone, size: 44),
               const Spacer(),
               if (action.badge != null)
                 Flexible(

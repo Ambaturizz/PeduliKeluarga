@@ -49,6 +49,7 @@ class AppPageHeader extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.icon,
+    this.imageAssetIcon,
     this.trailing,
     super.key,
   });
@@ -56,6 +57,7 @@ class AppPageHeader extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData? icon;
+  final String? imageAssetIcon;
   final Widget? trailing;
 
   @override
@@ -65,7 +67,14 @@ class AppPageHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (icon != null) ...[
+          if (imageAssetIcon != null) ...[
+            Image.asset(
+              imageAssetIcon!,
+              width: 48,
+              height: 48,
+            ),
+            const SizedBox(width: PkSpacing.md),
+          ] else if (icon != null) ...[
             PkIconBox(icon: icon!, size: 48, iconSize: 24),
             const SizedBox(width: PkSpacing.md),
           ],
@@ -76,6 +85,7 @@ class AppPageHeader extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: PkColors.text,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -0.6,
                       ),
@@ -83,7 +93,9 @@ class AppPageHeader extends StatelessWidget {
                 const SizedBox(height: PkSpacing.xs),
                 Text(
                   subtitle,
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: PkColors.text2,
+                      ),
                 ),
               ],
             ),

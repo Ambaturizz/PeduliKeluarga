@@ -21,11 +21,15 @@ class _TermsConditionsTextState extends State<TermsConditionsText> {
     super.initState();
     _recognizerSnK = TapGestureRecognizer()
       ..onTap = () {
-        context.pushNamed(AppRoute.termsConditions.name);
+        if (mounted) {
+          context.push(AppRoute.termsConditions.path);
+        }
       };
     _recognizerPrivacy = TapGestureRecognizer()
       ..onTap = () {
-        context.pushNamed(AppRoute.privacyPolicy.name);
+        if (mounted) {
+          context.push(AppRoute.privacyPolicy.path);
+        }
       };
   }
 

@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/animations/app_motion.dart';
+
 import '../../core/routing/app_navigation_destination.dart';
-import '../../core/theme/app_spacing.dart';
 import '../../core/utils/responsive.dart';
 import '../../state/providers/app_mode_provider.dart';
-import '../widgets/app_bottom_navigation.dart';
 import '../widgets/app_navigation_rail.dart';
 import '../widgets/app_top_bar.dart';
 
@@ -29,11 +27,6 @@ class AppNavigationShell extends ConsumerWidget {
     final theme = Theme.of(context);
 
     final body = navigationShell;
-
-    // Tampilkan semua fitur yang tersedia untuk mode aktif pada APK.
-    // AppBottomNavigation menampilkan 4 fitur per layar dalam 1 baris.
-    // Fitur lainnya tetap tersedia dengan menggeser menu ke kanan.
-    final bottomDestinations = destinations;
 
     if (context.isExpanded) {
       return Scaffold(
@@ -62,22 +55,6 @@ class AppNavigationShell extends ConsumerWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: const AppTopBar(),
       body: body,
-      bottomNavigationBar: DecoratedBox(
-        decoration: BoxDecoration(
-          color: theme.navigationBarTheme.backgroundColor ?? theme.colorScheme.surface,
-          border: Border(top: BorderSide(color: theme.dividerColor)),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.xs),
-            child: AppBottomNavigation(
-              navigationShell: navigationShell,
-              destinations: bottomDestinations,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

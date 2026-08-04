@@ -8,6 +8,7 @@ class PageShell extends StatelessWidget {
     this.title = '',
     this.subtitle = '',
     this.icon,
+    this.imageAssetIcon,
     required this.children,
     this.maxWidth = 840,
     this.headerTrailing,
@@ -18,6 +19,7 @@ class PageShell extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData? icon;
+  final String? imageAssetIcon;
   final List<Widget> children;
   final double maxWidth;
   final Widget? headerTrailing;
@@ -40,6 +42,7 @@ class PageShell extends StatelessWidget {
                 title: title,
                 subtitle: subtitle,
                 icon: icon,
+                imageAssetIcon: imageAssetIcon,
                 trailing: headerTrailing,
               ),
               const SizedBox(height: AppSpacing.xxl),

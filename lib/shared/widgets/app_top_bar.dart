@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../core/routing/app_routes.dart';
 import '../../core/routing/navigation_helper.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
@@ -21,9 +23,17 @@ class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mode = ref.watch(appModeControllerProvider);
+    final isHome = GoRouterState.of(context).uri.path == AppRoutes.homePath;
 
     return AppBar(
       automaticallyImplyLeading: showMenuButton,
+      leading: !isHome
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back_rounded),
+              onPressed: () => context.go(AppRoutes.homePath),
+              tooltip: 'Kembali',
+            )
+          : null,
       titleSpacing: AppSpacing.lg,
       title: Builder(
         builder: (context) {
@@ -65,12 +75,23 @@ class AppTopBar extends ConsumerWidget implements PreferredSizeWidget {
         IconButton(
           tooltip: 'Notifikasi',
           onPressed: context.goNotifications,
-          icon: const Icon(Icons.notifications_outlined),
+          icon: Image.asset(
+            'assets/icons/notifikasi.webp',
+            width: 24,
+            height: 24,
+          ),
         ),
         IconButton(
           tooltip: 'Profil',
           onPressed: context.goProfile,
-          icon: const Icon(Icons.account_circle_outlined),
+          icon: CircleAvatar(
+            radius: 14,
+            backgroundImage: AssetImage(
+              mode == AppUserMode.elder
+                  ? 'assets/icons/profillansia.webp'
+                  : 'assets/icons/profilanak.webp',
+            ),
+          ),
         ),
         const SizedBox(width: AppSpacing.xs),
       ],
@@ -100,12 +121,20 @@ class _ModeSwitcher extends StatelessWidget {
       segments: const [
         ButtonSegment<AppUserMode>(
           value: AppUserMode.elder,
-          label: Text('Lansia'),
+          label: Text(
+            'Lansia',
+            softWrap: false,
+            overflow: TextOverflow.visible,
+          ),
           icon: Icon(Icons.volunteer_activism_outlined),
         ),
         ButtonSegment<AppUserMode>(
           value: AppUserMode.caregiver,
-          label: Text('Anak'),
+          label: Text(
+            'Anak',
+            softWrap: false,
+            overflow: TextOverflow.visible,
+          ),
           icon: Icon(Icons.groups_outlined),
         ),
       ],

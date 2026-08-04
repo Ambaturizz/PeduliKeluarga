@@ -17,6 +17,9 @@ enum HomeActionTarget {
   peduliKonsul,
   familyChat,
   peduliPantau,
+  peduliLiterasi,
+  peduliAmbulans,
+  aiPeduli,
 }
 
 class HomeHeroStat {
@@ -91,7 +94,7 @@ class HomeQuickAction {
   const HomeQuickAction({
     required this.title,
     required this.subtitle,
-    required this.icon,
+    required this.iconPath,
     required this.tone,
     required this.target,
     this.badge,
@@ -99,7 +102,7 @@ class HomeQuickAction {
 
   final String title;
   final String subtitle;
-  final IconData icon;
+  final String iconPath;
   final PkTone tone;
   final HomeActionTarget target;
   final String? badge;
@@ -299,7 +302,7 @@ final class HomeDummyData {
         HomeQuickAction(
           title: 'PeduliCek',
           subtitle: 'Cek hari ini',
-          icon: Icons.medical_services_outlined,
+          iconPath: 'assets/icons/pedulicek.webp',
           tone: PkTone.brand,
           target: HomeActionTarget.peduliCek,
           badge: 'Belum diisi',
@@ -307,7 +310,7 @@ final class HomeDummyData {
         HomeQuickAction(
           title: 'PeduliObat',
           subtitle: 'Jadwal obat',
-          icon: Icons.medication_outlined,
+          iconPath: 'assets/icons/peduliobat.webp',
           tone: PkTone.green,
           target: HomeActionTarget.peduliObat,
           badge: '13:00',
@@ -315,30 +318,51 @@ final class HomeDummyData {
         HomeQuickAction(
           title: 'PeduliDarurat',
           subtitle: 'Bantuan cepat',
-          icon: Icons.emergency_outlined,
+          iconPath: 'assets/icons/pedulidarurat.webp',
           tone: PkTone.red,
           target: HomeActionTarget.familyAlert,
         ),
         HomeQuickAction(
-          title: 'PeduliChat',
-          subtitle: 'Chat keluarga',
-          icon: Icons.forum_outlined,
+          title: 'PeduliRiwayat',
+          subtitle: 'Riwayat sehat',
+          iconPath: 'assets/icons/peduliriwayat.webp',
           tone: PkTone.blue,
+          target: HomeActionTarget.peduliRiwayat,
+        ),
+        HomeQuickAction(
+          title: 'PeduliLiterasi',
+          subtitle: 'Info kesehatan',
+          iconPath: 'assets/icons/peduliliterasi.webp',
+          tone: PkTone.purple,
+          target: HomeActionTarget.peduliLiterasi,
+        ),
+        HomeQuickAction(
+          title: 'PeduliAmbulans',
+          subtitle: 'Panggil',
+          iconPath: 'assets/icons/peduliambulans.webp',
+          tone: PkTone.red,
+          target: HomeActionTarget.peduliAmbulans,
+        ),
+        HomeQuickAction(
+          title: 'AIPeduli',
+          subtitle: 'Tanya AI',
+          iconPath: 'assets/icons/aipeduli.webp',
+          tone: PkTone.blue,
+          target: HomeActionTarget.aiPeduli,
+        ),
+        HomeQuickAction(
+          title: 'PeduliChat',
+          subtitle: 'Grup chat',
+          iconPath: 'assets/icons/pedulichat.webp',
+          tone: PkTone.green,
           target: HomeActionTarget.familyChat,
         ),
         HomeQuickAction(
           title: 'PeduliKonsul',
           subtitle: 'Konsultasi',
-          icon: Icons.health_and_safety_outlined,
+          iconPath: 'assets/icons/pedulikonsul.webp',
           tone: PkTone.purple,
           target: HomeActionTarget.peduliKonsul,
-        ),
-        HomeQuickAction(
-          title: 'PeduliRiwayat',
-          subtitle: 'Riwayat sehat',
-          icon: Icons.assignment_outlined,
-          tone: PkTone.blue,
-          target: HomeActionTarget.peduliRiwayat,
         ),
       ],
       history: const [
@@ -454,14 +478,17 @@ final class HomeDummyData {
         HomeMedicine(name: 'Simvastatin', dose: '20mg · stok rendah', time: '19:00', status: 'Konfirmasi', progress: 22, tone: PkTone.red, lowStock: true),
       ],
       quickActions: const [
-        HomeQuickAction(title: 'PeduliRiwayat', subtitle: 'Riwayat sehat', icon: Icons.assignment_outlined, tone: PkTone.blue, target: HomeActionTarget.peduliRiwayat),
-        HomeQuickAction(title: 'PeduliObat', subtitle: 'Atur jadwal', icon: Icons.medication_outlined, tone: PkTone.brand, target: HomeActionTarget.peduliObat),
-        HomeQuickAction(title: 'PeduliPantau', subtitle: 'CCTV rumah', icon: Icons.videocam_outlined, tone: PkTone.green, target: HomeActionTarget.peduliPantau, badge: 'Mockup'),
-        HomeQuickAction(title: 'PeduliChat', subtitle: 'Chat keluarga', icon: Icons.forum_outlined, tone: PkTone.blue, target: HomeActionTarget.familyChat),
-        HomeQuickAction(title: 'PeduliAntar', subtitle: 'Antar obat', icon: Icons.local_shipping_outlined, tone: PkTone.amber, target: HomeActionTarget.peduliAntar),
-        HomeQuickAction(title: 'AhliPeduli', subtitle: 'Tenaga medis', icon: Icons.health_and_safety_outlined, tone: PkTone.purple, target: HomeActionTarget.ahliPeduli),
-        HomeQuickAction(title: 'PeduliDarurat', subtitle: 'Darurat', icon: Icons.emergency_outlined, tone: PkTone.red, target: HomeActionTarget.familyAlert),
-        HomeQuickAction(title: 'PeduliKonsul', subtitle: 'Konsultasi dokter', icon: Icons.health_and_safety_outlined, tone: PkTone.purple, target: HomeActionTarget.peduliKonsul),
+        HomeQuickAction(title: 'PeduliRiwayat', subtitle: 'Riwayat sehat', iconPath: 'assets/icons/peduliriwayat.webp', tone: PkTone.blue, target: HomeActionTarget.peduliRiwayat),
+        HomeQuickAction(title: 'PeduliObat', subtitle: 'Atur jadwal', iconPath: 'assets/icons/peduliobat.webp', tone: PkTone.brand, target: HomeActionTarget.peduliObat),
+        HomeQuickAction(title: 'PeduliPantau', subtitle: 'CCTV rumah', iconPath: 'assets/icons/pedulipantau.webp', tone: PkTone.green, target: HomeActionTarget.peduliPantau, badge: 'Mockup'),
+        HomeQuickAction(title: 'PeduliAntar', subtitle: 'Antar obat', iconPath: 'assets/icons/peduliantar.webp', tone: PkTone.amber, target: HomeActionTarget.peduliAntar),
+        HomeQuickAction(title: 'AhliPeduli', subtitle: 'Tenaga medis', iconPath: 'assets/icons/ahlipeduli.webp', tone: PkTone.purple, target: HomeActionTarget.ahliPeduli),
+        HomeQuickAction(title: 'PeduliDarurat', subtitle: 'Darurat', iconPath: 'assets/icons/pedulidarurat.webp', tone: PkTone.red, target: HomeActionTarget.familyAlert),
+        HomeQuickAction(title: 'PeduliLiterasi', subtitle: 'Info kesehatan', iconPath: 'assets/icons/peduliliterasi.webp', tone: PkTone.purple, target: HomeActionTarget.peduliLiterasi),
+        HomeQuickAction(title: 'PeduliAmbulans', subtitle: 'Panggil', iconPath: 'assets/icons/peduliambulans.webp', tone: PkTone.red, target: HomeActionTarget.peduliAmbulans),
+        HomeQuickAction(title: 'AIPeduli', subtitle: 'Tanya AI', iconPath: 'assets/icons/aipeduli.webp', tone: PkTone.blue, target: HomeActionTarget.aiPeduli),
+        HomeQuickAction(title: 'PeduliChat', subtitle: 'Grup chat', iconPath: 'assets/icons/pedulichat.webp', tone: PkTone.green, target: HomeActionTarget.familyChat),
+        HomeQuickAction(title: 'PeduliKonsul', subtitle: 'Konsultasi', iconPath: 'assets/icons/pedulikonsul.webp', tone: PkTone.purple, target: HomeActionTarget.peduliKonsul),
       ],
       history: const [
         HomeHistoryItem(title: 'Obat pagi sudah diminum', copy: 'Amlodipin dan Metformin selesai.', time: '07:32', tone: PkTone.green),
